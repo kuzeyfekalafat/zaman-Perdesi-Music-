@@ -199,13 +199,43 @@
             margin-top: 10px;
             font-size: 16px;
         }
+        .auth-card {
+            background: #181818;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #282828;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+        .profile-header-box {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+            background: #181818;
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 1px solid #282828;
+        }
+        .profile-avatar {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background-color: #333;
+            object-fit: cover;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #777;
+            font-size: 11px;
+        }
     </style>
 </head>
 <body>
 
     <header>
         <span>Zaman Perdesi Music</span>
-        <span style="font-size: 14px; color: #888; font-weight: normal;">Preview</span>
+        <span id="girisDurumGosterge" style="font-size: 13px; color: #ffb703; font-weight: normal; cursor:pointer;" onclick="switchTab(event, 'giris-paneli')">Giriş Yap</span>
     </header>
 
     <div class="app-title">ZAMAN PERDESİ</div>
@@ -220,8 +250,9 @@
         <button class="tab-btn" onclick="switchTab(event, 'favoriler')">Favoriler ❤️</button>
         <button class="tab-btn" onclick="switchTab(event, 'calma-listeleri')">Çalma Listeleri 🎧</button>
         <button class="tab-btn" onclick="switchTab(event, 'gecmis')">Geçmiş ⏱️</button>
-        <button class="tab-btn" onclick="switchTab(event, 'profil')">Kuzeyfe Kalafat</button>
-        <button class="tab-btn" onclick="switchTab(event, 'sarki-ekle')">+ Şarkı Ekle</button>
+        <button class="tab-btn" id="profilSekmeBtn" onclick="profilSekmesiniAc()">Profilim / Sayfam</button>
+        <button class="tab-btn" onclick="switchTab(event, 'giris-paneli')">Giriş / Üye Ol</button>
+        <button class="tab-btn" onclick="sarkiEkleSekmesiniKontrolEt()">+ Şarkı Ekle</button>
     </div>
 
     <!-- Sekme İçerikleri -->
@@ -232,7 +263,7 @@
                 <div style="width: 50px; height: 50px; background: #333; border-radius: 4px; display:flex; align-items:center; justify-content:center; color:#777;">Kapak</div>
                 <div>
                     <div style="font-weight: bold; font-size: 14px;">Henüz şarkı eklenmedi</div>
-                    <p>Kuzeyfe Kalafat</p>
+                    <p>Zaman Perdesi</p>
                 </div>
             </div>
         </div>
@@ -276,15 +307,83 @@
         <p>Dinleme geçmişi boş.</p>
     </div>
 
+    <!-- KİŞİSEL PROFİL VE SAYFA YÖNETİMİ -->
     <div id="profil" class="tab-content">
-        <h2>Kuzeyfe Kalafat</h2>
-        <div style="background: #181818; padding: 16px; border-radius: 8px; margin-bottom: 20px; line-height: 1.5; color: #ccc; font-size: 14px;">
-            Director, screenwriter, producer, music arranger and creative director operating under 0-Nokta Yapım Holding. Zaman Perdesi projesinin yaratıcısı.
+        <div class="profile-header-box">
+            <div id="profilAvatarAlan"><div class="profile-avatar">Resim</div></div>
+            <div>
+                <h2 id="profilIsim Baslik" style="margin-bottom: 4px;">Kullanıcı Profili</h2>
+                <p id="profilEmailGosterge" style="font-size: 12px; color: #aaa;"></p>
+            </div>
         </div>
-        <h2>Sanatçının Parçaları</h2>
-        <div id="profilSarkilari"><p>Parça bulunamadı.</p></div>
+
+        <div class="auth-card" style="margin-bottom: 20px; max-width: 100%;">
+            <h3 style="font-size: 16px; color: #ffb703; margin-bottom: 12px;">Profilimi Düzenle</h3>
+            <div class="form-group">
+                <label>Biyografim</label>
+                <textarea id="kullaniciBioInput" rows="3" placeholder="Kendinden, tarzından bahset..."></textarea>
+            </div>
+            <div class="form-group">
+                <label>Profil Fotoğrafı Seç</label>
+                <input type="file" id="kullaniciResimInput" accept="image/*">
+            </div>
+            <button type="button" class="submit-btn" onclick="profilBilgileriniKaydet()">Bilgileri Kaydet</button>
+        </div>
+
+        <div style="background: #181818; padding: 16px; border-radius: 8px; margin-bottom: 20px; line-height: 1.5; color: #ccc; font-size: 14px;" id="kullaniciBioGoruntuleme">
+            Henüz bir biyografi eklemedin. Yukarıdan düzenleyebilirsin.
+        </div>
+
+        <h2>Sanatçının / Üyenin Parçaları</h2>
+        <div id="profilSarkilari"><p>Bu kullanıcıya ait parça bulunamadı.</p></div>
     </div>
 
+    <!-- GİRİŞ YAP / KAYIT OL PANELİ -->
+    <div id="giris-paneli" class="tab-content">
+        <h2>Üye Girişi & Kayıt Ol</h2>
+        <div class="auth-card">
+            <div id="girisFormuBolumu">
+                <div class="form-group">
+                    <label>E-Posta Adresi</label>
+                    <input type="email" id="authEmail" placeholder="ornek@mail.com">
+                </div>
+                <div class="form-group">
+                    <label>Şifre</label>
+                    <input type="password" id="authPassword" placeholder="******">
+                </div>
+                <button type="button" class="submit-btn" onclick="uyeGirisYap()">Giriş Yap</button>
+                <p style="text-align: center; margin-top: 15px; font-size: 13px;">
+                    Hesabın yok mu? <a href="#" onclick="authModDegistir('kayit')" style="color: #ffb703; text-decoration: none;">Kayıt Ol</a>
+                </p>
+            </div>
+
+            <div id="kayitFormuBolumu" style="display: none;">
+                <div class="form-group">
+                    <label>Ad Soyad / Sanatçı Adı</label>
+                    <input type="text" id="regAd" placeholder="Kuzeyfe Kalafat">
+                </div>
+                <div class="form-group">
+                    <label>E-Posta Adresi</label>
+                    <input type="email" id="regEmail" placeholder="ornek@mail.com">
+                </div>
+                <div class="form-group">
+                    <label>Şifre Belirle</label>
+                    <input type="password" id="regPassword" placeholder="******">
+                </div>
+                <button type="button" class="submit-btn" onclick="uyeKayitOl()">Kayıt Ol</button>
+                <p style="text-align: center; margin-top: 15px; font-size: 13px;">
+                    Zaten hesabın var mı? <a href="#" onclick="authModDegistir('giris')" style="color: #ffb703; text-decoration: none;">Giriş Yap</a>
+                </p>
+            </div>
+
+            <div id="aktifKullaniciPaneli" style="display: none; text-align: center;">
+                <p style="font-size: 15px; color: #fff; margin-bottom: 10px;">Aktif Oturum: <span id="aktifKullaniciAdi" style="color: #ffb703; font-weight: bold;"></span></p>
+                <button type="button" class="submit-btn" style="background: #d90429; color: #fff;" onclick="cikisYap()">Çıkış Yap</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ŞARKI EKLEME PANELİ -->
     <div id="sarki-ekle" class="tab-content">
         <h2>Telefondan Şarkı Ekle</h2>
         
@@ -324,7 +423,7 @@
             <div class="player-thumb" id="aktifKapak" style="display:flex; align-items:center; justify-content:center; color:#777; font-size:10px;">Kapak</div>
             <div class="player-text">
                 <div class="title" id="aktifBaslik">Şarkı Seçilmedi</div>
-                <div class="artist" id="aktifSanatci">Kuzeyfe Kalafat</div>
+                <div class="artist" id="aktifSanatci">Zaman Perdesi</div>
             </div>
         </div>
         <div class="player-controls">
@@ -347,14 +446,19 @@
                 buttons[i].classList.remove("active");
             }
             document.getElementById(tabName).classList.add("active");
-            evt.currentTarget.classList.add("active");
+            
+            for (let i = 0; i < buttons.length; i++) {
+                if (buttons[i].getAttribute("onclick") && buttons[i].getAttribute("onclick").includes(tabName)) {
+                    buttons[i].classList.add("active");
+                }
+            }
         }
 
         let db;
         let tumSarkilarDizisi = [];
         let aktifCalinanIndex = 0;
 
-        const request = indexedDB.open("ZamanPerdesiDB", 2); // Sürüm güncellendi
+        const request = indexedDB.open("ZamanPerdesiDB", 4); // Sürüm 4
 
         request.onerror = function(event) {
             console.log("IndexedDB hatası:", event.target.error);
@@ -363,6 +467,7 @@
         request.onsuccess = function(event) {
             db = event.target.result;
             sarkilariYukle();
+            oturumKontrolEt();
         };
 
         request.onupgradeneeded = function(event) {
@@ -370,9 +475,224 @@
             if (!db.objectStoreNames.contains("songs")) {
                 db.createObjectStore("songs", { keyPath: "id", autoIncrement: true });
             }
+            if (!db.objectStoreNames.contains("users")) {
+                db.createObjectStore("users", { keyPath: "email" });
+            }
         };
 
+        // KULLANICI GİRİŞ & KAYIT İŞLEMLERİ
+        function authModDegistir(mod) {
+            if (mod === 'kayit') {
+                document.getElementById("girisFormuBolumu").style.display = "none";
+                document.getElementById("kayitFormuBolumu").style.display = "block";
+            } else {
+                document.getElementById("kayitFormuBolumu").style.display = "none";
+                document.getElementById("girisFormuBolumu").style.display = "block";
+            }
+        }
+
+        function uyeKayitOl() {
+            const ad = document.getElementById("regAd").value.trim();
+            const email = document.getElementById("regEmail").value.trim();
+            const password = document.getElementById("regPassword").value.trim();
+
+            if (!ad || !email || !password) {
+                alert("Lütfen tüm alanları doldurun!");
+                return;
+            }
+
+            const transaction = db.transaction(["users"], "readwrite");
+            const store = transaction.objectStore("users");
+            const req = store.add({ name: ad, email: email, password: password, bio: "", profileImage: null });
+
+            req.onsuccess = function() {
+                alert("Kayıt başarılı! Şimdi giriş yapabilirsiniz.");
+                authModDegistir('giris');
+            };
+
+            req.onerror = function() {
+                alert("Bu e-posta adresi zaten kayıtlı!");
+            };
+        }
+
+        function uyeGirisYap() {
+            const email = document.getElementById("authEmail").value.trim();
+            const password = document.getElementById("authPassword").value.trim();
+
+            if (!email || !password) {
+                alert("Lütfen e-posta ve şifrenizi girin!");
+                return;
+            }
+
+            const transaction = db.transaction(["users"], "readonly");
+            const store = transaction.objectStore("users");
+            const req = store.get(email);
+
+            req.onsuccess = function(event) {
+                const user = event.target.result;
+                if (user && user.password === password) {
+                    localStorage.setItem("aktifEmail", user.email);
+                    localStorage.setItem("aktifKullanici", user.name);
+                    oturumKontrolEt();
+                    alert("Giriş başarılı, hoş geldin " + user.name + "!");
+                    switchTab({ currentTarget: document.getElementById("profilSekmeBtn") }, 'profil');
+                    profilSayfasiniYukle();
+                } else {
+                    alert("Hatalı e-posta veya şifre!");
+                }
+            };
+        }
+
+        function oturumKontrolEt() {
+            const aktifUser = localStorage.getItem("aktifKullanici");
+            const girisDurumGosterge = document.getElementById("girisDurumGosterge");
+            const aktifKullaniciPaneli = document.getElementById("aktifKullaniciPaneli");
+            const girisFormuBolumu = document.getElementById("girisFormuBolumu");
+            const kayitFormuBolumu = document.getElementById("kayitFormuBolumu");
+
+            if (aktifUser) {
+                girisDurumGosterge.innerText = "Sayfam: " + aktifUser;
+                aktifKullaniciPaneli.style.display = "block";
+                girisFormuBolumu.style.display = "none";
+                kayitFormuBolumu.style.display = "none";
+                document.getElementById("aktifKullaniciAdi").innerText = aktifUser;
+                document.getElementById("profilSekmeBtn").innerText = aktifUser;
+            } else {
+                girisDurumGosterge.innerText = "Giriş Yap";
+                aktifKullaniciPaneli.style.display = "none";
+                girisFormuBolumu.style.display = "block";
+                document.getElementById("profilSekmeBtn").innerText = "Profilim / Sayfam";
+            }
+        }
+
+        function cikisYap() {
+            localStorage.removeItem("aktifKullanici");
+            localStorage.removeItem("aktifEmail");
+            oturumKontrolEt();
+            alert("Oturum kapatıldı.");
+            switchTab({ currentTarget: document.querySelector(".tab-btn") }, 'ana-sayfa');
+        }
+
+        function profilSekmesiniAc() {
+            const aktifEmail = localStorage.getItem("aktifEmail");
+            if (!aktifEmail) {
+                alert("Lütfen önce üye girişi yapın veya kayıt olun!");
+                switchTab({ currentTarget: document.querySelector(".tab-btn") }, 'giris-paneli');
+                return;
+            }
+            switchTab({ currentTarget: document.getElementById("profilSekmeBtn") }, 'profil');
+            profilSayfasiniYukle();
+        }
+
+        function sarkiEkleSekmesiniKontrolEt() {
+            const aktifUser = localStorage.getItem("aktifKullanici");
+            if (!aktifUser) {
+                alert("Şarkı eklemek için önce giriş yapmalısın kanka!");
+                switchTab({ currentTarget: document.querySelector(".tab-btn") }, 'giris-paneli');
+                return;
+            }
+            switchTab({ currentTarget: document.querySelector(".tab-btn") }, 'sarki-ekle');
+        }
+
+        // PROFİL BİLGİLERİNİ KAYDETME VE YÜKLEME
+        function profilBilgileriniKaydet() {
+            const aktifEmail = localStorage.getItem("aktifEmail");
+            if (!aktifEmail) return;
+
+            const yeniBio = document.getElementById("kullaniciBioInput").value.trim();
+            const resimInput = document.getElementById("kullaniciResimInput");
+            const yeniResim = resimInput.files.length > 0 ? resimInput.files[0] : null;
+
+            const transaction = db.transaction(["users"], "readwrite");
+            const store = transaction.objectStore("users");
+            const req = store.get(aktifEmail);
+
+            req.onsuccess = function(event) {
+                let user = event.target.result;
+                if (user) {
+                    user.bio = yeniBio;
+                    if (yeniResim) {
+                        user.profileImage = yeniResim;
+                    }
+                    store.put(user);
+                    alert("Profil başarıyla güncellendi! 🎉");
+                    profilSayfasiniYukle();
+                }
+            };
+        }
+
+        function profilSayfasiniYukle() {
+            const aktifEmail = localStorage.getItem("aktifEmail");
+            if (!aktifEmail || !db) return;
+
+            const transaction = db.transaction(["users", "songs"], "readonly");
+            const userStore = transaction.objectStore("users");
+            const userReq = userStore.get(aktifEmail);
+
+            userReq.onsuccess = function(event) {
+                const user = event.target.result;
+                if (user) {
+                    document.getElementById("profilIsim Baslik" || "profilIsim Baslik").innerText = user.name;
+                    document.getElementById("profilEmailGosterge").innerText = user.email;
+                    document.getElementById("kullaniciBioGoruntuleme").innerText = user.bio || "Henüz bir biyografi eklemedin.";
+                    document.getElementById("kullaniciBioInput").value = user.bio || "";
+
+                    const avatarAlan = document.getElementById("profilAvatarAlan");
+                    if (user.profileImage) {
+                        let imgUrl = URL.createObjectURL(user.profileImage);
+                        avatarAlan.innerHTML = `<img src="${imgUrl}" class="profile-avatar">`;
+                    } else {
+                        avatarAlan.innerHTML = `<div class="profile-avatar">Resim</div>`;
+                    }
+                }
+            };
+
+            // Kullanıcının kendi şarkılarını filtrele
+            const songStore = transaction.objectStore("songs");
+            const songReq = songStore.getAll();
+
+            songReq.onsuccess = function(event) {
+                const allSongs = event.target.result;
+                const aktifUserAdi = localStorage.getItem("aktifKullanici");
+                const userSongs = allSongs.filter(s => s.artist === aktifUserAdi);
+
+                const profilSarkilari = document.getElementById("profilSarkilari");
+                if (userSongs.length === 0) {
+                    profilSarkilari.innerHTML = "<p>Bu kullanıcıya ait parça bulunmuyor.</p>";
+                    return;
+                }
+
+                let html = "";
+                userSongs.forEach((song) => {
+                    let gerçekIndex = allSongs.indexOf(song);
+                    let coverUrl = song.imageFile ? URL.createObjectURL(song.imageFile) : "";
+                    let coverTag = coverUrl ? `<img src="${coverUrl}" class="song-thumb">` : `<div class="song-thumb">Kapak</div>`;
+
+                    html += `
+                        <div class="song-card">
+                            <div class="song-info">
+                                ${coverTag}
+                                <div class="song-details">
+                                    <div class="title">${song.title}</div>
+                                    <div class="artist">${song.artist} ${song.album ? '• ' + song.album : ''}</div>
+                                </div>
+                            </div>
+                            <button class="play-btn-item" onclick="sarkiyiCal(${gerçekIndex})">Çal 🎵</button>
+                        </div>
+                    `;
+                });
+                profilSarkilari.innerHTML = html;
+            };
+        }
+
+        // ŞARKI YAYINLAMA VE LİSTELEME
         function sarkiyiYayinlaTikla() {
+            const aktifUser = localStorage.getItem("aktifKullanici");
+            if (!aktifUser) {
+                alert("Şarkı yayınlamak için giriş yapmalısın!");
+                return;
+            }
+
             const titleInput = document.getElementById("sarkiAdiInput");
             const mp3FileInput = document.getElementById("mp3Input");
             const imgFileInput = document.getElementById("imageInput");
@@ -400,7 +720,7 @@
 
             const newSong = {
                 title: title,
-                artist: "Kuzeyfe Kalafat",
+                artist: aktifUser,
                 album: albumInput.value.trim(),
                 category: turInput.value,
                 lyrics: sozlerInput.value.trim(),
@@ -414,15 +734,13 @@
 
             requestAdd.onsuccess = function() {
                 alert("Şarkı başarıyla yayınlandı ve listeye eklendi! 🎉");
-                // Formu temizle ve şarkıları hemen yeniden yükle
                 titleInput.value = "";
                 mp3FileInput.value = "";
                 imgFileInput.value = "";
                 albumInput.value = "";
                 sozlerInput.value = "";
                 sarkilariYukle();
-                // Şarkılar sekmesine otomatik geçiş yap ki direkt gör
-                document.querySelector("button[onclick=\"switchTab(event, 'sarkilar')\"]").click();
+                switchTab({ currentTarget: document.querySelector(".tab-btn") }, 'sarkilar');
             };
 
             requestAdd.onerror = function(event) {
@@ -432,7 +750,7 @@
 
         function sarkilariYukle() {
             if (!db) {
-                setTimeout(sarkilariYukle, 200); // DB henüz hazır değilse 200ms sonra tekrar dene
+                setTimeout(sarkilariYukle, 200);
                 return;
             }
             const transaction = db.transaction(["songs"], "readonly");
@@ -449,14 +767,12 @@
             const sarkilarListesi = document.getElementById("sarkilarListesi");
             const teklilerListesi = document.getElementById("teklilerListesi");
             const albumlerListesi = document.getElementById("albumlerListesi");
-            const profilSarkilari = document.getElementById("profilSarkilari");
             const oneCikanAlan = document.getElementById("oneCikanAlan");
 
             if (!songs || songs.length === 0) {
                 sarkilarListesi.innerHTML = "<p>Listelenecek şarkı yok.</p>";
                 teklilerListesi.innerHTML = "<p>Tekli parça bulunmuyor.</p>";
                 albumlerListesi.innerHTML = "<p>Albüm bulunmuyor.</p>";
-                profilSarkilari.innerHTML = "<p>Parça bulunamadı.</p>";
                 return;
             }
 
@@ -492,9 +808,7 @@
             sarkilarListesi.innerHTML = htmlContent;
             teklilerListesi.innerHTML = tekliHtml || "<p>Tekli parça bulunmuyor.</p>";
             albumlerListesi.innerHTML = albumHtml || "<p>Albüm parçası bulunmuyor.</p>";
-            profilSarkilari.innerHTML = htmlContent;
 
-            // En son eklenen şarkıyı ana sayfaya koy
             let sonSong = songs[songs.length - 1];
             let sonCoverUrl = sonSong.imageFile ? URL.createObjectURL(sonSong.imageFile) : "";
             let sonCoverTag = sonCoverUrl ? `<img src="${sonCoverUrl}" style="width:50px; height:50px; border-radius:4px; object-fit:cover;">` : `<div style="width:50px; height:50px; background:#333; border-radius:4px; display:flex; align-items:center; justify-content:center; color:#777;">Kapak</div>`;
