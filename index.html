@@ -260,7 +260,7 @@
         <button class="tab-btn" onclick="switchTab(event, 'favoriler')">Favoriler ❤️</button>
         <button class="tab-btn" onclick="switchTab(event, 'calma-listeleri')">Çalma Listeleri 🎧</button>
         <button class="tab-btn" onclick="switchTab(event, 'gecmis')">Geçmiş ⏱️</button>
-        <button class="tab-btn" id="uyeSayfaTab" style="display:none;" onclick="switchTab(event, 'uye-profil')">Üye Profilim</button>
+        <button class="tab-btn" id="uyeSayfaTab" onclick="switchTab(event, 'uye-profil')">👤 Üye Profilim</button>
         <button class="tab-btn" onclick="switchTab(event, 'giris-paneli')">Giriş / Üye Ol</button>
         <button class="tab-btn" onclick="switchTab(event, 'sarki-ekle')">+ Şarkı Ekle</button>
     </div>
@@ -480,8 +480,8 @@
     <audio id="sesCalici" onended="sonrakiSarki()"></audio>
 
     <script>
-        // KURUCU E-POSTA TANIMI (Sadece bu e-posta ile giriş yapıldığında Kuzeyfe profili düzenlenebilir)
-        const KURUCU_EMAIL = "kuzeyfe@kuzeyfekalafat.com.tr"; // Kendi kurucu mailini buraya yazabilirsin veya ilk kayıt olduğun mail olabilir.
+        // Kendi kurucu mail adresini buraya tam olarak yazabilirsin:
+        const KURUCU_EMAIL = "kuzeyfe@kuzeyfekalafat.com.tr"; 
 
         function switchTab(evt, tabName) {
             const contents = document.getElementsByClassName("tab-content");
@@ -517,7 +517,7 @@
         let favoriIdler = JSON.parse(localStorage.getItem("favoriIdler") || "[]");
         let calmaliListeleri = JSON.parse(localStorage.getItem("calmaliListeleri") || "[]");
 
-        const request = indexedDB.open("ZamanPerdesiDB", 10);
+        const request = indexedDB.open("ZamanPerdesiDB", 11);
 
         request.onerror = function(event) {
             console.log("IndexedDB hatası:", event.target.error);
@@ -655,7 +655,6 @@
 
         function kuzeyfeProfiliKaydet() {
             const aktifEmail = localStorage.getItem("aktifEmail");
-            // Sadece sistemde kayıtlı kurucu e-postası ise kayda izin ver
             if (aktifEmail !== KURUCU_EMAIL) {
                 alert("Yetkisiz işlem! Bu profili yalnızca resmi kurucu güncelleyebilir.");
                 return;
@@ -689,7 +688,6 @@
             const duzenlemeBolumu = document.getElementById("kuzeyfeDuzenlemeBolumu");
             const bilgiNotu = document.getElementById("kuzeyfeBilgiNotu");
 
-            // Kesin güvenlik: Sadece KURUCU_EMAIL oturumu açıksa düzenleme alanını göster
             if (aktifEmail === KURUCU_EMAIL) {
                 duzenlemeBolumu.style.display = "block";
                 bilgiNotu.style.display = "none";
@@ -699,7 +697,6 @@
             }
 
             const transaction = db.transaction(["profile", "songs"], "readonly");
-            
             const profileStore = transaction.objectStore("profile");
             const profReq = profileStore.get("kuzeyfe");
 
@@ -805,16 +802,11 @@
                 if (user && user.password === password) {
                     localStorage.setItem("aktifEmail", user.email);
                     localStorage.setItem("aktifKullanici", user.name);
-                    
-                    // Eğer ilk kez kendi kurucu mailinle giriyorsan otomatik kurucu mailiyle eşitleyelim
-                    if(user.name === "Kuzeyfe Kalafat" && KURUCU_EMAIL === "kuzeyfe@kuzeyfekalafat.com.tr") {
-                        // İstersen ilk kayıttaki mailini buraya tam oturtabilirsin
-                    }
 
                     oturumKontrolEt();
                     kuzeyfeProfiliYukle();
                     alert("Giriş başarılı, hoş geldin " + user.name + "!");
-                    switchTab(null, 'uye-profil');
+                    switchTab(null, 'uye-profil'); // Giriş yapınca doğrudan kendi profiline atar
                 } else {
                     alert("Hatalı e-posta veya şifre!");
                 }
@@ -830,13 +822,15 @@
 
             if (aktifUser) {
                 ustGirisBtn.innerText = aktifUser;
+                ustGirisBtn.setAttribute("onclick", "switchTab(event, 'uye-profil')"); // Butona tıklayınca direkt profile gider
                 aktifKullaniciPaneli.style.display = "block";
                 girisFormuBolumu.style.display = "none";
                 document.getElementById("aktifKullaniciAdi").innerText = aktifUser;
                 uyeSayfaTab.style.display = "block";
-                uyeSayfaTab.innerText = aktifUser + " (Profilim)";
+                uyeSayfaTab.innerText = "👤 " + aktifUser + " (Profilim)";
             } else {
                 ustGirisBtn.innerText = "Giriş / Üye Ol";
+                ustGirisBtn.setAttribute("onclick", "switchTab(event, 'giris-paneli')");
                 aktifKullaniciPaneli.style.display = "none";
                 girisFormuBolumu.style.display = "block";
                 uyeSayfaTab.style.display = "none";
@@ -854,7 +848,10 @@
 
         function uyeBilgileriniKaydet() {
             const aktifEmail = localStorage.getItem("aktifEmail");
-            if (!aktifEmail) return;
+            if (!aktifEmail) {
+                alert("Önce giriş yapmalısın!");
+                return;
+            }
 
             const yeniBio = document.getElementById("uyeBioInput").value.trim();
             const resimInput = document.getElementById("uyeResimInput");
@@ -872,7 +869,7 @@
                         user.profileImage = yeniResim;
                     }
                     store.put(user);
-                    alert("Bilgileriniz kaydedildi!");
+                    alert("Sanatçı profilin başarıyla kaydedildi! 🎉");
                     uyeProfiliYukle();
                 }
             };
@@ -958,7 +955,12 @@
                 return;
             }
 
-            const aktifUser = localStorage.getItem("aktifKullanici") || "Kuzeyfe Kalafat";
+            const aktifUser = localStorage.getItem("aktifKullanici");
+            if (!aktifUser) {
+                alert("Lütfen önce giriş yapın!");
+                switchTab(null, 'giris-paneli');
+                return;
+            }
 
             alert("Şarkı yükleniyor...");
 
@@ -984,7 +986,7 @@
                 albumInput.value = "";
                 sozlerInput.value = "";
                 sarkilariYukle();
-                kuzeyfeProfiliYukle();
+                uyeProfiliYukle();
                 switchTab(null, 'sarkilar');
             };
         }
