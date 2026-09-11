@@ -121,7 +121,7 @@
             font-size: 18px;
             cursor: pointer;
         }
-        /* Form elemanları (Şarkı Ekle sekmesi için) */
+        /* Form elemanları */
         .form-group {
             margin-bottom: 14px;
         }
@@ -242,34 +242,37 @@
 
     <div id="sarki-ekle" class="tab-content">
         <h2>Telefondan Şarkı Ekle</h2>
-        <div class="form-group">
-            <label>Şarkı Adı</label>
-            <input type="text" id="sarkiAdiInput" placeholder="Örn: İçimde Kalan">
-        </div>
-        <div class="form-group">
-            <label>Tür / Kategori</label>
-            <select>
-                <option>Tekli (Single)</option>
-                <option>Albüm Parçası</option>
-            </select>
-        </div>
-        <div class="form-group">
-            <label>Albüm Adı</label>
-            <input type="text" placeholder="Örn: Zamanın Ötesinde">
-        </div>
-        <div class="form-group">
-            <label>MP3 Dosyası Seç</label>
-            <input type="file" accept="audio/*">
-        </div>
-        <div class="form-group">
-            <label>Kapak Görseli Seç</label>
-            <input type="file" accept="image/*">
-        </div>
-        <div class="form-group">
-            <label>Şarkı Sözleri / Yapım Bilgileri</label>
-            <textarea rows="3" placeholder="Sözler, aranjör, yapım detayları..."></textarea>
-        </div>
-        <button class="submit-btn" id="sarkiYayinlaBtn">Şarkıyı Yayınla</button>
+        <!-- Form etiketi ekledik, buton artık kesin tetiklenecek -->
+        <form id="sarkiEkleForm">
+            <div class="form-group">
+                <label>Şarkı Adı</label>
+                <input type="text" id="sarkiAdiInput" placeholder="Örn: İçimde Kalan" required>
+            </div>
+            <div class="form-group">
+                <label>Tür / Kategori</label>
+                <select>
+                    <option>Tekli (Single)</option>
+                    <option>Albüm Parçası</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Albüm Adı</label>
+                <input type="text" placeholder="Örn: Zamanın Ötesinde">
+            </div>
+            <div class="form-group">
+                <label>MP3 Dosyası Seç</label>
+                <input type="file" id="mp3Input" accept="audio/*" required>
+            </div>
+            <div class="form-group">
+                <label>Kapak Görseli Seç</label>
+                <input type="file" id="imageInput" accept="image/*">
+            </div>
+            <div class="form-group">
+                <label>Şarkı Sözleri / Yapım Bilgileri</label>
+                <textarea rows="3" placeholder="Sözler, aranjör, yapım detayları..."></textarea>
+            </div>
+            <button type="submit" class="submit-btn">Şarkıyı Yayınla</button>
+        </form>
     </div>
 
     <!-- Sabit Alt Müzik Çalar -->
@@ -304,46 +307,46 @@
             evt.currentTarget.classList.add("active");
         }
 
-        // Şarkı Yayınla ve localStorage'a kaydetme mantığı
+        // Form submit olayı ile şarkı kaydetme
         document.addEventListener("DOMContentLoaded", () => {
             loadSavedSongs();
-        });
 
-        const publishBtn = document.querySelector("#sarkiYayinlaBtn");
-        if (publishBtn) {
-            publishBtn.addEventListener("click", function(e) {
-                e.preventDefault();
+            const form = document.querySelector("#sarkiEkleForm");
+            if (form) {
+                form.addEventListener("submit", function(e) {
+                    e.preventDefault();
 
-                const titleInput = document.querySelector("#sarkiAdiInput");
-                const sarkiEkleDiv = document.querySelector("#sarki-ekle");
-                const fileInputs = sarkiEkleDiv.querySelectorAll("input[type='file']");
+                    const titleInput = document.querySelector("#sarkiAdiInput");
+                    const mp3FileInput = document.querySelector("#mp3Input");
+                    const imgFileInput = document.querySelector("#imageInput");
 
-                if (!titleInput || !titleInput.value.trim() || !fileInputs[0] || fileInputs[0].files.length === 0) {
-                    alert("Lütfen şarkı adı girin ve bir MP3 dosyası seçin!");
-                    return;
-                }
-
-                const title = titleInput.value;
-                const audioFile = fileInputs[0].files[0];
-                const imageFile = fileInputs[1] && fileInputs[1].files[0] ? fileInputs[1].files[0] : null;
-
-                const readerAudio = new FileReader();
-                readerAudio.onload = function(eventAudio) {
-                    const audioData = eventAudio.target.result;
-
-                    if (imageFile) {
-                        const readerImage = new FileReader();
-                        readerImage.onload = function(eventImage) {
-                            saveSongToStorage(title, audioData, eventImage.target.result);
-                        };
-                        readerImage.readAsDataURL(imageFile);
-                    } else {
-                        saveSongToStorage(title, audioData, null);
+                    if (!titleInput.value.trim() || mp3FileInput.files.length === 0) {
+                        alert("Lütfen şarkı adı girin ve bir MP3 dosyası seçin!");
+                        return;
                     }
-                };
-                readerAudio.readAsDataURL(audioFile);
-            });
-        }
+
+                    const title = titleInput.value.trim();
+                    const audioFile = mp3FileInput.files[0];
+                    const imageFile = imgFileInput.files.length > 0 ? imgFileInput.files[0] : null;
+
+                    const readerAudio = new FileReader();
+                    readerAudio.onload = function(eventAudio) {
+                        const audioData = eventAudio.target.result;
+
+                        if (imageFile) {
+                            const readerImage = new FileReader();
+                            readerImage.onload = function(eventImage) {
+                                saveSongToStorage(title, audioData, eventImage.target.result);
+                            };
+                            readerImage.readAsDataURL(imageFile);
+                        } else {
+                            saveSongToStorage(title, audioData, null);
+                        }
+                    };
+                    readerAudio.readAsDataURL(audioFile);
+                });
+            }
+        });
 
         function saveSongToStorage(title, audioData, imageData) {
             const newSong = {
@@ -357,7 +360,7 @@
             savedSongs.push(newSong);
             localStorage.setItem("zamanPerdesiSongs", JSON.stringify(savedSongs));
 
-            alert("Şarkı başarıyla yayınlandı!");
+            alert("Şarkı başarıyla yayınlandı ve tarayıcıya kaydedildi!");
             location.reload();
         }
 
