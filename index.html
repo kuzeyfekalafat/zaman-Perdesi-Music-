@@ -260,12 +260,12 @@
         <button class="tab-btn" onclick="switchTab(event, 'favoriler')">Favoriler ❤️</button>
         <button class="tab-btn" onclick="switchTab(event, 'calma-listeleri')">Çalma Listeleri 🎧</button>
         <button class="tab-btn" onclick="switchTab(event, 'gecmis')">Geçmiş ⏱️</button>
-        <button class="tab-btn" id="uyeSayfaTab" onclick="switchTab(event, 'uye-profil')">👤 Üye Profilim</button>
+        <button class="tab-btn" id="uyeSayfaTab" onclick="switchTab(event, 'uye-profil')" style="display:none;">👤 Profilim</button>
         <button class="tab-btn" onclick="switchTab(event, 'giris-paneli')">Giriş / Üye Ol</button>
         <button class="tab-btn" onclick="switchTab(event, 'sarki-ekle')">+ Şarkı Ekle</button>
     </div>
 
-    <!-- KUZEYFE KALAFAT PROFİLİ (Sadece Kurucu Düzenleyebilir) -->
+    <!-- KUZEYFE KALAFAT RESMİ PROFİLİ -->
     <div id="kuzeyfe-profil" class="tab-content active">
         <div class="profile-header-box">
             <div id="kuzeyfeAvatarAlan"><div class="profile-avatar">Kuzeyfe</div></div>
@@ -275,9 +275,9 @@
             </div>
         </div>
 
-        <!-- Sadece kurucu maili (kuzeyfe198634@gmail.com) giriliyse görünür -->
+        <!-- Yalnızca kurucu (kuzeyfe198634@gmail.com) giriş yaptığında burada düzenleme kutusu açılacak -->
         <div class="auth-card" id="kuzeyfeDuzenlemeBolumu" style="display: none;">
-            <h3 style="font-size: 16px; color: #ffb703; margin-bottom: 12px;">Kurucu Biyografini ve Fotoğrafını Güncelle</h3>
+            <h3 style="font-size: 16px; color: #ffb703; margin-bottom: 12px;">Kurucu Profilini Düzenle</h3>
             <div class="form-group">
                 <label>Biyografi</label>
                 <textarea id="kuzeyfeBioInput" rows="4">Director, screenwriter, producer, music arranger and creative director operating under 0-Nokta Yapım Holding. Zaman Perdesi projesinin yaratıcısı.</textarea>
@@ -356,7 +356,7 @@
         <p>Dinleme geçmişi boş.</p>
     </div>
 
-    <!-- ÜYE PROFİLİ -->
+    <!-- ÜYE PROFİLİ (Sadece normal üyeler için) -->
     <div id="uye-profil" class="tab-content">
         <div class="profile-header-box">
             <div id="uyeAvatarAlan"><div class="profile-avatar">Üye</div></div>
@@ -480,7 +480,6 @@
     <audio id="sesCalici" onended="sonrakiSarki()"></audio>
 
     <script>
-        // Tek kurucu mail adresi buraya sabitlendi:
         const KURUCU_EMAIL = "kuzeyfe198634@gmail.com"; 
 
         function switchTab(evt, tabName) {
@@ -688,6 +687,7 @@
             const duzenlemeBolumu = document.getElementById("kuzeyfeDuzenlemeBolumu");
             const bilgiNotu = document.getElementById("kuzeyfeBilgiNotu");
 
+            // Sadece kurucu maili girilmişse Kuzeyfe profili sekmesinde düzenleme alanı açılır
             if (aktifEmail === KURUCU_EMAIL) {
                 duzenlemeBolumu.style.display = "block";
                 bilgiNotu.style.display = "none";
@@ -809,7 +809,13 @@
                     oturumKontrolEt();
                     kuzeyfeProfiliYukle();
                     alert("Giriş başarılı, hoş geldin " + user.name + "!");
-                    switchTab(null, 'kuzeyfe-profil'); // Giriş yapınca doğrudan ana kurucu profiline atar
+                    
+                    // Eğer kurucu girişi yaptıysa direkt Kuzeyfe profiline yönlendir ve düzenleme yetkisini aç
+                    if (user.email === KURUCU_EMAIL) {
+                        switchTab(null, 'kuzeyfe-profil');
+                    } else {
+                        switchTab(null, 'uye-profil');
+                    }
                 } else {
                     alert("Hatalı e-posta veya şifre!");
                 }
@@ -818,19 +824,26 @@
 
         function oturumKontrolEt() {
             const aktifUser = localStorage.getItem("aktifKullanici");
+            const aktifEmail = localStorage.getItem("aktifEmail");
             const ustGirisBtn = document.getElementById("ustGirisBtn");
             const aktifKullaniciPaneli = document.getElementById("aktifKullaniciPaneli");
             const girisFormuBolumu = document.getElementById("girisFormuBolumu");
             const uyeSayfaTab = document.getElementById("uyeSayfaTab");
 
             if (aktifUser) {
-                ustGirisBtn.innerText = aktifUser;
-                ustGirisBtn.setAttribute("onclick", "switchTab(event, 'uye-profil')");
+                if (aktifEmail === KURUCU_EMAIL) {
+                    ustGirisBtn.innerText = "⭐ Kuzeyfe (Kurucu)";
+                    ustGirisBtn.setAttribute("onclick", "switchTab(event, 'kuzeyfe-profil')");
+                    uyeSayfaTab.style.display = "none"; // Kurucu kendi resmi profilini doğrudan düzenleyebilir
+                } else {
+                    ustGirisBtn.innerText = aktifUser;
+                    ustGirisBtn.setAttribute("onclick", "switchTab(event, 'uye-profil')");
+                    uyeSayfaTab.style.display = "block";
+                    uyeSayfaTab.innerText = "👤 " + aktifUser + " (Profilim)";
+                }
                 aktifKullaniciPaneli.style.display = "block";
                 girisFormuBolumu.style.display = "none";
                 document.getElementById("aktifKullaniciAdi").innerText = aktifUser;
-                uyeSayfaTab.style.display = "block";
-                uyeSayfaTab.innerText = "👤 " + aktifUser + " (Profilim)";
             } else {
                 ustGirisBtn.innerText = "Giriş / Üye Ol";
                 ustGirisBtn.setAttribute("onclick", "switchTab(event, 'giris-paneli')");
@@ -989,7 +1002,7 @@
                 albumInput.value = "";
                 sozlerInput.value = "";
                 sarkilariYukle();
-                uyeProfiliYukle();
+                kuzeyfeProfiliYukle();
                 switchTab(null, 'sarkilar');
             };
         }
