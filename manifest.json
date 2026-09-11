@@ -9,7 +9,7 @@
   "theme_color": "#121212",
   "icons": [
     {
-      "src": ./file_00000000b8e8243a5edc8ecc2bd8288.jpg 
+      "src": /file_00000000b8e8243a5edc8ecc2bd8288.jpg 
       "sizes": "512x512" 
      "type": "image/jpeg" 
       "purpose": "any maskable"
