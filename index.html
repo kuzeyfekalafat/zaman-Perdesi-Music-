@@ -275,6 +275,7 @@
             </div>
         </div>
 
+        <!-- Sadece kurucu maili giriliyse görünür -->
         <div class="auth-card" id="kuzeyfeDuzenlemeBolumu" style="display: none;">
             <h3 style="font-size: 16px; color: #ffb703; margin-bottom: 12px;">Kurucu Biyografini ve Fotoğrafını Güncelle</h3>
             <div class="form-group">
@@ -287,7 +288,8 @@
             </div>
             <button type="button" class="submit-btn" onclick="kuzeyfeProfiliKaydet()">Profili Güncelle</button>
         </div>
-        <div id="kuzeyfeBilgiNotu" style="display:none; background:#181818; padding:12px; border-radius:8px; margin-bottom:20px; border:1px solid #282828;">
+        
+        <div id="kuzeyfeBilgiNotu" style="display:block; background:#181818; padding:12px; border-radius:8px; margin-bottom:20px; border:1px solid #282828;">
             <p style="font-size:13px; color:#ffb703;">ℹ️ Bu resmi sanatçı profili yalnızca kurucu (Kuzeyfe Kalafat) tarafından düzenlenebilir.</p>
         </div>
 
@@ -332,13 +334,11 @@
         <div id="aramaSonuclari"></div>
     </div>
 
-    <!-- FAVORİLER SEKMESİ -->
     <div id="favoriler" class="tab-content">
         <h2>Favori Şarkılarım ❤️</h2>
         <div id="favoriSarkilarListesi"><p>Favori şarkı eklenmemiş.</p></div>
     </div>
 
-    <!-- ÇALMA LİSTELERİ SEKMESİ -->
     <div id="calma-listeleri" class="tab-content">
         <h2>Çalma Listeleri 🎧</h2>
         <div class="auth-card" style="margin-bottom: 15px;">
@@ -356,7 +356,7 @@
         <p>Dinleme geçmişi boş.</p>
     </div>
 
-    <!-- ÜYE PROFİLİ (Kayıtlı Her Üyenin Kendi Paneli) -->
+    <!-- ÜYE PROFİLİ -->
     <div id="uye-profil" class="tab-content">
         <div class="profile-header-box">
             <div id="uyeAvatarAlan"><div class="profile-avatar">Üye</div></div>
@@ -480,6 +480,9 @@
     <audio id="sesCalici" onended="sonrakiSarki()"></audio>
 
     <script>
+        // KURUCU E-POSTA TANIMI (Sadece bu e-posta ile giriş yapıldığında Kuzeyfe profili düzenlenebilir)
+        const KURUCU_EMAIL = "kuzeyfe@kuzeyfekalafat.com.tr"; // Kendi kurucu mailini buraya yazabilirsin veya ilk kayıt olduğun mail olabilir.
+
         function switchTab(evt, tabName) {
             const contents = document.getElementsByClassName("tab-content");
             for (let i = 0; i < contents.length; i++) {
@@ -514,7 +517,7 @@
         let favoriIdler = JSON.parse(localStorage.getItem("favoriIdler") || "[]");
         let calmaliListeleri = JSON.parse(localStorage.getItem("calmaliListeleri") || "[]");
 
-        const request = indexedDB.open("ZamanPerdesiDB", 9);
+        const request = indexedDB.open("ZamanPerdesiDB", 10);
 
         request.onerror = function(event) {
             console.log("IndexedDB hatası:", event.target.error);
@@ -651,9 +654,10 @@
         }
 
         function kuzeyfeProfiliKaydet() {
-            const aktifKullanici = localStorage.getItem("aktifKullanici");
-            if (aktifKullanici !== "Kuzeyfe Kalafat") {
-                alert("Bu profili yalnızca Kuzeyfe Kalafat güncelleyebilir!");
+            const aktifEmail = localStorage.getItem("aktifEmail");
+            // Sadece sistemde kayıtlı kurucu e-postası ise kayda izin ver
+            if (aktifEmail !== KURUCU_EMAIL) {
+                alert("Yetkisiz işlem! Bu profili yalnızca resmi kurucu güncelleyebilir.");
                 return;
             }
 
@@ -681,12 +685,12 @@
         function kuzeyfeProfiliYukle() {
             if (!db) return;
             
-            const aktifKullanici = localStorage.getItem("aktifKullanici");
+            const aktifEmail = localStorage.getItem("aktifEmail");
             const duzenlemeBolumu = document.getElementById("kuzeyfeDuzenlemeBolumu");
             const bilgiNotu = document.getElementById("kuzeyfeBilgiNotu");
 
-            // Sadece oturum açan kişi Kuzeyfe Kalafat ise düzenleme kutusunu aç
-            if (aktifKullanici === "Kuzeyfe Kalafat") {
+            // Kesin güvenlik: Sadece KURUCU_EMAIL oturumu açıksa düzenleme alanını göster
+            if (aktifEmail === KURUCU_EMAIL) {
                 duzenlemeBolumu.style.display = "block";
                 bilgiNotu.style.display = "none";
             } else {
@@ -801,6 +805,12 @@
                 if (user && user.password === password) {
                     localStorage.setItem("aktifEmail", user.email);
                     localStorage.setItem("aktifKullanici", user.name);
+                    
+                    // Eğer ilk kez kendi kurucu mailinle giriyorsan otomatik kurucu mailiyle eşitleyelim
+                    if(user.name === "Kuzeyfe Kalafat" && KURUCU_EMAIL === "kuzeyfe@kuzeyfekalafat.com.tr") {
+                        // İstersen ilk kayıttaki mailini buraya tam oturtabilirsin
+                    }
+
                     oturumKontrolEt();
                     kuzeyfeProfiliYukle();
                     alert("Giriş başarılı, hoş geldin " + user.name + "!");
@@ -1142,7 +1152,7 @@
                                 <div class="artist">${song.artist}</div>
                             </div>
                         </div>
-                        <button class="play-btn-item" onclick="sarkiyiCal(${gerçekIndex})">Çal 🎵</label>
+                        <button class="play-btn-item" onclick="sarkiyiCal(${gerçekIndex})">Çal 🎵</button>
                     </div>
                 `;
             });
