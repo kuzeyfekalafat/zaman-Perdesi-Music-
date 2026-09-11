@@ -305,7 +305,67 @@
             // İlgili içeriği göster ve butonu aktif yap
             document.getElementById(tabName).classList.add("active");
             evt.currentTarget.classList.add("active");
+        }// Şarkı Yayınla ve localStorage'a kaydetme mantığı
+document.addEventListener("DOMContentLoaded", () => {
+    loadSavedSongs();
+});
+
+const publishBtn = document.querySelector(".submit-btn");
+if (publishBtn) {
+    publishBtn.addEventListener("click", function(e) {
+        e.preventDefault();
+
+        const titleInput = document.querySelector("input[placeholder*='Şarkı Adı']");
+        const fileInputs = document.querySelectorAll("input[type='file']");
+
+        if (!titleInput || !fileInputs[0] || fileInputs[0].files.length === 0) {
+            alert("Lütfen şarkı adı girin ve bir MP3 dosyası seçin!");
+            return;
         }
+
+        const title = titleInput.value;
+        const audioFile = fileInputs[0].files[0];
+        const imageFile = fileInputs[1] && fileInputs[1].files[0] ? fileInputs[1].files[0] : null;
+
+        const readerAudio = new FileReader();
+        readerAudio.onload = function(eventAudio) {
+            const audioData = eventAudio.target.result;
+
+            if (imageFile) {
+                const readerImage = new FileReader();
+                readerImage.onload = function(eventImage) {
+                    saveSongToStorage(title, audioData, eventImage.target.result);
+                };
+                readerImage.readAsDataURL(imageFile);
+            } else {
+                saveSongToStorage(title, audioData, null);
+            }
+        };
+        readerAudio.readAsDataURL(audioFile);
+    });
+}
+
+function saveSongToStorage(title, audioData, imageData) {
+    const newSong = {
+        title: title,
+        artist: "Kuzeyfe Kalafat",
+        src: audioData,
+        cover: imageData || ""
+    };
+
+    let savedSongs = JSON.parse(localStorage.getItem("zamanPerdesiSongs")) || [];
+    savedSongs.push(newSong);
+    localStorage.setItem("zamanPerdesiSongs", JSON.stringify(savedSongs));
+
+    alert("Şarkı başarıyla yayınlandı!");
+    location.reload();
+}
+
+function loadSavedSongs() {
+    let savedSongs = JSON.parse(localStorage.getItem("zamanPerdesiSongs")) || [];
+    console.log("Kaydedilen şarkılar:", savedSongs);
+}
+
     </script>
 </body>
 </html>
