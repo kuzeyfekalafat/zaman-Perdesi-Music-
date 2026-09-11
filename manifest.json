@@ -9,9 +9,9 @@
   "theme_color": "#121212",
   "icons": [
     {
-      "src": "favicon.ico",
+      "src": "https://raw.githubusercontent.com/kuzeyfekalataf/zaman-Perdesi-Music-/main/favicon.ico",
       "sizes": "192x192",
-      "type": "image/png",
+      "type": "image/x-icon",
       "purpose": "any maskable"
     }
   ]
