@@ -271,11 +271,11 @@
             <div id="kuzeyfeAvatarAlan"><div class="profile-avatar">Kuzeyfe</div></div>
             <div>
                 <h2 style="margin-bottom: 4px; color:#ffb703;">Kuzeyfe Kalafat</h2>
-                <p style="font-size: 12px; color: #aaa;">Director, screenwriter, producer, music arranger and creative director operating under 0-Nokta Yapım Holding. Zaman Perdesi projesinin yaratıcısı.</p>
+                <p id="kuzeyfeBiyoGosterge" style="font-size: 12px; color: #aaa;">Director, screenwriter, producer, music arranger and creative director operating under 0-Nokta Yapım Holding. Zaman Perdesi projesinin yaratıcısı.</p>
             </div>
         </div>
 
-        <!-- Sadece kurucu maili giriliyse görünür -->
+        <!-- Sadece kurucu maili (kuzeyfe198634@gmail.com) giriliyse görünür -->
         <div class="auth-card" id="kuzeyfeDuzenlemeBolumu" style="display: none;">
             <h3 style="font-size: 16px; color: #ffb703; margin-bottom: 12px;">Kurucu Biyografini ve Fotoğrafını Güncelle</h3>
             <div class="form-group">
@@ -480,8 +480,8 @@
     <audio id="sesCalici" onended="sonrakiSarki()"></audio>
 
     <script>
-        // Kendi kurucu mail adresini buraya tam olarak yazabilirsin:
-        const KURUCU_EMAIL = "kuzeyfe@kuzeyfekalafat.com.tr"; 
+        // Tek kurucu mail adresi buraya sabitlendi:
+        const KURUCU_EMAIL = "kuzeyfe198634@gmail.com"; 
 
         function switchTab(evt, tabName) {
             const contents = document.getElementsByClassName("tab-content");
@@ -517,7 +517,7 @@
         let favoriIdler = JSON.parse(localStorage.getItem("favoriIdler") || "[]");
         let calmaliListeleri = JSON.parse(localStorage.getItem("calmaliListeleri") || "[]");
 
-        const request = indexedDB.open("ZamanPerdesiDB", 11);
+        const request = indexedDB.open("ZamanPerdesiDB", 12);
 
         request.onerror = function(event) {
             console.log("IndexedDB hatası:", event.target.error);
@@ -656,7 +656,7 @@
         function kuzeyfeProfiliKaydet() {
             const aktifEmail = localStorage.getItem("aktifEmail");
             if (aktifEmail !== KURUCU_EMAIL) {
-                alert("Yetkisiz işlem! Bu profili yalnızca resmi kurucu güncelleyebilir.");
+                alert("Yetkisiz işlem! Bu profili yalnızca kurucu (" + KURUCU_EMAIL + ") güncelleyebilir.");
                 return;
             }
 
@@ -703,7 +703,10 @@
             profReq.onsuccess = function(event) {
                 const profile = event.target.result;
                 if (profile) {
-                    document.getElementById("kuzeyfeBioInput").value = profile.bio || "";
+                    if(profile.bio) {
+                        document.getElementById("kuzeyfeBioInput").value = profile.bio;
+                        document.getElementById("kuzeyfeBiyoGosterge").innerText = profile.bio;
+                    }
                     if (profile.image) {
                         let imgUrl = URL.createObjectURL(profile.image);
                         document.getElementById("kuzeyfeAvatarAlan").innerHTML = `<img src="${imgUrl}" class="profile-avatar">`;
@@ -806,7 +809,7 @@
                     oturumKontrolEt();
                     kuzeyfeProfiliYukle();
                     alert("Giriş başarılı, hoş geldin " + user.name + "!");
-                    switchTab(null, 'uye-profil'); // Giriş yapınca doğrudan kendi profiline atar
+                    switchTab(null, 'kuzeyfe-profil'); // Giriş yapınca doğrudan ana kurucu profiline atar
                 } else {
                     alert("Hatalı e-posta veya şifre!");
                 }
@@ -822,7 +825,7 @@
 
             if (aktifUser) {
                 ustGirisBtn.innerText = aktifUser;
-                ustGirisBtn.setAttribute("onclick", "switchTab(event, 'uye-profil')"); // Butona tıklayınca direkt profile gider
+                ustGirisBtn.setAttribute("onclick", "switchTab(event, 'uye-profil')");
                 aktifKullaniciPaneli.style.display = "block";
                 girisFormuBolumu.style.display = "none";
                 document.getElementById("aktifKullaniciAdi").innerText = aktifUser;
