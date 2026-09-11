@@ -265,7 +265,7 @@
         <button class="tab-btn" onclick="switchTab(event, 'sarki-ekle')">+ Şarkı Ekle</button>
     </div>
 
-    <!-- KUZEYFE KALAFAT PROFİLİ -->
+    <!-- KUZEYFE KALAFAT PROFİLİ (Sadece Kurucu Düzenleyebilir) -->
     <div id="kuzeyfe-profil" class="tab-content active">
         <div class="profile-header-box">
             <div id="kuzeyfeAvatarAlan"><div class="profile-avatar">Kuzeyfe</div></div>
@@ -275,7 +275,7 @@
             </div>
         </div>
 
-        <div class="auth-card">
+        <div class="auth-card" id="kuzeyfeDuzenlemeBolumu" style="display: none;">
             <h3 style="font-size: 16px; color: #ffb703; margin-bottom: 12px;">Kurucu Biyografini ve Fotoğrafını Güncelle</h3>
             <div class="form-group">
                 <label>Biyografi</label>
@@ -286,6 +286,9 @@
                 <input type="file" id="kuzeyfeResimInput" accept="image/*">
             </div>
             <button type="button" class="submit-btn" onclick="kuzeyfeProfiliKaydet()">Profili Güncelle</button>
+        </div>
+        <div id="kuzeyfeBilgiNotu" style="display:none; background:#181818; padding:12px; border-radius:8px; margin-bottom:20px; border:1px solid #282828;">
+            <p style="font-size:13px; color:#ffb703;">ℹ️ Bu resmi sanatçı profili yalnızca kurucu (Kuzeyfe Kalafat) tarafından düzenlenebilir.</p>
         </div>
 
         <h2>Kuzeyfe Kalafat'ın Parçaları</h2>
@@ -353,7 +356,7 @@
         <p>Dinleme geçmişi boş.</p>
     </div>
 
-    <!-- ÜYE PROFİLİ -->
+    <!-- ÜYE PROFİLİ (Kayıtlı Her Üyenin Kendi Paneli) -->
     <div id="uye-profil" class="tab-content">
         <div class="profile-header-box">
             <div id="uyeAvatarAlan"><div class="profile-avatar">Üye</div></div>
@@ -511,7 +514,7 @@
         let favoriIdler = JSON.parse(localStorage.getItem("favoriIdler") || "[]");
         let calmaliListeleri = JSON.parse(localStorage.getItem("calmaliListeleri") || "[]");
 
-        const request = indexedDB.open("ZamanPerdesiDB", 8);
+        const request = indexedDB.open("ZamanPerdesiDB", 9);
 
         request.onerror = function(event) {
             console.log("IndexedDB hatası:", event.target.error);
@@ -648,6 +651,12 @@
         }
 
         function kuzeyfeProfiliKaydet() {
+            const aktifKullanici = localStorage.getItem("aktifKullanici");
+            if (aktifKullanici !== "Kuzeyfe Kalafat") {
+                alert("Bu profili yalnızca Kuzeyfe Kalafat güncelleyebilir!");
+                return;
+            }
+
             const yeniBio = document.getElementById("kuzeyfeBioInput").value.trim();
             const resimInput = document.getElementById("kuzeyfeResimInput");
             const yeniResim = resimInput.files.length > 0 ? resimInput.files[0] : null;
@@ -671,6 +680,20 @@
 
         function kuzeyfeProfiliYukle() {
             if (!db) return;
+            
+            const aktifKullanici = localStorage.getItem("aktifKullanici");
+            const duzenlemeBolumu = document.getElementById("kuzeyfeDuzenlemeBolumu");
+            const bilgiNotu = document.getElementById("kuzeyfeBilgiNotu");
+
+            // Sadece oturum açan kişi Kuzeyfe Kalafat ise düzenleme kutusunu aç
+            if (aktifKullanici === "Kuzeyfe Kalafat") {
+                duzenlemeBolumu.style.display = "block";
+                bilgiNotu.style.display = "none";
+            } else {
+                duzenlemeBolumu.style.display = "none";
+                bilgiNotu.style.display = "block";
+            }
+
             const transaction = db.transaction(["profile", "songs"], "readonly");
             
             const profileStore = transaction.objectStore("profile");
@@ -779,6 +802,7 @@
                     localStorage.setItem("aktifEmail", user.email);
                     localStorage.setItem("aktifKullanici", user.name);
                     oturumKontrolEt();
+                    kuzeyfeProfiliYukle();
                     alert("Giriş başarılı, hoş geldin " + user.name + "!");
                     switchTab(null, 'uye-profil');
                 } else {
@@ -813,6 +837,7 @@
             localStorage.removeItem("aktifKullanici");
             localStorage.removeItem("aktifEmail");
             oturumKontrolEt();
+            kuzeyfeProfiliYukle();
             alert("Oturum kapatıldı.");
             switchTab(null, 'ana-sayfa');
         }
@@ -1117,7 +1142,7 @@
                                 <div class="artist">${song.artist}</div>
                             </div>
                         </div>
-                        <button class="play-btn-item" onclick="sarkiyiCal(${gerçekIndex})">Çal 🎵</button>
+                        <button class="play-btn-item" onclick="sarkiyiCal(${gerçekIndex})">Çal 🎵</label>
                     </div>
                 `;
             });
