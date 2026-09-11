@@ -354,7 +354,7 @@
         let tumSarkilarDizisi = [];
         let aktifCalinanIndex = 0;
 
-        const request = indexedDB.open("ZamanPerdesiDB", 1);
+        const request = indexedDB.open("ZamanPerdesiDB", 2); // Sürüm güncellendi
 
         request.onerror = function(event) {
             console.log("IndexedDB hatası:", event.target.error);
@@ -413,8 +413,16 @@
             const requestAdd = store.add(newSong);
 
             requestAdd.onsuccess = function() {
-                alert("Şarkı başarıyla yayınlandı! 🎉");
-                location.reload();
+                alert("Şarkı başarıyla yayınlandı ve listeye eklendi! 🎉");
+                // Formu temizle ve şarkıları hemen yeniden yükle
+                titleInput.value = "";
+                mp3FileInput.value = "";
+                imgFileInput.value = "";
+                albumInput.value = "";
+                sozlerInput.value = "";
+                sarkilariYukle();
+                // Şarkılar sekmesine otomatik geçiş yap ki direkt gör
+                document.querySelector("button[onclick=\"switchTab(event, 'sarkilar')\"]").click();
             };
 
             requestAdd.onerror = function(event) {
@@ -423,7 +431,10 @@
         }
 
         function sarkilariYukle() {
-            if (!db) return;
+            if (!db) {
+                setTimeout(sarkilariYukle, 200); // DB henüz hazır değilse 200ms sonra tekrar dene
+                return;
+            }
             const transaction = db.transaction(["songs"], "readonly");
             const store = transaction.objectStore("songs");
             const requestAll = store.getAll();
@@ -441,7 +452,7 @@
             const profilSarkilari = document.getElementById("profilSarkilari");
             const oneCikanAlan = document.getElementById("oneCikanAlan");
 
-            if (songs.length === 0) {
+            if (!songs || songs.length === 0) {
                 sarkilarListesi.innerHTML = "<p>Listelenecek şarkı yok.</p>";
                 teklilerListesi.innerHTML = "<p>Tekli parça bulunmuyor.</p>";
                 albumlerListesi.innerHTML = "<p>Albüm bulunmuyor.</p>";
@@ -558,7 +569,7 @@
                 sonucDiv.innerHTML = "";
                 return;
             }
-            let filtrelenmis = tumSarkilarDizisi.filter(s => s.title.toLowerCase().includes(query.toLowerCase()) || s.album.toLowerCase().includes(query.toLowerCase()));
+            let filtrelenmis = tumSarkilarDizisi.filter(s => s.title.toLowerCase().includes(query.toLowerCase()) || (s.album && s.album.toLowerCase().includes(query.toLowerCase())));
             
             if (filtrelenmis.length === 0) {
                 sonucDiv.innerHTML = "<p style='margin-top:10px;'>Arama sonucu bulunamadı.</p>";
