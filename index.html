@@ -14,7 +14,7 @@
         body {
             background-color: #121212;
             color: #ffffff;
-            padding-bottom: 100px;
+            padding-bottom: 120px;
         }
         header {
             padding: 16px;
@@ -75,6 +75,53 @@
             color: #aaa;
             font-size: 14px;
         }
+        /* Şarkı Kartları */
+        .song-card {
+            background: #181818;
+            padding: 12px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border: 1px solid #282828;
+        }
+        .song-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .song-thumb {
+            width: 45px;
+            height: 45px;
+            background-color: #333;
+            border-radius: 4px;
+            object-fit: cover;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #777;
+            font-size: 10px;
+        }
+        .song-details .title {
+            font-size: 14px;
+            font-weight: bold;
+            color: #fff;
+        }
+        .song-details .artist {
+            font-size: 12px;
+            color: #aaa;
+        }
+        .play-btn-item {
+            background: #ffb703;
+            color: #121212;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
+        }
         /* Alt Oynatıcı */
         .player-bar {
             position: fixed;
@@ -87,11 +134,19 @@
             align-items: center;
             justify-content: space-between;
             padding: 10px 16px;
+            z-index: 1000;
         }
         .player-info {
             display: flex;
             align-items: center;
             gap: 12px;
+        }
+        .player-thumb {
+            width: 45px;
+            height: 45px;
+            background-color: #333;
+            border-radius: 4px;
+            object-fit: cover;
         }
         .player-text .title {
             font-size: 14px;
@@ -172,11 +227,13 @@
     <!-- Sekme İçerikleri -->
     <div id="ana-sayfa" class="tab-content active">
         <h2>Öne Çıkan</h2>
-        <div style="background: #181818; padding: 12px; border-radius: 8px; display: flex; gap: 12px; align-items: center;">
-            <div style="width: 50px; height: 50px; background: #333; border-radius: 4px; display:flex; align-items:center; justify-content:center; color:#777;">Kapak</div>
-            <div>
-                <div style="font-weight: bold; font-size: 14px;">Henüz şarkı eklenmedi</div>
-                <p>Kuzeyfe Kalafat</p>
+        <div id="oneCikanAlan">
+            <div style="background: #181818; padding: 12px; border-radius: 8px; display: flex; gap: 12px; align-items: center;">
+                <div style="width: 50px; height: 50px; background: #333; border-radius: 4px; display:flex; align-items:center; justify-content:center; color:#777;">Kapak</div>
+                <div>
+                    <div style="font-weight: bold; font-size: 14px;">Henüz şarkı eklenmedi</div>
+                    <p>Kuzeyfe Kalafat</p>
+                </div>
             </div>
         </div>
     </div>
@@ -188,19 +245,20 @@
 
     <div id="albumler" class="tab-content">
         <h2>Albümler</h2>
-        <p>Albüm bulunmuyor.</p>
+        <div id="albumlerListesi"><p>Albüm bulunmuyor.</p></div>
     </div>
 
     <div id="tekliler" class="tab-content">
         <h2>Tekliler (Singles)</h2>
-        <p>Tekli parça bulunmuyor.</p>
+        <div id="teklilerListesi"><p>Tekli parça bulunmuyor.</p></div>
     </div>
 
     <div id="arama" class="tab-content">
         <h2>Arama</h2>
         <div class="form-group">
-            <input type="text" placeholder="Şarkı, albüm veya sanatçı ara...">
+            <input type="text" id="aramaInput" placeholder="Şarkı veya albüm ara..." oninput="aramaYap(this.value)">
         </div>
+        <div id="aramaSonuclari"></div>
     </div>
 
     <div id="favoriler" class="tab-content">
@@ -223,6 +281,8 @@
         <div style="background: #181818; padding: 16px; border-radius: 8px; margin-bottom: 20px; line-height: 1.5; color: #ccc; font-size: 14px;">
             Director, screenwriter, producer, music arranger and creative director operating under 0-Nokta Yapım Holding. Zaman Perdesi projesinin yaratıcısı.
         </div>
+        <h2>Sanatçının Parçaları</h2>
+        <div id="profilSarkilari"><p>Parça bulunamadı.</p></div>
     </div>
 
     <div id="sarki-ekle" class="tab-content">
@@ -230,7 +290,7 @@
         
         <div class="form-group">
             <label>Şarkı Adı</label>
-            <input type="text" id="sarkiAdiInput" placeholder="Örn: İçimde Kalan">
+            <input type="text" id="sarkiAdiInput" placeholder="Örn: Ateş Ve Kumsal">
         </div>
         <div class="form-group">
             <label>Tür / Kategori</label>
@@ -261,18 +321,20 @@
     <!-- Sabit Alt Müzik Çalar -->
     <div class="player-bar">
         <div class="player-info">
-            <div style="width: 45px; height: 45px; background-color: #333; border-radius: 4px; display:flex; align-items:center; justify-content:center; color:#777; font-size:10px;">Kapak</div>
+            <div class="player-thumb" id="aktifKapak" style="display:flex; align-items:center; justify-content:center; color:#777; font-size:10px;">Kapak</div>
             <div class="player-text">
-                <div class="title">Şarkı Seçilmedi</div>
-                <div class="artist">Kuzeyfe Kalafat</div>
+                <div class="title" id="aktifBaslik">Şarkı Seçilmedi</div>
+                <div class="artist" id="aktifSanatci">Kuzeyfe Kalafat</div>
             </div>
         </div>
         <div class="player-controls">
-            <button>⏮</button>
-            <button>▶</button>
-            <button>⏭</button>
+            <button onclick="oncekiSarki()">⏮</button>
+            <button id="oynatDurdurBtn" onclick="oynatmaKontrol()">▶</button>
+            <button onclick="sonrakiSarki()">⏭</button>
         </div>
     </div>
+
+    <audio id="sesCalici" onended="sonrakiSarki()"></audio>
 
     <script>
         function switchTab(evt, tabName) {
@@ -280,18 +342,18 @@
             for (let i = 0; i < contents.length; i++) {
                 contents[i].classList.remove("active");
             }
-
             const buttons = document.getElementsByClassName("tab-btn");
             for (let i = 0; i < buttons.length; i++) {
                 buttons[i].classList.remove("active");
             }
-
             document.getElementById(tabName).classList.add("active");
             evt.currentTarget.classList.add("active");
         }
 
-        // IndexedDB Veritabanı Kurulumu (Kotayı aşmamak için)
         let db;
+        let tumSarkilarDizisi = [];
+        let aktifCalinanIndex = 0;
+
         const request = indexedDB.open("ZamanPerdesiDB", 1);
 
         request.onerror = function(event) {
@@ -300,7 +362,7 @@
 
         request.onsuccess = function(event) {
             db = event.target.result;
-            sarkilariGetir();
+            sarkilariYukle();
         };
 
         request.onupgradeneeded = function(event) {
@@ -316,6 +378,7 @@
             const imgFileInput = document.getElementById("imageInput");
             const albumInput = document.getElementById("albumAdiInput");
             const sozlerInput = document.getElementById("sozlerInput");
+            const turInput = document.getElementById("turInput");
 
             const title = titleInput.value.trim();
 
@@ -330,19 +393,19 @@
                 return;
             }
 
+            alert("Şarkı yayınlanıyor, lütfen bekleyin...");
+
             const audioFile = mp3FileInput.files[0];
             const imageFile = imgFileInput.files.length > 0 ? imgFileInput.files[0] : null;
-
-            alert("Şarkı veritabanına kaydediliyor, lütfen bekleyin...");
 
             const newSong = {
                 title: title,
                 artist: "Kuzeyfe Kalafat",
                 album: albumInput.value.trim(),
+                category: turInput.value,
                 lyrics: sozlerInput.value.trim(),
                 audioFile: audioFile,
-                imageFile: imageFile,
-                date: new Date().getTime()
+                imageFile: imageFile
             };
 
             const transaction = db.transaction(["songs"], "readwrite");
@@ -350,7 +413,7 @@
             const requestAdd = store.add(newSong);
 
             requestAdd.onsuccess = function() {
-                alert("Şarkı başarıyla yayınlandı ve kaydedildi! 🎉");
+                alert("Şarkı başarıyla yayınlandı! 🎉");
                 location.reload();
             };
 
@@ -359,24 +422,165 @@
             };
         }
 
-        function sarkilariGetir() {
+        function sarkilariYukle() {
             if (!db) return;
             const transaction = db.transaction(["songs"], "readonly");
             const store = transaction.objectStore("songs");
             const requestAll = store.getAll();
 
             requestAll.onsuccess = function(event) {
-                const songs = event.target.result;
-                if (songs.length > 0) {
-                    const listContainer = document.getElementById("sarkilarListesi");
-                    listContainer.innerHTML = "";
-                    songs.forEach(song => {
-                        listContainer.innerHTML += `<div style="background:#181818; padding:10px; margin-bottom:8px; border-radius:6px;">
-                            <strong>${song.title}</strong><br><small>${song.artist} - ${song.album || 'Tekli'}</small>
-                        </div>`;
-                    });
-                }
+                tumSarkilarDizisi = event.target.result;
+                listeleriGuncelle(tumSarkilarDizisi);
             };
+        }
+
+        function listeleriGuncelle(songs) {
+            const sarkilarListesi = document.getElementById("sarkilarListesi");
+            const teklilerListesi = document.getElementById("teklilerListesi");
+            const albumlerListesi = document.getElementById("albumlerListesi");
+            const profilSarkilari = document.getElementById("profilSarkilari");
+            const oneCikanAlan = document.getElementById("oneCikanAlan");
+
+            if (songs.length === 0) {
+                sarkilarListesi.innerHTML = "<p>Listelenecek şarkı yok.</p>";
+                teklilerListesi.innerHTML = "<p>Tekli parça bulunmuyor.</p>";
+                albumlerListesi.innerHTML = "<p>Albüm bulunmuyor.</p>";
+                profilSarkilari.innerHTML = "<p>Parça bulunamadı.</p>";
+                return;
+            }
+
+            let htmlContent = "";
+            let tekliHtml = "";
+            let albumHtml = "";
+
+            songs.forEach((song, index) => {
+                let coverUrl = song.imageFile ? URL.createObjectURL(song.imageFile) : "";
+                let coverTag = coverUrl ? `<img src="${coverUrl}" class="song-thumb">` : `<div class="song-thumb">Kapak</div>`;
+
+                let itemHtml = `
+                    <div class="song-card">
+                        <div class="song-info">
+                            ${coverTag}
+                            <div class="song-details">
+                                <div class="title">${song.title}</div>
+                                <div class="artist">${song.artist} ${song.album ? '• ' + song.album : ''}</div>
+                            </div>
+                        </div>
+                        <button class="play-btn-item" onclick="sarkiyiCal(${index})">Çal 🎵</button>
+                    </div>
+                `;
+
+                htmlContent += itemHtml;
+                if (song.category === "Tekli (Single)") {
+                    tekliHtml += itemHtml;
+                } else {
+                    albumHtml += itemHtml;
+                }
+            });
+
+            sarkilarListesi.innerHTML = htmlContent;
+            teklilerListesi.innerHTML = tekliHtml || "<p>Tekli parça bulunmuyor.</p>";
+            albumlerListesi.innerHTML = albumHtml || "<p>Albüm parçası bulunmuyor.</p>";
+            profilSarkilari.innerHTML = htmlContent;
+
+            // En son eklenen şarkıyı ana sayfaya koy
+            let sonSong = songs[songs.length - 1];
+            let sonCoverUrl = sonSong.imageFile ? URL.createObjectURL(sonSong.imageFile) : "";
+            let sonCoverTag = sonCoverUrl ? `<img src="${sonCoverUrl}" style="width:50px; height:50px; border-radius:4px; object-fit:cover;">` : `<div style="width:50px; height:50px; background:#333; border-radius:4px; display:flex; align-items:center; justify-content:center; color:#777;">Kapak</div>`;
+
+            oneCikanAlan.innerHTML = `
+                <div style="background: #181818; padding: 12px; border-radius: 8px; display: flex; gap: 12px; align-items: center; justify-content:space-between;">
+                    <div style="display:flex; gap:12px; align-items:center;">
+                        ${sonCoverTag}
+                        <div>
+                            <div style="font-weight: bold; font-size: 14px;">${sonSong.title}</div>
+                            <p>${sonSong.artist}</p>
+                        </div>
+                    </div>
+                    <button class="play-btn-item" onclick="sarkiyiCal(${songs.length - 1})">Çal 🎵</button>
+                </div>
+            `;
+        }
+
+        function sarkiyiCal(index) {
+            aktifCalinanIndex = index;
+            const song = tumSarkilarDizisi[index];
+            const audioPlayer = document.getElementById("sesCalici");
+
+            document.getElementById("aktifBaslik").innerText = song.title;
+            document.getElementById("aktifSanatci").innerText = song.artist;
+
+            const kapakDiv = document.getElementById("aktifKapak");
+            if (song.imageFile) {
+                let imgUrl = URL.createObjectURL(song.imageFile);
+                kapakDiv.outerHTML = `<img src="${imgUrl}" class="player-thumb" id="aktifKapak">`;
+            } else {
+                kapakDiv.outerHTML = `<div class="player-thumb" id="aktifKapak" style="display:flex; align-items:center; justify-content:center; color:#777; font-size:10px;">Kapak</div>`;
+            }
+
+            audioPlayer.src = URL.createObjectURL(song.audioFile);
+            audioPlayer.play();
+            document.getElementById("oynatDurdurBtn").innerText = "⏸";
+        }
+
+        function oynatmaKontrol() {
+            const audioPlayer = document.getElementById("sesCalici");
+            const btn = document.getElementById("oynatDurdurBtn");
+
+            if (audioPlayer.paused) {
+                if (audioPlayer.src) {
+                    audioPlayer.play();
+                    btn.innerText = "⏸";
+                } else if (tumSarkilarDizisi.length > 0) {
+                    sarkiyiCal(0);
+                }
+            } else {
+                audioPlayer.pause();
+                btn.innerText = "▶";
+            }
+        }
+
+        function sonrakiSarki() {
+            if (tumSarkilarDizisi.length === 0) return;
+            aktifCalinanIndex = (aktifCalinanIndex + 1) % tumSarkilarDizisi.length;
+            sarkiyiCal(aktifCalinanIndex);
+        }
+
+        function oncekiSarki() {
+            if (tumSarkilarDizisi.length === 0) return;
+            aktifCalinanIndex = (aktifCalinanIndex - 1 + tumSarkilarDizisi.length) % tumSarkilarDizisi.length;
+            sarkiyiCal(aktifCalinanIndex);
+        }
+
+        function aramaYap(query) {
+            const sonucDiv = document.getElementById("aramaSonuclari");
+            if (!query.trim()) {
+                sonucDiv.innerHTML = "";
+                return;
+            }
+            let filtrelenmis = tumSarkilarDizisi.filter(s => s.title.toLowerCase().includes(query.toLowerCase()) || s.album.toLowerCase().includes(query.toLowerCase()));
+            
+            if (filtrelenmis.length === 0) {
+                sonucDiv.innerHTML = "<p style='margin-top:10px;'>Arama sonucu bulunamadı.</p>";
+                return;
+            }
+
+            let html = "<h3 style='font-size:16px; color:#ffb703; margin:15px 0 10px 0;'>Arama Sonuçları</h3>";
+            filtrelenmis.forEach((song) => {
+                let gerçekIndex = tumSarkilarDizisi.indexOf(song);
+                html += `
+                    <div class="song-card">
+                        <div class="song-info">
+                            <div class="song-details">
+                                <div class="title">${song.title}</div>
+                                <div class="artist">${song.artist}</div>
+                            </div>
+                        </div>
+                        <button class="play-btn-item" onclick="sarkiyiCal(${gerçekIndex})">Çal 🎵</button>
+                    </div>
+                `;
+            });
+            sonucDiv.innerHTML = html;
         }
     </script>
 </body>
