@@ -577,9 +577,9 @@
     <audio id="audio-player" onended="nextTrack()"></audio>
 
     <script>
-        // Supabase Bağlantı Bilgileri (Kendi Supabase projenin bilgileriyle güncelleyebilirsin)
-        const SUPABASE_URL = 'https://SENIN_PROJE_ID.supabase.co';
-        const SUPABASE_ANON_KEY = 'SENIN_SUPABASE_ANON_KEY';
+        // Supabase Bağlantı Bilgileri (Kuzeyfe Kalafat - Zaman Perdesi)
+        const SUPABASE_URL = 'https://zmumdwcagjqnqahehunx.supabase.co';
+        const SUPABASE_ANON_KEY = 'sb_publishable_IAnZrTYQWhG-hXrIGlR4pg__AZyUwV-';
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         let users = [];
@@ -768,7 +768,7 @@
             `).join('');
         }
 
-        // OTOMATİK KÜNYELİ ŞARKI EKLEME (Supabase Storage entegre edilebilir)
+        // OTOMATİK KÜNYELİ ŞARKI EKLEME
         async function addNewSong() {
             const title = document.getElementById('song-title').value.trim();
             const category = document.getElementById('song-category').value;
@@ -785,14 +785,13 @@
 
             const readerAudio = new FileReader();
             readerAudio.onload = async function(eAudio) {
-                const audioUrl = eAudio.target.result; // Base64 veya Supabase Storage URL
+                const audioUrl = eAudio.target.result;
 
                 const newSong = {
                     id: 'song_' + Date.now(),
                     title, artist: artistName, category, album, lyrics: fullLyrics, audioUrl, coverUrl: ''
                 };
 
-                // Buluta kaydet
                 const { error } = await supabaseClient.from('songs').insert([newSong]);
                 if (error) {
                     alert('Şarkı buluta kaydedilemedi: ' + error.message);
