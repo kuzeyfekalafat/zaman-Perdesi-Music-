@@ -588,8 +588,6 @@
         let favorites = JSON.parse(localStorage.getItem('zp_favorites')) || [];
         let playlists = JSON.parse(localStorage.getItem('zp_playlists')) || [];
         let history = JSON.parse(localStorage.getItem('zp_history')) || [];
-        let likes = {};
-        let comments = {};
         let viewedProfileUser = null;
 
         let currentTrackIndex = -1;
@@ -613,7 +611,7 @@
         }
 
         async function fetchCloudData() {
-            let { data: songsData, error } = await supabaseClient.from('songs').select('*');
+            let { data: songsData } = await supabaseClient.from('songs').select('*');
             if (songsData) songs = songsData;
 
             let { data: usersData } = await supabaseClient.from('profiles').select('*');
@@ -669,7 +667,7 @@
             document.querySelectorAll('.nav-tab').forEach(el => el.classList.remove('active'));
             
             document.getElementById('tab-' + tabId).classList.remove('hidden');
-            event && event.target.classList.add('active');
+            if (event && event.target) event.target.classList.add('active');
 
             if (tabId === 'home') renderHome();
             if (tabId === 'auth') renderAuthScreen();
@@ -713,36 +711,46 @@
             }
         }
 
-        // GÜNCELLENEN PROFİL VE AVATAR GÜNCELLEME FONKSİYONU
+        // DÜZELTİLMİŞ VE EKSİKSİZ PROFİL & AVATAR GÜNCELLEME FONKSİYONU
         async function updateProfileData() {
-            if (!currentUser) return;
+            if (!currentUser) {
+                alert("Oturum bulunamadı!");
+                return;
+            }
+            
             const newBio = document.getElementById('edit-bio').value;
             const avatarInput = document.getElementById('edit-avatar');
 
-            let updateData = { bio: newBio };
+            let updateData = { 
+                bio: newBio,
+                updated_at: new Date()
+            };
 
-            if (avatarInput.files && avatarInput.files[0]) {
-                const reader = new FileReader();
-                reader.onload = async function(e) {
-                    updateData.avatar = e.target.result; // Resmi base64 formatına çevir
-                    
-                    const { error } = await supabaseClient.from('profiles').update(updateData).eq('id', currentUser.id);
-                    if (error) {
-                        alert('Güncelleme hatası: ' + error.message);
-                    } else {
-                        alert('Profil ve avatar bulutta başarıyla güncellendi!');
-                        location.reload();
-                    }
-                };
-                reader.readAsDataURL(avatarInput.files[0]);
-            } else {
-                const { error } = await supabaseClient.from('profiles').update(updateData).eq('id', currentUser.id);
+            try {
+                if (avatarInput.files && avatarInput.files[0]) {
+                    const file = avatarInput.files[0];
+                    const base64Avatar = await new Promise((resolve, reject) => {
+                        const reader = new FileReader();
+                        reader.onload = (e) => resolve(e.target.result);
+                        reader.onerror = (error) => reject(error);
+                        reader.readAsDataURL(file);
+                    });
+                    updateData.avatar = base64Avatar;
+                }
+
+                const { error } = await supabaseClient
+                    .from('profiles')
+                    .update(updateData)
+                    .eq('id', currentUser.id);
+
                 if (error) {
                     alert('Güncelleme hatası: ' + error.message);
                 } else {
-                    alert('Profil bulutta güncellendi!');
+                    alert('Profil ve avatar bulutta başarıyla güncellendi kanka!');
                     location.reload();
                 }
+            } catch (err) {
+                alert('Beklenmeyen bir hata oluştu: ' + err.message);
             }
         }
 
