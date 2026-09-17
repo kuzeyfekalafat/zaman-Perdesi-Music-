@@ -31,7 +31,7 @@
         body {
             background-color: var(--bg-color);
             color: var(--text-main);
-            padding-bottom: 120px;
+            padding-bottom: 140px;
         }
 
         header {
@@ -193,6 +193,7 @@
         .track-info h4 {
             font-size: 0.95rem;
             margin-bottom: 2px;
+            cursor: pointer;
         }
 
         .track-info p {
@@ -238,9 +239,15 @@
             border-top: 1px solid var(--border-color);
             padding: 12px 20px;
             display: flex;
+            flex-direction: column;
+            gap: 8px;
+            z-index: 1000;
+        }
+
+        .player-top {
+            display: flex;
             align-items: center;
             justify-content: space-between;
-            z-index: 1000;
         }
 
         .player-left {
@@ -296,6 +303,19 @@
             font-size: 1rem;
         }
 
+        .player-volume {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .player-volume input[type="range"] {
+            width: 80px;
+            accent-color: var(--primary-color);
+        }
+
         .hidden {
             display: none !important;
         }
@@ -330,7 +350,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.8);
+            background: rgba(0,0,0,0.85);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -343,8 +363,8 @@
             border: 1px solid var(--border-color);
             border-radius: 12px;
             width: 100%;
-            max-width: 500px;
-            max-height: 80vh;
+            max-width: 550px;
+            max-height: 85vh;
             overflow-y: auto;
             padding: 20px;
             position: relative;
@@ -376,12 +396,10 @@
         <button class="nav-tab active" onclick="switchTab('home')">Ana Sayfa</button>
         <button class="nav-tab" onclick="switchTab('songs')">Şarkılar</button>
         <button class="nav-tab" onclick="switchTab('albums')">Albümler</button>
-        <button class="nav-tab" onclick="switchTab('singles')">Tekliler</button>
         <button class="nav-tab" onclick="switchTab('artists')">Sanatçılar</button>
         <button class="nav-tab" onclick="switchTab('search')">Arama 🔍</button>
         <button class="nav-tab" onclick="switchTab('favorites')">Favoriler ❤️</button>
-        <button class="nav-tab" onclick="switchTab('playlists')">Çalma Listeleri 🎧</button>
-        <button class="nav-tab" onclick="switchTab('history')">Geçmiş ⏱️</button>
+        <button class="nav-tab" onclick="switchTab('my-songs')">Şarkılarım 🎵</button>
         <button class="nav-tab" onclick="switchTab('add-song')">+ Şarkı Ekle</button>
         <button class="nav-tab" onclick="switchTab('auth')">Giriş / Üye Ol</button>
     </div>
@@ -402,11 +420,6 @@
             <div id="albums-list"></div>
         </div>
 
-        <div id="tab-singles" class="tab-content hidden">
-            <h2 class="section-title">Tekliler (Singles)</h2>
-            <div id="singles-list"></div>
-        </div>
-
         <div id="tab-artists" class="tab-content hidden">
             <h2 class="section-title">Platform Sanatçıları</h2>
             <div id="artists-grid" class="artist-grid"></div>
@@ -425,21 +438,9 @@
             <div id="favorites-list"></div>
         </div>
 
-        <div id="tab-playlists" class="tab-content hidden">
-            <h2 class="section-title">Çalma Listeleri 🎧</h2>
-            <div class="card">
-                <div class="form-group">
-                    <label>Yeni Çalma Listesi Oluştur</label>
-                    <input type="text" id="playlist-name-input" class="form-control" placeholder="Liste Adı">
-                </div>
-                <button class="btn" onclick="createPlaylist()">Liste Oluştur</button>
-            </div>
-            <div id="playlists-container"></div>
-        </div>
-
-        <div id="tab-history" class="tab-content hidden">
-            <h2 class="section-title">Dinleme Geçmişi ⏱️</h2>
-            <div id="history-list"></div>
+        <div id="tab-my-songs" class="tab-content hidden">
+            <h2 class="section-title">Yüklediğim Şarkılarım 🎵</h2>
+            <div id="my-songs-list"></div>
         </div>
 
         <div id="tab-add-song" class="tab-content hidden">
@@ -465,10 +466,6 @@
                 <div class="form-group">
                     <label>Ses Dosyası (.mp3)</label>
                     <input type="file" id="song-file" class="form-control" accept="audio/*">
-                </div>
-                <div class="form-group">
-                    <label>Kapak Görseli</label>
-                    <input type="file" id="song-cover" class="form-control" accept="image/*">
                 </div>
                 <div class="form-group">
                     <label>Şarkı Sözleri</label>
@@ -497,7 +494,7 @@
                 <button class="btn btn-secondary" onclick="handleSupabaseRegister()">Kayıt Ol</button>
             </div>
             <div id="profile-box" class="card hidden">
-                <h3 id="profile-display-name" style="margin-bottom: 10px;"></h3>
+                <h3 id="profile-display-name" style="margin-bottom: 5px;"></h3>
                 <p id="profile-status" style="color: var(--primary-color); font-size: 0.85rem; margin-bottom: 10px;">✓ Onaylı Bulut Sanatçısı</p>
                 
                 <div id="self-profile-edit">
@@ -520,10 +517,18 @@
             <div class="card" style="text-align: center;">
                 <img id="view-profile-avatar" src="" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary-color); margin-bottom: 10px; display: none; margin-left: auto; margin-right: auto;">
                 <h2 id="view-profile-name" style="margin-bottom: 5px;"></h2>
-                <p id="view-profile-bio" style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 15px;"></p>
+                <p id="view-profile-bio" style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 10px;"></p>
+                <p id="view-profile-followers" style="color: var(--primary-color); font-size: 0.85rem; margin-bottom: 15px;">Takipçi: 0</p>
+                <button id="follow-btn" class="btn" style="max-width: 150px; margin: 0 auto; display: none;" onclick="toggleFollow()">Takip Et</button>
             </div>
             <h3 class="section-title">Sanatçının Parçaları</h3>
             <div id="view-profile-tracks"></div>
+        </div>
+
+        <div id="tab-album-detail" class="tab-content hidden">
+            <button class="btn btn-secondary" style="max-width: 120px; margin-bottom: 15px;" onclick="switchTab('albums')">← Geri Dön</button>
+            <h2 id="album-detail-title" class="section-title">Albüm Adı</h2>
+            <div id="album-tracks-list"></div>
         </div>
     </div>
 
@@ -535,17 +540,23 @@
     </div>
 
     <div class="player-bar">
-        <div class="player-left">
-            <img id="player-thumb" src="" class="player-thumb" alt="Kapak">
-            <div class="player-meta">
-                <h4 id="player-title">Şarkı Seçilmedi</h4>
-                <p id="player-artist">Zaman Perdesi</p>
+        <div class="player-top">
+            <div class="player-left">
+                <img id="player-thumb" src="https://via.placeholder.com/45" class="player-thumb" alt="Kapak">
+                <div class="player-meta">
+                    <h4 id="player-title">Şarkı Seçilmedi</h4>
+                    <p id="player-artist">Zaman Perdesi</p>
+                </div>
             </div>
-        </div>
-        <div class="player-controls">
-            <button onclick="prevTrack()">⏮</button>
-            <button class="play-main" id="play-btn" onclick="togglePlay()">▶</button>
-            <button onclick="nextTrack()">⏭</button>
+            <div class="player-controls">
+                <button onclick="prevTrack()">⏮</button>
+                <button class="play-main" id="play-btn" onclick="togglePlay()">▶</button>
+                <button onclick="nextTrack()">⏭</button>
+            </div>
+            <div class="player-volume">
+                <span>🔊</span>
+                <input type="range" min="0" max="1" step="0.05" value="1" oninput="changeVolume(this.value)">
+            </div>
         </div>
     </div>
 
@@ -559,12 +570,14 @@
         let users = [];
         let currentUser = null;
         let songs = [];
+        let follows = [];
+        let comments = [];
         let favorites = JSON.parse(localStorage.getItem('zp_favorites')) || [];
-        let playlists = JSON.parse(localStorage.getItem('zp_playlists')) || [];
         let history = JSON.parse(localStorage.getItem('zp_history')) || [];
 
         let currentTrackIndex = -1;
         let audio = document.getElementById('audio-player');
+        let viewedProfileName = '';
 
         async function initApp() {
             await checkSupabaseAuth();
@@ -592,6 +605,12 @@
             } else {
                 users = [{ username: 'Kuzeyfe Kalafat', bio: 'Director, screenwriter, producer, music arranger and creative director.', avatar: '', verified: true }];
             }
+
+            let { data: followsData } = await supabaseClient.from('follows').select('*');
+            if (followsData) follows = followsData;
+
+            let { data: commentsData } = await supabaseClient.from('comments').select('*');
+            if (commentsData) comments = commentsData;
         }
 
         async function handleSupabaseRegister() {
@@ -644,9 +663,9 @@
             if (tabId === 'home') renderHome();
             if (tabId === 'auth') renderAuthScreen();
             if (tabId === 'songs') renderSongs();
+            if (tabId === 'albums') renderAlbums();
             if (tabId === 'favorites') renderFavorites();
-            if (tabId === 'playlists') renderPlaylists();
-            if (tabId === 'history') renderHistory();
+            if (tabId === 'my-songs') renderMySongs();
             if (tabId === 'artists') renderArtists();
         }
 
@@ -659,7 +678,7 @@
             container.innerHTML = songs.slice(0, 5).map(s => `
                 <div class="track-item">
                     <div class="track-info">
-                        <h4>🔥 ${s.title}</h4>
+                        <h4 onclick="playSong('${s.id}')">🔥 ${s.title}</h4>
                         <p>${s.artist} <span class="verified-badge">✓</span></p>
                     </div>
                     <div class="track-actions">
@@ -702,10 +721,7 @@
                     updateData.avatar = base64Avatar;
                 }
 
-                const { error } = await supabaseClient
-                    .from('profiles')
-                    .update(updateData)
-                    .eq('id', currentUser.id);
+                const { error } = await supabaseClient.from('profiles').update(updateData).eq('id', currentUser.id);
 
                 if (error) {
                     alert('Güncelleme hatası: ' + error.message);
@@ -719,8 +735,8 @@
         }
 
         function openProfile(username) {
-            let user = users.find(u => u.username === username);
-            if (!user) return;
+            viewedProfileName = username;
+            let user = users.find(u => u.username === username) || { username, bio: 'Sanatçı', avatar: '' };
 
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
             document.getElementById('tab-user-profile').classList.remove('hidden');
@@ -728,6 +744,18 @@
             document.getElementById('view-profile-name').innerHTML = `${user.username} <span class="verified-badge">✓</span>`;
             document.getElementById('view-profile-bio').textContent = user.bio || 'Biyografi bulunmuyor.';
             
+            const artistFollowers = follows.filter(f => f.following === username).length;
+            document.getElementById('view-profile-followers').textContent = `Takipçi: ${artistFollowers}`;
+
+            const followBtn = document.getElementById('follow-btn');
+            if (currentUser && currentUser.profile && currentUser.profile.username !== username) {
+                followBtn.style.display = 'block';
+                const isFollowing = follows.some(f => f.follower === currentUser.profile.username && f.following === username);
+                followBtn.textContent = isFollowing ? 'Takiptesin ✓' : 'Takip Et';
+            } else {
+                followBtn.style.display = 'none';
+            }
+
             const avatarImg = document.getElementById('view-profile-avatar');
             if (user.avatar) {
                 avatarImg.src = user.avatar;
@@ -736,17 +764,36 @@
                 avatarImg.style.display = 'none';
             }
 
-            const artistSongs = songs.filter(s => s.artist === user.username);
+            const artistSongs = songs.filter(s => s.artist === username);
             const container = document.getElementById('view-profile-tracks');
             container.innerHTML = artistSongs.length === 0 ? '<p style="color: var(--text-muted);">Yayınlanmış şarkı yok.</p>' : artistSongs.map(s => `
                 <div class="track-item">
                     <div class="track-info">
-                        <h4>${s.title}</h4>
+                        <h4 onclick="playSong('${s.id}')">${s.title}</h4>
                         <p>${s.category}</p>
                     </div>
                     <button class="icon-btn" onclick="playSong('${s.id}')">▶</button>
                 </div>
             `).join('');
+        }
+
+        async function toggleFollow() {
+            if (!currentUser || !currentUser.profile) return alert('Lütfen giriş yapın.');
+            const followerName = currentUser.profile.username;
+            const followingName = viewedProfileName;
+
+            const existing = follows.find(f => f.follower === followerName && f.following === followingName);
+            if (existing) {
+                await supabaseClient.from('follows').delete().eq('follower', followerName).eq('following', followingName);
+                follows = follows.filter(f => !(f.follower === followerName && f.following === followingName));
+                alert('Takipten çıkıldı.');
+            } else {
+                const newFollow = { id: 'fol_' + Date.now(), follower: followerName, following: followingName };
+                await supabaseClient.from('follows').insert([newFollow]);
+                follows.push(newFollow);
+                alert('Takibe alındı!');
+            }
+            openProfile(followingName);
         }
 
         function renderArtists() {
@@ -755,6 +802,51 @@
                 <div class="artist-card" onclick="openProfile('${u.username}')">
                     <img src="${u.avatar || 'https://via.placeholder.com/70'}" alt="Avatar">
                     <h4 style="font-size: 0.9rem;">${u.username} <span class="verified-badge">✓</span></h4>
+                </div>
+            `).join('');
+        }
+
+        function renderAlbums() {
+            const list = document.getElementById('albums-list');
+            const albumsMap = {};
+            songs.forEach(s => {
+                if (s.album) {
+                    if (!albumsMap[s.album]) albumsMap[s.album] = [];
+                    albumsMap[s.album].push(s);
+                }
+            });
+
+            const albumKeys = Object.keys(albumsMap);
+            if (albumKeys.length === 0) {
+                list.innerHTML = '<p style="color: var(--text-muted);">Bulutta henüz albüm bulunmuyor.</p>';
+                return;
+            }
+
+            list.innerHTML = albumKeys.map(albumName => `
+                <div class="track-item" onclick="openAlbumDetail('${albumName}')" style="cursor: pointer;">
+                    <div class="track-info">
+                        <h4>💿 ${albumName}</h4>
+                        <p>Parça Sayısı: ${albumsMap[albumName].length}</p>
+                    </div>
+                    <span style="color: var(--primary-color);">İncele →</span>
+                </div>
+            `).join('');
+        }
+
+        function openAlbumDetail(albumName) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.getElementById('tab-album-detail').classList.remove('hidden');
+            document.getElementById('album-detail-title').textContent = `💿 ${albumName} Albümü`;
+
+            const albumSongs = songs.filter(s => s.album === albumName);
+            const container = document.getElementById('album-tracks-list');
+            container.innerHTML = albumSongs.map(s => `
+                <div class="track-item">
+                    <div class="track-info">
+                        <h4 onclick="playSong('${s.id}')">${s.title}</h4>
+                        <p>${s.artist}</p>
+                    </div>
+                    <button class="icon-btn" onclick="playSong('${s.id}')">▶</button>
                 </div>
             `).join('');
         }
@@ -769,12 +861,12 @@
             if (!title || !fileInput.files[0]) return alert('Lütfen şarkı adı ve ses dosyası seçin.');
 
             const artistName = currentUser && currentUser.profile ? currentUser.profile.username : 'Kuzeyfe Kalafat';
-            const fullLyrics = `${rawLyrics}\n\n--------------------\nKünye & Yapım Bilgileri:\nSöz Yazarı: Kuzeyfe Kalafat\nYapım: Zaman Perdesi Music`;
+            const fullLyrics = `${rawLyrics}\n\n--------------------\nKünye & Yapım Bilgileri:\nSöz Yazarı: ${artistName}\nYapım: Zaman Perdesi Music`;
 
             const readerAudio = new FileReader();
             readerAudio.onload = async function(eAudio) {
                 const audioUrl = eAudio.target.result;
-                const newSong = { id: 'song_' + Date.now(), title, artist: artistName, category, album, lyrics: fullLyrics, audioUrl, coverUrl: '' };
+                const newSong = { id: 'song_' + Date.now(), title, artist: artistName, category, album, lyrics: fullLyrics, audioUrl };
 
                 const { error } = await supabaseClient.from('songs').insert([newSong]);
                 if (error) {
@@ -797,11 +889,11 @@
             list.innerHTML = songs.map(s => `
                 <div class="track-item">
                     <div class="track-info">
-                        <h4>${s.title}</h4>
+                        <h4 onclick="playSong('${s.id}')">${s.title}</h4>
                         <p>${s.artist} <span class="verified-badge">✓</span></p>
                     </div>
                     <div class="track-actions">
-                        <button class="icon-btn" onclick="openLyricsModal('${s.id}')">📜</button>
+                        <button class="icon-btn" onclick="openDetailsModal('${s.id}')">💬</button>
                         <button class="icon-btn" onclick="toggleFavorite('${s.id}')">${favorites.includes(s.id) ? '❤️' : '🤍'}</button>
                         <button class="icon-btn" onclick="playSong('${s.id}')">▶</button>
                     </div>
@@ -809,14 +901,89 @@
             `).join('');
         }
 
-        function openLyricsModal(id) {
+        function renderMySongs() {
+            const list = document.getElementById('my-songs-list');
+            if (!currentUser || !currentUser.profile) {
+                list.innerHTML = '<p style="color: var(--text-muted);">Şarkılarınızı görmek için lütfen giriş yapın.</p>';
+                return;
+            }
+            const mySongs = songs.filter(s => s.artist === currentUser.profile.username);
+            if (mySongs.length === 0) {
+                list.innerHTML = '<p style="color: var(--text-muted);">Henüz yüklediğiniz bir şarkı yok.</p>';
+                return;
+            }
+            list.innerHTML = mySongs.map(s => `
+                <div class="track-item">
+                    <div class="track-info">
+                        <h4>${s.title}</h4>
+                        <p>${s.category}</p>
+                    </div>
+                    <div class="track-actions">
+                        <button class="icon-btn" onclick="deleteSong('${s.id}')">🗑️</button>
+                        <button class="icon-btn" onclick="playSong('${s.id}')">▶</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        async function deleteSong(id) {
+            if (!confirm('Bu şarkıyı silmek istediğinize emin misiniz?')) return;
+            const { error } = await supabaseClient.from('songs').delete().eq('id', id);
+            if (error) {
+                alert('Silme hatası: ' + error.message);
+            } else {
+                songs = songs.filter(s => s.id !== id);
+                renderMySongs();
+                alert('Şarkı silindi!');
+            }
+        }
+
+        function openDetailsModal(id) {
             const s = songs.find(x => x.id === id);
             if (!s) return;
+            
+            const songComments = comments.filter(c => c.song_id === id);
+
             document.getElementById('modal-container').classList.remove('hidden');
             document.getElementById('modal-body').innerHTML = `
-                <h3 style="color: var(--primary-color); margin-bottom: 10px;">${s.title} - Sözler & Künye</h3>
-                <pre style="white-space: pre-wrap; font-family: inherit; color: var(--text-main); font-size: 0.9rem; line-height: 1.5;">${s.lyrics || 'Söz eklenmemiş.'}</pre>
+                <h3 style="color: var(--primary-color); margin-bottom: 5px;">${s.title}</h3>
+                <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 15px;">Sanatçı: ${s.artist}</p>
+                
+                <a href="${s.audioUrl}" download="${s.title}.mp3" class="btn" style="text-align: center; display: block; text-decoration: none; margin-bottom: 15px; font-size: 0.9rem;">📥 Şarkıyı İndir (.mp3)</a>
+
+                <h4 style="font-size: 1rem; margin-bottom: 5px;">📜 Sözler & Künye</h4>
+                <pre style="white-space: pre-wrap; font-family: inherit; color: var(--text-main); font-size: 0.85rem; line-height: 1.4; margin-bottom: 20px; background: #181818; padding: 10px; border-radius: 6px;">${s.lyrics || 'Söz eklenmemiş.'}</pre>
+
+                <h4 style="font-size: 1rem; margin-bottom: 10px;">💬 Yorumlar (${songComments.length})</h4>
+                <div id="modal-comments-list" style="max-height: 150px; overflow-y: auto; margin-bottom: 10px;">
+                    ${songComments.length === 0 ? '<p style="color: var(--text-muted); font-size: 0.85rem;">Henüz yorum yapılmamış.</p>' : songComments.map(c => `
+                        <div style="background: #181818; padding: 8px; border-radius: 6px; margin-bottom: 6px;">
+                            <strong style="font-size: 0.85rem; color: var(--primary-color);">${c.username}</strong>
+                            <p style="font-size: 0.85rem; margin-top: 2px;">${c.comment}</p>
+                        </div>
+                    `).join('')}
+                </div>
+
+                <div class="form-group">
+                    <input type="text" id="new-comment-text" class="form-control" placeholder="Yorum yaz...">
+                </div>
+                <button class="btn" onclick="postComment('${s.id}')">Yorum Gönder</button>
             `;
+        }
+
+        async function postComment(songId) {
+            if (!currentUser || !currentUser.profile) return alert('Yorum yapmak için giriş yapmalısınız.');
+            const text = document.getElementById('new-comment-text').value.trim();
+            if (!text) return alert('Yorum boş olamaz.');
+
+            const newC = { id: 'com_' + Date.now(), song_id: songId, username: currentUser.profile.username, comment: text, created_at: new Date().toISOString() };
+            const { error } = await supabaseClient.from('comments').insert([newC]);
+            if (error) {
+                alert('Yorum gönderilemedi: ' + error.message);
+            } else {
+                comments.push(newC);
+                openDetailsModal(songId);
+            }
         }
 
         function closeModal() {
@@ -848,6 +1015,10 @@
             }
         }
 
+        function changeVolume(val) {
+            audio.volume = val;
+        }
+
         function nextTrack() {
             if (songs.length === 0) return;
             currentTrackIndex = (currentTrackIndex + 1) % songs.length;
@@ -875,35 +1046,9 @@
             const favSongs = songs.filter(s => favorites.includes(s.id));
             list.innerHTML = favSongs.length === 0 ? '<p style="color: var(--text-muted);">Favori şarkı yok.</p>' : favSongs.map(s => `
                 <div class="track-item">
-                    <div class="track-info"><h4>${s.title}</h4><p>${s.artist}</p></div>
+                    <div class="track-info"><h4 onclick="playSong('${s.id}')">${s.title}</h4><p>${s.artist}</p></div>
                     <button class="icon-btn" onclick="playSong('${s.id}')">▶</button>
                 </div>
-            `).join('');
-        }
-
-        function renderHistory() {
-            const list = document.getElementById('history-list');
-            list.innerHTML = history.length === 0 ? '<p style="color: var(--text-muted);">Geçmiş boş.</p>' : history.map(s => `
-                <div class="track-item">
-                    <div class="track-info"><h4>${s.title}</h4><p>${s.artist}</p></div>
-                    <button class="icon-btn" onclick="playSong('${s.id}')">▶</button>
-                </div>
-            `).join('');
-        }
-
-        function createPlaylist() {
-            const name = document.getElementById('playlist-name-input').value.trim();
-            if (!name) return alert('Liste adı girin.');
-            playlists.push({ name, tracks: [] });
-            localStorage.setItem('zp_playlists', JSON.stringify(playlists));
-            renderPlaylists();
-            alert('Çalma listesi oluşturuldu!');
-        }
-
-        function renderPlaylists() {
-            const container = document.getElementById('playlists-container');
-            container.innerHTML = playlists.length === 0 ? '<p style="color: var(--text-muted);">Çalma listesi yok.</p>' : playlists.map(p => `
-                <div class="card"><h4>${p.name}</h4><p style="color: var(--text-muted); font-size: 0.8rem;">Parça: ${p.tracks.length}</p></div>
             `).join('');
         }
 
@@ -914,7 +1059,7 @@
             const filtered = songs.filter(s => s.title.toLowerCase().includes(query) || s.artist.toLowerCase().includes(query));
             resultsDiv.innerHTML = filtered.length === 0 ? '<p style="color: var(--text-muted);">Sonuç bulunamadı.</p>' : filtered.map(s => `
                 <div class="track-item">
-                    <div class="track-info"><h4>${s.title}</h4><p>${s.artist}</p></div>
+                    <div class="track-info"><h4 onclick="playSong('${s.id}')">${s.title}</h4><p>${s.artist}</p></div>
                     <button class="icon-btn" onclick="playSong('${s.id}')">▶</button>
                 </div>
             `).join('');
