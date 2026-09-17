@@ -607,18 +607,15 @@
             const { data: { session } } = await supabaseClient.auth.getSession();
             if (session) {
                 currentUser = session.user;
-                // Profil tablosundan ek detayları çekebiliriz
                 let { data } = await supabaseClient.from('profiles').select('*').eq('id', currentUser.id).single();
                 if (data) currentUser.profile = data;
             }
         }
 
         async function fetchCloudData() {
-            // Şarkıları Supabase'den çek
             let { data: songsData, error } = await supabaseClient.from('songs').select('*');
             if (songsData) songs = songsData;
 
-            // Sanatçıları çek
             let { data: usersData } = await supabaseClient.from('profiles').select('*');
             if (usersData && usersData.length > 0) {
                 users = usersData;
@@ -627,7 +624,6 @@
             }
         }
 
-        // Supabase Kayıt Ol
         async function handleSupabaseRegister() {
             const email = document.getElementById('auth-email').value.trim();
             const password = document.getElementById('auth-password').value.trim();
@@ -639,13 +635,11 @@
             if (error) return alert('Kayıt hatası: ' + error.message);
 
             if (data.user) {
-                // Profili veritabanına kaydet
-                await supabaseClient.from('profiles').insert([{ id: data.user.id, username, bio: 'Zaman Perdesi Onaylı Sanatçısı', verified: true, followers: [] }]);
+                await supabaseClient.from('profiles').insert([{ id: data.user.id, username, bio: 'Zaman Perdesi Onaylı Sanatçısı', avatar: '', verified: true, followers: [] }]);
                 alert('Kayıt başarılı! Lütfen giriş yapın.');
             }
         }
 
-        // Supabase Giriş Yap
         async function handleSupabaseLogin() {
             const email = document.getElementById('auth-email').value.trim();
             const password = document.getElementById('auth-password').value.trim();
@@ -719,11 +713,37 @@
             }
         }
 
+        // GÜNCELLENEN PROFİL VE AVATAR GÜNCELLEME FONKSİYONU
         async function updateProfileData() {
             if (!currentUser) return;
             const newBio = document.getElementById('edit-bio').value;
-            await supabaseClient.from('profiles').update({ bio: newBio }).eq('id', currentUser.id);
-            alert('Profil bulutta güncellendi!');
+            const avatarInput = document.getElementById('edit-avatar');
+
+            let updateData = { bio: newBio };
+
+            if (avatarInput.files && avatarInput.files[0]) {
+                const reader = new FileReader();
+                reader.onload = async function(e) {
+                    updateData.avatar = e.target.result; // Resmi base64 formatına çevir
+                    
+                    const { error } = await supabaseClient.from('profiles').update(updateData).eq('id', currentUser.id);
+                    if (error) {
+                        alert('Güncelleme hatası: ' + error.message);
+                    } else {
+                        alert('Profil ve avatar bulutta başarıyla güncellendi!');
+                        location.reload();
+                    }
+                };
+                reader.readAsDataURL(avatarInput.files[0]);
+            } else {
+                const { error } = await supabaseClient.from('profiles').update(updateData).eq('id', currentUser.id);
+                if (error) {
+                    alert('Güncelleme hatası: ' + error.message);
+                } else {
+                    alert('Profil bulutta güncellendi!');
+                    location.reload();
+                }
+            }
         }
 
         function openProfile(username) {
@@ -738,6 +758,14 @@
             document.getElementById('view-profile-bio').textContent = user.bio || 'Biyografi bulunmuyor.';
             document.getElementById('view-profile-followers').textContent = `Takipçi: ${user.followers ? user.followers.length : 0}`;
             
+            const avatarImg = document.getElementById('view-profile-avatar');
+            if (user.avatar) {
+                avatarImg.src = user.avatar;
+                avatarImg.style.display = 'block';
+            } else {
+                avatarImg.style.display = 'none';
+            }
+
             const followBtn = document.getElementById('follow-btn');
             if (currentUser && currentUser.profile && currentUser.profile.username === user.username) {
                 followBtn.style.display = 'none';
@@ -768,7 +796,6 @@
             `).join('');
         }
 
-        // OTOMATİK KÜNYELİ ŞARKI EKLEME
         async function addNewSong() {
             const title = document.getElementById('song-title').value.trim();
             const category = document.getElementById('song-category').value;
