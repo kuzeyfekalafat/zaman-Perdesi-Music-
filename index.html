@@ -71,7 +71,6 @@
             box-shadow: 0 4px 10px rgba(255, 183, 3, 0.3);
         }
 
-        /* Navigation Bar Tabs */
         .nav-scroller {
             display: flex;
             gap: 10px;
@@ -167,11 +166,6 @@
             width: 100%;
             cursor: pointer;
             font-size: 1rem;
-            transition: opacity 0.2s;
-        }
-
-        .btn:active {
-            opacity: 0.8;
         }
 
         .btn-secondary {
@@ -235,7 +229,6 @@
             vertical-align: middle;
         }
 
-        /* Player Bar */
         .player-bar {
             position: fixed;
             bottom: 0;
@@ -331,7 +324,6 @@
             border: 2px solid var(--primary-color);
         }
 
-        /* Modal */
         .modal {
             position: fixed;
             top: 0;
@@ -395,37 +387,31 @@
     </div>
 
     <div class="container">
-        <!-- ANA SAYFA -->
         <div id="tab-home" class="tab-content">
             <h2 class="section-title">🔥 Trendler & Öne Çıkanlar</h2>
             <div id="trending-container"></div>
         </div>
 
-        <!-- ŞARKILAR -->
         <div id="tab-songs" class="tab-content hidden">
             <h2 class="section-title">Tüm Şarkılar</h2>
             <div id="all-songs-list"></div>
         </div>
 
-        <!-- ALBÜMLER -->
         <div id="tab-albums" class="tab-content hidden">
             <h2 class="section-title">Albümler</h2>
             <div id="albums-list"></div>
         </div>
 
-        <!-- TEKLİLER -->
         <div id="tab-singles" class="tab-content hidden">
             <h2 class="section-title">Tekliler (Singles)</h2>
             <div id="singles-list"></div>
         </div>
 
-        <!-- SANATÇILAR -->
         <div id="tab-artists" class="tab-content hidden">
             <h2 class="section-title">Platform Sanatçıları</h2>
             <div id="artists-grid" class="artist-grid"></div>
         </div>
 
-        <!-- ARAMA -->
         <div id="tab-search" class="tab-content hidden">
             <h2 class="section-title">Arama</h2>
             <div class="form-group">
@@ -434,13 +420,11 @@
             <div id="search-results"></div>
         </div>
 
-        <!-- FAVORİLER -->
         <div id="tab-favorites" class="tab-content hidden">
             <h2 class="section-title">Favori Şarkılarım ❤️</h2>
             <div id="favorites-list"></div>
         </div>
 
-        <!-- ÇALMA LİSTELERİ -->
         <div id="tab-playlists" class="tab-content hidden">
             <h2 class="section-title">Çalma Listeleri 🎧</h2>
             <div class="card">
@@ -453,13 +437,11 @@
             <div id="playlists-container"></div>
         </div>
 
-        <!-- GEÇMİŞ -->
         <div id="tab-history" class="tab-content hidden">
             <h2 class="section-title">Dinleme Geçmişi ⏱️</h2>
             <div id="history-list"></div>
         </div>
 
-        <!-- ŞARKI EKLE -->
         <div id="tab-add-song" class="tab-content hidden">
             <h2 class="section-title">Şarkı Ekle</h2>
             <div class="card">
@@ -489,14 +471,13 @@
                     <input type="file" id="song-cover" class="form-control" accept="image/*">
                 </div>
                 <div class="form-group">
-                    <label>Şarkı Sözleri (Künye otomatik eklenecektir)</label>
+                    <label>Şarkı Sözleri</label>
                     <textarea id="song-lyrics" class="form-control" placeholder="Şarkı sözlerini buraya yazın..."></textarea>
                 </div>
                 <button class="btn" onclick="addNewSong()">Şarkıyı Yayınla</button>
             </div>
         </div>
 
-        <!-- ÜYE GİRİŞİ / KAYIT -->
         <div id="tab-auth" class="tab-content hidden">
             <h2 class="section-title">Üye Girişi & Kayıt Ol (Supabase)</h2>
             <div id="auth-box" class="card">
@@ -509,7 +490,7 @@
                     <input type="password" id="auth-password" class="form-control" placeholder="******">
                 </div>
                 <div class="form-group">
-                    <label>Sanatçı / Kullanıcı Adı (Kayıt olurken)</label>
+                    <label>Sanatçı / Kullanıcı Adı</label>
                     <input type="text" id="auth-username" class="form-control" placeholder="Adınız Soyadınız">
                 </div>
                 <button class="btn" onclick="handleSupabaseLogin()">Giriş Yap</button>
@@ -518,7 +499,6 @@
             <div id="profile-box" class="card hidden">
                 <h3 id="profile-display-name" style="margin-bottom: 10px;"></h3>
                 <p id="profile-status" style="color: var(--primary-color); font-size: 0.85rem; margin-bottom: 10px;">✓ Onaylı Bulut Sanatçısı</p>
-                <p id="profile-followers-count" style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 15px;"></p>
                 
                 <div id="self-profile-edit">
                     <div class="form-group">
@@ -536,21 +516,17 @@
             </div>
         </div>
 
-        <!-- BAŞKASININ PROFİLİ -->
         <div id="tab-user-profile" class="tab-content hidden">
             <div class="card" style="text-align: center;">
                 <img id="view-profile-avatar" src="" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary-color); margin-bottom: 10px; display: none; margin-left: auto; margin-right: auto;">
                 <h2 id="view-profile-name" style="margin-bottom: 5px;"></h2>
-                <p id="view-profile-followers" style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 10px;"></p>
                 <p id="view-profile-bio" style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 15px;"></p>
-                <button class="btn" id="follow-btn" onclick="toggleFollow()">Takip Et</button>
             </div>
             <h3 class="section-title">Sanatçının Parçaları</h3>
             <div id="view-profile-tracks"></div>
         </div>
     </div>
 
-    <!-- MODAL -->
     <div id="modal-container" class="modal hidden">
         <div class="modal-content">
             <button class="close-modal" onclick="closeModal()">✕</button>
@@ -558,7 +534,6 @@
         </div>
     </div>
 
-    <!-- ALT OYNATICI BAR -->
     <div class="player-bar">
         <div class="player-left">
             <img id="player-thumb" src="" class="player-thumb" alt="Kapak">
@@ -587,7 +562,6 @@
         let favorites = JSON.parse(localStorage.getItem('zp_favorites')) || [];
         let playlists = JSON.parse(localStorage.getItem('zp_playlists')) || [];
         let history = JSON.parse(localStorage.getItem('zp_history')) || [];
-        let viewedProfileUser = null;
 
         let currentTrackIndex = -1;
         let audio = document.getElementById('audio-player');
@@ -616,7 +590,7 @@
             if (usersData && usersData.length > 0) {
                 users = usersData;
             } else {
-                users = [{ username: 'Kuzeyfe Kalafat', bio: 'Director, screenwriter, producer, music arranger and creative director operating under 0-Nokta Yapım Holding.', avatar: '', verified: true, followers: [] }];
+                users = [{ username: 'Kuzeyfe Kalafat', bio: 'Director, screenwriter, producer, music arranger and creative director.', avatar: '', verified: true }];
             }
         }
 
@@ -631,7 +605,7 @@
             if (error) return alert('Kayıt hatası: ' + error.message);
 
             if (data.user) {
-                await supabaseClient.from('profiles').insert([{ id: data.user.id, username, bio: 'Zaman Perdesi Onaylı Sanatçısı', avatar: '', verified: true, followers: [] }]);
+                await supabaseClient.from('profiles').insert([{ id: data.user.id, username, bio: 'Zaman Perdesi Onaylı Sanatçısı', avatar: '' }]);
                 alert('Kayıt başarılı! Lütfen giriş yapın.');
             }
         }
@@ -699,9 +673,8 @@
             if (currentUser) {
                 document.getElementById('auth-box').classList.add('hidden');
                 document.getElementById('profile-box').classList.remove('hidden');
-                const profile = currentUser.profile || { username: 'Bulut Kullanıcısı', followers: [] };
+                const profile = currentUser.profile || { username: 'Bulut Kullanıcısı' };
                 document.getElementById('profile-display-name').innerHTML = `${profile.username} <span class="verified-badge">✓</span>`;
-                document.getElementById('profile-followers-count').textContent = `Takipçi Sayısı: ${profile.followers ? profile.followers.length : 0}`;
                 document.getElementById('edit-bio').value = profile.bio || '';
             } else {
                 document.getElementById('auth-box').classList.remove('hidden');
@@ -710,18 +683,12 @@
         }
 
         async function updateProfileData() {
-            if (!currentUser) {
-                alert("Oturum bulunamadı!");
-                return;
-            }
+            if (!currentUser) return alert("Oturum bulunamadı!");
             
             const newBio = document.getElementById('edit-bio').value;
             const avatarInput = document.getElementById('edit-avatar');
 
-            let updateData = { 
-                bio: newBio,
-                updated_at: new Date()
-            };
+            let updateData = { bio: newBio };
 
             try {
                 if (avatarInput.files && avatarInput.files[0]) {
@@ -743,25 +710,23 @@
                 if (error) {
                     alert('Güncelleme hatası: ' + error.message);
                 } else {
-                    alert('Profil ve avatar bulutta başarıyla güncellendi kanka!');
+                    alert('Profil bulutta başarıyla güncellendi kanka!');
                     location.reload();
                 }
             } catch (err) {
-                alert('Beklenmeyen bir hata oluştu: ' + err.message);
+                alert('Beklenmeyen hata: ' + err.message);
             }
         }
 
         function openProfile(username) {
             let user = users.find(u => u.username === username);
             if (!user) return;
-            viewedProfileUser = user;
 
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
             document.getElementById('tab-user-profile').classList.remove('hidden');
 
             document.getElementById('view-profile-name').innerHTML = `${user.username} <span class="verified-badge">✓</span>`;
             document.getElementById('view-profile-bio').textContent = user.bio || 'Biyografi bulunmuyor.';
-            document.getElementById('view-profile-followers').textContent = `Takipçi: ${user.followers ? user.followers.length : 0}`;
             
             const avatarImg = document.getElementById('view-profile-avatar');
             if (user.avatar) {
@@ -769,13 +734,6 @@
                 avatarImg.style.display = 'block';
             } else {
                 avatarImg.style.display = 'none';
-            }
-
-            const followBtn = document.getElementById('follow-btn');
-            if (currentUser && currentUser.profile && currentUser.profile.username === user.username) {
-                followBtn.style.display = 'none';
-            } else {
-                followBtn.style.display = 'block';
             }
 
             const artistSongs = songs.filter(s => s.artist === user.username);
@@ -808,28 +766,22 @@
             const rawLyrics = document.getElementById('song-lyrics').value.trim();
             const fileInput = document.getElementById('song-file');
 
-            if (!title || !fileInput.files[0]) {
-                return alert('Lütfen şarkı adı ve ses dosyası seçin.');
-            }
+            if (!title || !fileInput.files[0]) return alert('Lütfen şarkı adı ve ses dosyası seçin.');
 
             const artistName = currentUser && currentUser.profile ? currentUser.profile.username : 'Kuzeyfe Kalafat';
-            const fullLyrics = `${rawLyrics}\n\n--------------------\nKünye & Yapım Bilgileri:\nSöz Yazarı: Kuzeyfe Kalafat\nYapım: Zaman Perdesi Music\nWebsitesi: zamanperdesimusic.com.tr`;
+            const fullLyrics = `${rawLyrics}\n\n--------------------\nKünye & Yapım Bilgileri:\nSöz Yazarı: Kuzeyfe Kalafat\nYapım: Zaman Perdesi Music`;
 
             const readerAudio = new FileReader();
             readerAudio.onload = async function(eAudio) {
                 const audioUrl = eAudio.target.result;
-
-                const newSong = {
-                    id: 'song_' + Date.now(),
-                    title, artist: artistName, category, album, lyrics: fullLyrics, audioUrl, coverUrl: ''
-                };
+                const newSong = { id: 'song_' + Date.now(), title, artist: artistName, category, album, lyrics: fullLyrics, audioUrl, coverUrl: '' };
 
                 const { error } = await supabaseClient.from('songs').insert([newSong]);
                 if (error) {
-                    alert('Şarkı buluta kaydedilemedi: ' + error.message);
+                    alert('Şarkı kaydedilemedi: ' + error.message);
                 } else {
                     songs.push(newSong);
-                    alert('Şarkı ve resmi künye buluta başarıyla yayınlandı!');
+                    alert('Şarkı başarıyla yayınlandı!');
                     switchTab('songs');
                 }
             };
@@ -862,7 +814,7 @@
             if (!s) return;
             document.getElementById('modal-container').classList.remove('hidden');
             document.getElementById('modal-body').innerHTML = `
-                <h3 style="color: var(--primary-color); margin-bottom: 10px;">${s.title} - Şarkı Sözleri & Künye</h3>
+                <h3 style="color: var(--primary-color); margin-bottom: 10px;">${s.title} - Sözler & Künye</h3>
                 <pre style="white-space: pre-wrap; font-family: inherit; color: var(--text-main); font-size: 0.9rem; line-height: 1.5;">${s.lyrics || 'Söz eklenmemiş.'}</pre>
             `;
         }
@@ -881,7 +833,6 @@
             document.getElementById('play-btn').textContent = '⏸';
             document.getElementById('player-title').textContent = song.title;
             document.getElementById('player-artist').textContent = song.artist;
-            document.getElementById('player-thumb').src = song.coverUrl || '';
 
             history = history.filter(h => h.id !== song.id);
             history.unshift(song);
