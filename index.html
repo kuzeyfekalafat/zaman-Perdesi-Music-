@@ -331,7 +331,7 @@
             border: 2px solid var(--primary-color);
         }
 
-        /* Modal for Lyrics & Comments */
+        /* Modal */
         .modal {
             position: fixed;
             top: 0;
@@ -550,7 +550,7 @@
         </div>
     </div>
 
-    <!-- MODAL CONTAINER (Şarkı Sözleri ve Yorumlar için) -->
+    <!-- MODAL -->
     <div id="modal-container" class="modal hidden">
         <div class="modal-content">
             <button class="close-modal" onclick="closeModal()">✕</button>
@@ -577,7 +577,6 @@
     <audio id="audio-player" onended="nextTrack()"></audio>
 
     <script>
-        // Supabase Bağlantı Bilgileri (Kuzeyfe Kalafat - Zaman Perdesi)
         const SUPABASE_URL = 'https://zmumdwcagjqnqahehunx.supabase.co';
         const SUPABASE_ANON_KEY = 'sb_publishable_IAnZrTYQWhG-hXrIGlR4pg__AZyUwV-';
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -593,7 +592,6 @@
         let currentTrackIndex = -1;
         let audio = document.getElementById('audio-player');
 
-        // Başlangıçta Supabase'den verileri çek
         async function initApp() {
             await checkSupabaseAuth();
             await fetchCloudData();
@@ -711,7 +709,6 @@
             }
         }
 
-        // DÜZELTİLMİŞ VE EKSİKSİZ PROFİL & AVATAR GÜNCELLEME FONKSİYONU
         async function updateProfileData() {
             if (!currentUser) {
                 alert("Oturum bulunamadı!");
@@ -972,7 +969,6 @@
             `).join('');
         }
 
-        // Uygulamayı Başlat
         initApp();
     </script>
 </body>
