@@ -4,1179 +4,942 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Zaman Perdesi Music</title>
-    <link rel="manifest" href="https://zamanperdesi.com.tr/manifest.json">
+    <!-- Supabase CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
+        :root {
+            --bg-color: #121212;
+            --surface-color: #1a1a1a;
+            --surface-card: #222222;
+            --primary-color: #ffb703;
+            --primary-hover: #fb8500;
+            --text-main: #ffffff;
+            --text-muted: #aaaaaa;
+            --border-color: #333333;
+            --danger-color: #d90429;
+            --success-color: #2b9348;
+        }
+
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            -webkit-tap-highlight-color: transparent;
         }
+
         body {
-            background-color: #121212;
-            color: #ffffff;
+            background-color: var(--bg-color);
+            color: var(--text-main);
             padding-bottom: 120px;
         }
+
         header {
-            padding: 16px;
-            font-size: 20px;
-            font-weight: bold;
+            background: rgba(18, 18, 18, 0.95);
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid var(--border-color);
+            padding: 15px 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid #282828;
-            background: #181818;
         }
-        .app-title {
-            color: #ffb703;
-            font-size: 14px;
-            padding: 12px 16px 0 16px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+
+        .logo-area h1 {
+            font-size: 1.2rem;
+            color: var(--primary-color);
+            font-weight: 700;
         }
-        .tabs-container {
-            display: flex;
-            overflow-x: auto;
-            gap: 8px;
-            padding: 12px 16px;
-            scrollbar-width: none;
-            background: #181818;
-            margin-bottom: 10px;
-        }
-        .tabs-container::-webkit-scrollbar {
-            display: none;
-        }
-        .tab-btn {
-            background-color: #2b2b2b;
-            color: #ffffff;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 14px;
-            white-space: nowrap;
-            cursor: pointer;
-        }
-        .tab-btn.active {
-            background-color: #ffb703;
-            color: #121212;
-            font-weight: 600;
-        }
-        .tab-content {
-            display: none;
-            padding: 16px;
-        }
-        .tab-content.active {
+
+        .logo-area span {
+            font-size: 0.8rem;
+            color: var(--text-muted);
             display: block;
         }
-        h2 {
-            font-size: 20px;
-            color: #ffb703;
-            margin-bottom: 16px;
+
+        .founder-badge {
+            background: linear-gradient(135deg, #ffb703, #fb8500);
+            color: #000;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 4px 10px rgba(255, 183, 3, 0.3);
         }
-        p {
-            color: #aaa;
-            font-size: 14px;
+
+        /* Navigation Bar Tabs */
+        .nav-scroller {
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            padding: 10px 20px;
+            background: #161616;
+            border-bottom: 1px solid var(--border-color);
+            scrollbar-width: none;
         }
-        .song-card {
-            background: #181818;
-            padding: 12px;
-            margin-bottom: 10px;
+
+        .nav-scroller::-webkit-scrollbar {
+            display: none;
+        }
+
+        .nav-tab {
+            background: var(--surface-card);
+            color: var(--text-muted);
+            border: 1px solid var(--border-color);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            white-space: nowrap;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .nav-tab.active {
+            background: var(--primary-color);
+            color: #000;
+            border-color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        .container {
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        .card {
+            background: var(--surface-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 5px;
+        }
+
+        .form-control {
+            width: 100%;
+            background: var(--bg-color);
+            border: 1px solid var(--border-color);
             border-radius: 8px;
+            padding: 10px 12px;
+            color: var(--text-main);
+            font-size: 0.95rem;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary-color);
+            outline: none;
+        }
+
+        textarea.form-control {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .btn {
+            background: var(--primary-color);
+            color: #000;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-weight: 700;
+            width: 100%;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: opacity 0.2s;
+        }
+
+        .btn:active {
+            opacity: 0.8;
+        }
+
+        .btn-secondary {
+            background: #333;
+            color: #fff;
+            margin-top: 8px;
+        }
+
+        .btn-danger {
+            background: var(--danger-color);
+            color: #fff;
+        }
+
+        .track-item {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            border: 1px solid #282828;
+            background: var(--surface-card);
+            border: 1px solid var(--border-color);
+            padding: 10px 15px;
+            border-radius: 10px;
+            margin-bottom: 10px;
         }
-        .song-info {
+
+        .track-info h4 {
+            font-size: 0.95rem;
+            margin-bottom: 2px;
+        }
+
+        .track-info p {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .track-actions {
             display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-        .song-thumb {
-            width: 45px;
-            height: 45px;
-            background-color: #333;
-            border-radius: 4px;
-            object-fit: cover;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #777;
-            font-size: 10px;
-        }
-        .song-details .title {
-            font-size: 14px;
-            font-weight: bold;
-            color: #fff;
-        }
-        .song-details .artist {
-            font-size: 12px;
-            color: #aaa;
-        }
-        .actions-group {
-            display: flex;
-            gap: 6px;
+            gap: 8px;
             align-items: center;
         }
-        .play-btn-item {
-            background: #ffb703;
-            color: #121212;
-            border: none;
-            padding: 6px 10px;
-            border-radius: 15px;
-            font-size: 12px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-        .fav-btn-item {
+
+        .icon-btn {
             background: none;
             border: none;
-            font-size: 18px;
+            color: var(--text-main);
             cursor: pointer;
-            padding: 4px;
+            font-size: 1.1rem;
         }
+
+        .verified-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--primary-color);
+            color: #000;
+            border-radius: 50%;
+            width: 16px;
+            height: 16px;
+            font-size: 0.65rem;
+            font-weight: bold;
+            margin-left: 4px;
+            vertical-align: middle;
+        }
+
+        /* Player Bar */
         .player-bar {
             position: fixed;
             bottom: 0;
             left: 0;
             width: 100%;
-            background-color: #181818;
-            border-top: 1px solid #282828;
+            background: #181818;
+            border-top: 1px solid var(--border-color);
+            padding: 12px 20px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 10px 16px;
             z-index: 1000;
         }
-        .player-info {
+
+        .player-left {
             display: flex;
             align-items: center;
             gap: 12px;
         }
+
         .player-thumb {
             width: 45px;
             height: 45px;
-            background-color: #333;
-            border-radius: 4px;
+            background: #333;
+            border-radius: 6px;
             object-fit: cover;
         }
-        .player-text .title {
-            font-size: 14px;
-            font-weight: bold;
+
+        .player-meta h4 {
+            font-size: 0.9rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 140px;
         }
-        .player-text .artist {
-            font-size: 12px;
-            color: #aaa;
+
+        .player-meta p {
+            font-size: 0.75rem;
+            color: var(--text-muted);
         }
+
         .player-controls {
             display: flex;
-            gap: 16px;
             align-items: center;
+            gap: 15px;
         }
+
         .player-controls button {
             background: none;
             border: none;
             color: #fff;
-            font-size: 18px;
+            font-size: 1.2rem;
             cursor: pointer;
         }
-        .form-group {
-            margin-bottom: 14px;
-        }
-        .form-group label {
-            display: block;
-            font-size: 13px;
-            color: #ccc;
-            margin-bottom: 6px;
-        }
-        .form-group input, .form-group select, .form-group textarea {
-            width: 100%;
-            padding: 10px;
-            background: #1e1e1e;
-            border: 1px solid #333;
-            border-radius: 6px;
-            color: #fff;
-            font-size: 14px;
-        }
-        .submit-btn {
-            background: #ffb703;
-            color: #121212;
-            border: none;
-            padding: 12px;
-            width: 100%;
-            font-weight: bold;
-            border-radius: 6px;
-            cursor: pointer;
-            margin-top: 10px;
-            font-size: 16px;
-        }
-        .auth-card {
-            background: #181818;
-            padding: 20px;
-            border-radius: 8px;
-            border: 1px solid #282828;
-            max-width: 100%;
-            margin-bottom: 20px;
-        }
-        .profile-header-box {
-            display: flex;
-            gap: 16px;
-            align-items: center;
-            background: #181818;
-            padding: 16px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            border: 1px solid #282828;
-        }
-        .profile-avatar {
-            width: 70px;
-            height: 70px;
+
+        .player-controls .play-main {
+            background: var(--primary-color);
+            color: #000;
+            width: 38px;
+            height: 38px;
             border-radius: 50%;
-            background-color: #333;
-            object-fit: cover;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #777;
-            font-size: 11px;
+            font-size: 1rem;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .artist-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 15px;
+        }
+
+        .artist-card {
+            background: var(--surface-card);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+        }
+
+        .artist-card img {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 10px;
+            border: 2px solid var(--primary-color);
+        }
+
+        /* Modal for Lyrics & Comments */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            padding: 20px;
+        }
+
+        .modal-content {
+            background: var(--surface-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            width: 100%;
+            max-width: 500px;
+            max-height: 80vh;
+            overflow-y: auto;
+            padding: 20px;
+            position: relative;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 1.2rem;
+            cursor: pointer;
         }
     </style>
 </head>
 <body>
 
     <header>
-        <span>Zaman Perdesi Music</span>
-        <button id="ustGirisBtn" onclick="switchTab(event, 'giris-paneli')" style="background:#ffb703; color:#121212; border:none; padding:6px 12px; border-radius:15px; font-weight:bold; font-size:12px; cursor:pointer;">Giriş / Üye Ol</button>
+        <div class="logo-area">
+            <h1>Zaman Perdesi</h1>
+            <span>Music Platform (Cloud Sync)</span>
+        </div>
+        <button class="founder-badge" onclick="openProfile('Kuzeyfe Kalafat')">★ Kuzeyfe Kalafat</button>
     </header>
 
-    <div class="app-title">ZAMAN PERDESİ</div>
-
-    <div class="tabs-container" id="tabNav">
-        <button class="tab-btn active" onclick="switchTab(event, 'kuzeyfe-profil')">⭐ Kuzeyfe Kalafat</button>
-        <button class="tab-btn" onclick="switchTab(event, 'ana-sayfa')">Ana Sayfa</button>
-        <button class="tab-btn" onclick="switchTab(event, 'sarkilar')">Şarkılar</button>
-        <button class="tab-btn" onclick="switchTab(event, 'albumler')">Albümler</button>
-        <button class="tab-btn" onclick="switchTab(event, 'tekliler')">Tekliler</button>
-        <button class="tab-btn" onclick="switchTab(event, 'arama')">Arama 🔍</button>
-        <button class="tab-btn" onclick="switchTab(event, 'favoriler')">Favoriler ❤️</button>
-        <button class="tab-btn" onclick="switchTab(event, 'calma-listeleri')">Çalma Listeleri 🎧</button>
-        <button class="tab-btn" onclick="switchTab(event, 'gecmis')">Geçmiş ⏱️</button>
-        <button class="tab-btn" id="uyeSayfaTab" onclick="switchTab(event, 'uye-profil')" style="display:none;">👤 Profilim</button>
-        <button class="tab-btn" onclick="switchTab(event, 'giris-paneli')">Giriş / Üye Ol</button>
-        <button class="tab-btn" onclick="switchTab(event, 'sarki-ekle')">+ Şarkı Ekle</button>
+    <div class="nav-scroller">
+        <button class="nav-tab active" onclick="switchTab('home')">Ana Sayfa</button>
+        <button class="nav-tab" onclick="switchTab('songs')">Şarkılar</button>
+        <button class="nav-tab" onclick="switchTab('albums')">Albümler</button>
+        <button class="nav-tab" onclick="switchTab('singles')">Tekliler</button>
+        <button class="nav-tab" onclick="switchTab('artists')">Sanatçılar</button>
+        <button class="nav-tab" onclick="switchTab('search')">Arama 🔍</button>
+        <button class="nav-tab" onclick="switchTab('favorites')">Favoriler ❤️</button>
+        <button class="nav-tab" onclick="switchTab('playlists')">Çalma Listeleri 🎧</button>
+        <button class="nav-tab" onclick="switchTab('history')">Geçmiş ⏱️</button>
+        <button class="nav-tab" onclick="switchTab('add-song')">+ Şarkı Ekle</button>
+        <button class="nav-tab" onclick="switchTab('auth')">Giriş / Üye Ol</button>
     </div>
 
-    <!-- KUZEYFE KALAFAT RESMİ PROFİLİ -->
-    <div id="kuzeyfe-profil" class="tab-content active">
-        <div class="profile-header-box">
-            <div id="kuzeyfeAvatarAlan"><div class="profile-avatar">Kuzeyfe</div></div>
-            <div>
-                <h2 style="margin-bottom: 4px; color:#ffb703;">Kuzeyfe Kalafat</h2>
-                <p id="kuzeyfeBiyoGosterge" style="font-size: 12px; color: #aaa;">Director, screenwriter, producer, music arranger and creative director operating under 0-Nokta Yapım Holding. Zaman Perdesi projesinin yaratıcısı.</p>
-            </div>
+    <div class="container">
+        <!-- ANA SAYFA -->
+        <div id="tab-home" class="tab-content">
+            <h2 class="section-title">🔥 Trendler & Öne Çıkanlar</h2>
+            <div id="trending-container"></div>
         </div>
 
-        <!-- Yalnızca kurucu (kuzeyfe198634@gmail.com) giriş yaptığında burada düzenleme kutusu açılacak -->
-        <div class="auth-card" id="kuzeyfeDuzenlemeBolumu" style="display: none;">
-            <h3 style="font-size: 16px; color: #ffb703; margin-bottom: 12px;">Kurucu Profilini Düzenle</h3>
+        <!-- ŞARKILAR -->
+        <div id="tab-songs" class="tab-content hidden">
+            <h2 class="section-title">Tüm Şarkılar</h2>
+            <div id="all-songs-list"></div>
+        </div>
+
+        <!-- ALBÜMLER -->
+        <div id="tab-albums" class="tab-content hidden">
+            <h2 class="section-title">Albümler</h2>
+            <div id="albums-list"></div>
+        </div>
+
+        <!-- TEKLİLER -->
+        <div id="tab-singles" class="tab-content hidden">
+            <h2 class="section-title">Tekliler (Singles)</h2>
+            <div id="singles-list"></div>
+        </div>
+
+        <!-- SANATÇILAR -->
+        <div id="tab-artists" class="tab-content hidden">
+            <h2 class="section-title">Platform Sanatçıları</h2>
+            <div id="artists-grid" class="artist-grid"></div>
+        </div>
+
+        <!-- ARAMA -->
+        <div id="tab-search" class="tab-content hidden">
+            <h2 class="section-title">Arama</h2>
             <div class="form-group">
-                <label>Biyografi</label>
-                <textarea id="kuzeyfeBioInput" rows="4">Director, screenwriter, producer, music arranger and creative director operating under 0-Nokta Yapım Holding. Zaman Perdesi projesinin yaratıcısı.</textarea>
+                <input type="text" id="search-input" class="form-control" placeholder="Şarkı, sanatçı veya albüm ara..." oninput="handleSearch()">
             </div>
-            <div class="form-group">
-                <label>Profil Fotoğrafı Seç</label>
-                <input type="file" id="kuzeyfeResimInput" accept="image/*">
-            </div>
-            <button type="button" class="submit-btn" onclick="kuzeyfeProfiliKaydet()">Profili Güncelle</button>
-        </div>
-        
-        <div id="kuzeyfeBilgiNotu" style="display:block; background:#181818; padding:12px; border-radius:8px; margin-bottom:20px; border:1px solid #282828;">
-            <p style="font-size:13px; color:#ffb703;">ℹ️ Bu resmi sanatçı profili yalnızca kurucu (Kuzeyfe Kalafat) tarafından düzenlenebilir.</p>
+            <div id="search-results"></div>
         </div>
 
-        <h2>Kuzeyfe Kalafat'ın Parçaları</h2>
-        <div id="kuzeyfeSarkilari"><p>Parça bulunmuyor.</p></div>
-    </div>
-
-    <!-- ANA SAYFA -->
-    <div id="ana-sayfa" class="tab-content">
-        <h2>Öne Çıkan</h2>
-        <div id="oneCikanAlan">
-            <div style="background: #181818; padding: 12px; border-radius: 8px; display: flex; gap: 12px; align-items: center;">
-                <div style="width: 50px; height: 50px; background: #333; border-radius: 4px; display:flex; align-items:center; justify-content:center; color:#777;">Kapak</div>
-                <div>
-                    <div style="font-weight: bold; font-size: 14px;">Henüz şarkı eklenmedi</div>
-                    <p>Zaman Perdesi</p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div id="sarkilar" class="tab-content">
-        <h2>Tüm Şarkılar</h2>
-        <div id="sarkilarListesi"><p>Listelenecek şarkı yok.</p></div>
-    </div>
-
-    <div id="albumler" class="tab-content">
-        <h2>Albümler</h2>
-        <div id="albumlerListesi"><p>Albüm bulunmuyor.</p></div>
-    </div>
-
-    <div id="tekliler" class="tab-content">
-        <h2>Tekliler (Singles)</h2>
-        <div id="teklilerListesi"><p>Tekli parça bulunmuyor.</p></div>
-    </div>
-
-    <div id="arama" class="tab-content">
-        <h2>Arama</h2>
-        <div class="form-group">
-            <input type="text" id="aramaInput" placeholder="Şarkı veya albüm ara..." oninput="aramaYap(this.value)">
-        </div>
-        <div id="aramaSonuclari"></div>
-    </div>
-
-    <div id="favoriler" class="tab-content">
-        <h2>Favori Şarkılarım ❤️</h2>
-        <div id="favoriSarkilarListesi"><p>Favori şarkı eklenmemiş.</p></div>
-    </div>
-
-    <div id="calma-listeleri" class="tab-content">
-        <h2>Çalma Listeleri 🎧</h2>
-        <div class="auth-card" style="margin-bottom: 15px;">
-            <h3 style="font-size: 15px; color: #ffb703; margin-bottom: 8px;">Yeni Çalma Listesi Oluştur</h3>
-            <div class="form-group">
-                <input type="text" id="yeniListeAdi" placeholder="Liste Adı (Örn: Gece Yolculuğu)">
-            </div>
-            <button type="button" class="submit-btn" style="padding: 8px; font-size: 14px;" onclick="playlistOlustur()">Liste Oluştur</button>
-        </div>
-        <div id="calmaListeleriAlani"><p>Henüz çalma listesi oluşturulmadı.</p></div>
-    </div>
-
-    <div id="gecmis" class="tab-content">
-        <h2>Dinleme Geçmişi</h2>
-        <p>Dinleme geçmişi boş.</p>
-    </div>
-
-    <!-- ÜYE PROFİLİ (Sadece normal üyeler için) -->
-    <div id="uye-profil" class="tab-content">
-        <div class="profile-header-box">
-            <div id="uyeAvatarAlan"><div class="profile-avatar">Üye</div></div>
-            <div>
-                <h2 id="uyeIsimBaslik" style="margin-bottom: 4px; color:#ffb703;">Üye Profili</h2>
-                <p id="uyeEmailGosterge" style="font-size: 12px; color: #aaa;"></p>
-            </div>
+        <!-- FAVORİLER -->
+        <div id="tab-favorites" class="tab-content hidden">
+            <h2 class="section-title">Favori Şarkılarım ❤️</h2>
+            <div id="favorites-list"></div>
         </div>
 
-        <div class="auth-card">
-            <h3 style="font-size: 16px; color: #ffb703; margin-bottom: 12px;">Biyografini ve Fotoğrafını Düzenle</h3>
-            <div class="form-group">
-                <label>Biyografim</label>
-                <textarea id="uyeBioInput" rows="3" placeholder="Kendinden bahset..."></textarea>
-            </div>
-            <div class="form-group">
-                <label>Profil Fotoğrafı Seç</label>
-                <input type="file" id="uyeResimInput" accept="image/*">
-            </div>
-            <button type="button" class="submit-btn" onclick="uyeBilgileriniKaydet()">Bilgileri Kaydet</button>
-        </div>
-
-        <h2>Üyenin Parçaları</h2>
-        <div id="uyeSarkilari"><p>Parça bulunmuyor.</p></div>
-    </div>
-
-    <!-- GİRİŞ / KAYIT -->
-    <div id="giris-paneli" class="tab-content">
-        <h2>Üye Girişi & Kayıt Ol</h2>
-        <div class="auth-card">
-            <div id="girisFormuBolumu">
+        <!-- ÇALMA LİSTELERİ -->
+        <div id="tab-playlists" class="tab-content hidden">
+            <h2 class="section-title">Çalma Listeleri 🎧</h2>
+            <div class="card">
                 <div class="form-group">
-                    <label>E-Posta Adresi</label>
-                    <input type="email" id="authEmail" placeholder="ornek@mail.com">
+                    <label>Yeni Çalma Listesi Oluştur</label>
+                    <input type="text" id="playlist-name-input" class="form-control" placeholder="Liste Adı">
+                </div>
+                <button class="btn" onclick="createPlaylist()">Liste Oluştur</button>
+            </div>
+            <div id="playlists-container"></div>
+        </div>
+
+        <!-- GEÇMİŞ -->
+        <div id="tab-history" class="tab-content hidden">
+            <h2 class="section-title">Dinleme Geçmişi ⏱️</h2>
+            <div id="history-list"></div>
+        </div>
+
+        <!-- ŞARKI EKLE -->
+        <div id="tab-add-song" class="tab-content hidden">
+            <h2 class="section-title">Şarkı Ekle</h2>
+            <div class="card">
+                <div class="form-group">
+                    <label>Şarkı Adı</label>
+                    <input type="text" id="song-title" class="form-control" placeholder="Örn: Zaman Perdesi">
+                </div>
+                <div class="form-group">
+                    <label>Tür / Kategori</label>
+                    <select id="song-category" class="form-control">
+                        <option value="Tekli (Single)">Tekli (Single)</option>
+                        <option value="Deep House">Deep House</option>
+                        <option value="Türkçe Slow">Türkçe Slow</option>
+                        <option value="Ambient Tech">Ambient Tech</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Albüm Adı (Opsiyonel)</label>
+                    <input type="text" id="song-album" class="form-control" placeholder="Örn: İçimde Kalan">
+                </div>
+                <div class="form-group">
+                    <label>Ses Dosyası (.mp3)</label>
+                    <input type="file" id="song-file" class="form-control" accept="audio/*">
+                </div>
+                <div class="form-group">
+                    <label>Kapak Görseli</label>
+                    <input type="file" id="song-cover" class="form-control" accept="image/*">
+                </div>
+                <div class="form-group">
+                    <label>Şarkı Sözleri (Künye otomatik eklenecektir)</label>
+                    <textarea id="song-lyrics" class="form-control" placeholder="Şarkı sözlerini buraya yazın..."></textarea>
+                </div>
+                <button class="btn" onclick="addNewSong()">Şarkıyı Yayınla</button>
+            </div>
+        </div>
+
+        <!-- ÜYE GİRİŞİ / KAYIT -->
+        <div id="tab-auth" class="tab-content hidden">
+            <h2 class="section-title">Üye Girişi & Kayıt Ol (Supabase)</h2>
+            <div id="auth-box" class="card">
+                <div class="form-group">
+                    <label>E-posta Adresi</label>
+                    <input type="email" id="auth-email" class="form-control" placeholder="ornek@mail.com">
                 </div>
                 <div class="form-group">
                     <label>Şifre</label>
-                    <input type="password" id="authPassword" placeholder="******">
+                    <input type="password" id="auth-password" class="form-control" placeholder="******">
                 </div>
-                <button type="button" class="submit-btn" onclick="uyeGirisYap()">Giriş Yap</button>
-                <p style="text-align: center; margin-top: 15px; font-size: 13px;">
-                    Hesabın yok mu? <a href="#" onclick="authModDegistir('kayit')" style="color: #ffb703; text-decoration: none;">Kayıt Ol</a>
-                </p>
+                <div class="form-group">
+                    <label>Sanatçı / Kullanıcı Adı (Kayıt olurken)</label>
+                    <input type="text" id="auth-username" class="form-control" placeholder="Adınız Soyadınız">
+                </div>
+                <button class="btn" onclick="handleSupabaseLogin()">Giriş Yap</button>
+                <button class="btn btn-secondary" onclick="handleSupabaseRegister()">Kayıt Ol</button>
             </div>
+            <div id="profile-box" class="card hidden">
+                <h3 id="profile-display-name" style="margin-bottom: 10px;"></h3>
+                <p id="profile-status" style="color: var(--primary-color); font-size: 0.85rem; margin-bottom: 10px;">✓ Onaylı Bulut Sanatçısı</p>
+                <p id="profile-followers-count" style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 15px;"></p>
+                
+                <div id="self-profile-edit">
+                    <div class="form-group">
+                        <label>Biyografi</label>
+                        <textarea id="edit-bio" class="form-control"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Profil Fotoğrafı Seç</label>
+                        <input type="file" id="edit-avatar" class="form-control" accept="image/*">
+                    </div>
+                    <button class="btn" onclick="updateProfileData()">Profili Güncelle</button>
+                </div>
 
-            <div id="kayitFormuBolumu" style="display: none;">
-                <div class="form-group">
-                    <label>Ad Soyad / Sanatçı Adı</label>
-                    <input type="text" id="regAd" placeholder="Sanatçı Adı">
-                </div>
-                <div class="form-group">
-                    <label>E-Posta Adresi</label>
-                    <input type="email" id="regEmail" placeholder="ornek@mail.com">
-                </div>
-                <div class="form-group">
-                    <label>Şifre Belirle</label>
-                    <input type="password" id="regPassword" placeholder="******">
-                </div>
-                <button type="button" class="submit-btn" onclick="uyeKayitOl()">Kayıt Ol</button>
-                <p style="text-align: center; margin-top: 15px; font-size: 13px;">
-                    Zaten hesabın var mı? <a href="#" onclick="authModDegistir('giris')" style="color: #ffb703; text-decoration: none;">Giriş Yap</a>
-                </p>
+                <button class="btn btn-danger" style="margin-top: 15px;" onclick="supabaseLogout()">Çıkış Yap</button>
             </div>
+        </div>
 
-            <div id="aktifKullaniciPaneli" style="display: none; text-align: center;">
-                <p style="font-size: 15px; color: #fff; margin-bottom: 10px;">Aktif Oturum: <span id="aktifKullaniciAdi" style="color: #ffb703; font-weight: bold;"></span></p>
-                <button type="button" class="submit-btn" style="background: #d90429; color: #fff;" onclick="cikisYap()">Çıkış Yap</button>
+        <!-- BAŞKASININ PROFİLİ -->
+        <div id="tab-user-profile" class="tab-content hidden">
+            <div class="card" style="text-align: center;">
+                <img id="view-profile-avatar" src="" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary-color); margin-bottom: 10px; display: none; margin-left: auto; margin-right: auto;">
+                <h2 id="view-profile-name" style="margin-bottom: 5px;"></h2>
+                <p id="view-profile-followers" style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 10px;"></p>
+                <p id="view-profile-bio" style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 15px;"></p>
+                <button class="btn" id="follow-btn" onclick="toggleFollow()">Takip Et</button>
             </div>
+            <h3 class="section-title">Sanatçının Parçaları</h3>
+            <div id="view-profile-tracks"></div>
         </div>
     </div>
 
-    <!-- ŞARKI EKLE -->
-    <div id="sarki-ekle" class="tab-content">
-        <h2>Şarkı Ekle</h2>
-        <div class="form-group">
-            <label>Şarkı Adı</label>
-            <input type="text" id="sarkiAdiInput" placeholder="Örn: Ateş Ve Kumsal">
+    <!-- MODAL CONTAINER (Şarkı Sözleri ve Yorumlar için) -->
+    <div id="modal-container" class="modal hidden">
+        <div class="modal-content">
+            <button class="close-modal" onclick="closeModal()">✕</button>
+            <div id="modal-body"></div>
         </div>
-        <div class="form-group">
-            <label>Tür / Kategori</label>
-            <select id="turInput">
-                <option>Tekli (Single)</option>
-                <option>Albüm Parçası</option>
-            </select>
-        </div>
-        <div class="form-group">
-            <label>Albüm Adı</label>
-            <input type="text" id="albumAdiInput" placeholder="Örn: Zamanın Ötesinde">
-        </div>
-        <div class="form-group">
-            <label>MP3 Dosyası Seç</label>
-            <input type="file" id="mp3Input" accept="audio/*">
-        </div>
-        <div class="form-group">
-            <label>Kapak Görseli Seç</label>
-            <input type="file" id="imageInput" accept="image/*">
-        </div>
-        <div class="form-group">
-            <label>Şarkı Sözleri / Yapım Bilgileri</label>
-            <textarea id="sozlerInput" rows="3" placeholder="Sözler, aranjör detayları..."></textarea>
-        </div>
-        <button type="button" class="submit-btn" onclick="sarkiyiYayinlaTikla()">Şarkıyı Yayınla</button>
     </div>
 
-    <!-- Sabit Alt Müzik Çalar -->
+    <!-- ALT OYNATICI BAR -->
     <div class="player-bar">
-        <div class="player-info">
-            <div class="player-thumb" id="aktifKapak" style="display:flex; align-items:center; justify-content:center; color:#777; font-size:10px;">Kapak</div>
-            <div class="player-text">
-                <div class="title" id="aktifBaslik">Şarkı Seçilmedi</div>
-                <div class="artist" id="aktifSanatci">Zaman Perdesi</div>
+        <div class="player-left">
+            <img id="player-thumb" src="" class="player-thumb" alt="Kapak">
+            <div class="player-meta">
+                <h4 id="player-title">Şarkı Seçilmedi</h4>
+                <p id="player-artist">Zaman Perdesi</p>
             </div>
         </div>
         <div class="player-controls">
-            <button onclick="oncekiSarki()">⏮</button>
-            <button id="oynatDurdurBtn" onclick="oynatmaKontrol()">▶</button>
-            <button onclick="sonrakiSarki()">⏭</button>
+            <button onclick="prevTrack()">⏮</button>
+            <button class="play-main" id="play-btn" onclick="togglePlay()">▶</button>
+            <button onclick="nextTrack()">⏭</button>
         </div>
     </div>
 
-    <audio id="sesCalici" onended="sonrakiSarki()"></audio>
+    <audio id="audio-player" onended="nextTrack()"></audio>
 
     <script>
-        const KURUCU_EMAIL = "kuzeyfe198634@gmail.com"; 
+        // Supabase Bağlantı Bilgileri (Kendi Supabase projenin bilgileriyle güncelleyebilirsin)
+        const SUPABASE_URL = 'https://SENIN_PROJE_ID.supabase.co';
+        const SUPABASE_ANON_KEY = 'SENIN_SUPABASE_ANON_KEY';
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        function switchTab(evt, tabName) {
-            const contents = document.getElementsByClassName("tab-content");
-            for (let i = 0; i < contents.length; i++) {
-                contents[i].classList.remove("active");
+        let users = [];
+        let currentUser = null;
+        let songs = [];
+        let favorites = JSON.parse(localStorage.getItem('zp_favorites')) || [];
+        let playlists = JSON.parse(localStorage.getItem('zp_playlists')) || [];
+        let history = JSON.parse(localStorage.getItem('zp_history')) || [];
+        let likes = {};
+        let comments = {};
+        let viewedProfileUser = null;
+
+        let currentTrackIndex = -1;
+        let audio = document.getElementById('audio-player');
+
+        // Başlangıçta Supabase'den verileri çek
+        async function initApp() {
+            await checkSupabaseAuth();
+            await fetchCloudData();
+            renderAuthScreen();
+            renderHome();
+        }
+
+        async function checkSupabaseAuth() {
+            const { data: { session } } = await supabaseClient.auth.getSession();
+            if (session) {
+                currentUser = session.user;
+                // Profil tablosundan ek detayları çekebiliriz
+                let { data } = await supabaseClient.from('profiles').select('*').eq('id', currentUser.id).single();
+                if (data) currentUser.profile = data;
             }
-            const buttons = document.getElementsByClassName("tab-btn");
-            for (let i = 0; i < buttons.length; i++) {
-                buttons[i].classList.remove("active");
-            }
-            document.getElementById(tabName).classList.add("active");
-            if(evt && evt.currentTarget) {
-                evt.currentTarget.classList.add("active");
+        }
+
+        async function fetchCloudData() {
+            // Şarkıları Supabase'den çek
+            let { data: songsData, error } = await supabaseClient.from('songs').select('*');
+            if (songsData) songs = songsData;
+
+            // Sanatçıları çek
+            let { data: usersData } = await supabaseClient.from('profiles').select('*');
+            if (usersData && usersData.length > 0) {
+                users = usersData;
             } else {
-                const targetBtn = Array.from(buttons).find(b => b.getAttribute('onclick')?.includes(tabName));
-                if(targetBtn) targetBtn.classList.add("active");
-            }
-
-            if(tabName === 'kuzeyfe-profil') {
-                kuzeyfeProfiliYukle();
-            } else if(tabName === 'uye-profil') {
-                uyeProfiliYukle();
-            } else if(tabName === 'favoriler') {
-                favorileriGoster();
-            } else if(tabName === 'calma-listeleri') {
-                playlistleriGoster();
+                users = [{ username: 'Kuzeyfe Kalafat', bio: 'Director, screenwriter, producer, music arranger and creative director operating under 0-Nokta Yapım Holding.', avatar: '', verified: true, followers: [] }];
             }
         }
 
-        let db;
-        let tumSarkilarDizisi = [];
-        let aktifCalinanIndex = 0;
-        let favoriIdler = JSON.parse(localStorage.getItem("favoriIdler") || "[]");
-        let calmaliListeleri = JSON.parse(localStorage.getItem("calmaliListeleri") || "[]");
+        // Supabase Kayıt Ol
+        async function handleSupabaseRegister() {
+            const email = document.getElementById('auth-email').value.trim();
+            const password = document.getElementById('auth-password').value.trim();
+            const username = document.getElementById('auth-username').value.trim();
 
-        const request = indexedDB.open("ZamanPerdesiDB", 12);
+            if (!email || !password || !username) return alert('Lütfen tüm alanları doldurun.');
 
-        request.onerror = function(event) {
-            console.log("IndexedDB hatası:", event.target.error);
-        };
+            const { data, error } = await supabaseClient.auth.signUp({ email, password });
+            if (error) return alert('Kayıt hatası: ' + error.message);
 
-        request.onsuccess = function(event) {
-            db = event.target.result;
-            sarkilariYukle();
-            kuzeyfeProfiliYukle();
-            oturumKontrolEt();
-        };
-
-        request.onupgradeneeded = function(event) {
-            db = event.target.result;
-            if (!db.objectStoreNames.contains("songs")) {
-                db.createObjectStore("songs", { keyPath: "id", autoIncrement: true });
-            }
-            if (!db.objectStoreNames.contains("profile")) {
-                db.createObjectStore("profile", { keyPath: "id" });
-            }
-            if (!db.objectStoreNames.contains("users")) {
-                db.createObjectStore("users", { keyPath: "email" });
-            }
-        };
-
-        function favoriDegistir(songId) {
-            const index = favoriIdler.indexOf(songId);
-            if (index > -1) {
-                favoriIdler.splice(index, 1);
-            } else {
-                favoriIdler.push(songId);
-            }
-            localStorage.setItem("favoriIdler", JSON.stringify(favoriIdler));
-            sarkilariYukle();
-            favorileriGoster();
-        }
-
-        function favorileriGoster() {
-            const favContainer = document.getElementById("favoriSarkilarListesi");
-            const favSongs = tumSarkilarDizisi.filter(s => favoriIdler.includes(s.id));
-
-            if (favSongs.length === 0) {
-                favContainer.innerHTML = "<p>Favori şarkı eklenmemiş.</p>";
-                return;
-            }
-
-            let html = "";
-            favSongs.forEach((song) => {
-                let gerçekIndex = tumSarkilarDizisi.indexOf(song);
-                let coverUrl = song.imageFile ? URL.createObjectURL(song.imageFile) : "";
-                let coverTag = coverUrl ? `<img src="${coverUrl}" class="song-thumb">` : `<div class="song-thumb">Kapak</div>`;
-
-                html += `
-                    <div class="song-card">
-                        <div class="song-info">
-                            ${coverTag}
-                            <div class="song-details">
-                                <div class="title">${song.title}</div>
-                                <div class="artist">${song.artist}</div>
-                            </div>
-                        </div>
-                        <div class="actions-group">
-                            <button class="fav-btn-item" onclick="favoriDegistir(${song.id})">❤️</button>
-                            <button class="play-btn-item" onclick="sarkiyiCal(${gerçekIndex})">Çal 🎵</button>
-                        </div>
-                    </div>
-                `;
-            });
-            favContainer.innerHTML = html;
-        }
-
-        function playlistOlustur() {
-            const input = document.getElementById("yeniListeAdi");
-            const name = input.value.trim();
-            if (!name) {
-                alert("Lütfen liste adı girin!");
-                return;
-            }
-            calmaliListeleri.push({ name: name, songs: [] });
-            localStorage.setItem("calmaliListeleri", JSON.stringify(calmaliListeleri));
-            input.value = "";
-            playlistleriGoster();
-            alert("Çalma listesi oluşturuldu!");
-        }
-
-        function sarkiyiListeyeEkle(listeAdi, songId) {
-            let liste = calmaliListeleri.find(l => l.name === listeAdi);
-            if (liste && !liste.songs.includes(songId)) {
-                liste.songs.push(songId);
-                localStorage.setItem("calmaliListeleri", JSON.stringify(calmaliListeleri));
-                alert("Şarkı listeye eklendi!");
-                playlistleriGoster();
-            } else {
-                alert("Şarkı zaten bu listede.");
+            if (data.user) {
+                // Profili veritabanına kaydet
+                await supabaseClient.from('profiles').insert([{ id: data.user.id, username, bio: 'Zaman Perdesi Onaylı Sanatçısı', verified: true, followers: [] }]);
+                alert('Kayıt başarılı! Lütfen giriş yapın.');
             }
         }
 
-        function playlistleriGoster() {
-            const container = document.getElementById("calmaListeleriAlani");
-            if (calmaliListeleri.length === 0) {
-                container.innerHTML = "<p>Henüz çalma listesi oluşturulmadı.</p>";
-                return;
-            }
+        // Supabase Giriş Yap
+        async function handleSupabaseLogin() {
+            const email = document.getElementById('auth-email').value.trim();
+            const password = document.getElementById('auth-password').value.trim();
 
-            let html = "";
-            calmaliListeleri.forEach((liste) => {
-                html += `<div style="background: #181818; padding: 12px; border-radius: 8px; margin-bottom: 12px; border: 1px solid #282828;">
-                    <h3 style="color: #ffb703; font-size: 16px; margin-bottom: 8px;">📂 ${liste.name}</h3>`;
-                
-                if (liste.songs.length === 0) {
-                    html += `<p style="font-size:12px;">Bu listede şarkı yok.</p>`;
-                } else {
-                    liste.songs.forEach(sId => {
-                        let song = tumSarkilarDizisi.find(s => s.id === sId);
-                        if (song) {
-                            let gerçekIndex = tumSarkilarDizisi.indexOf(song);
-                            html += `
-                                <div class="song-card" style="margin-top:6px; margin-bottom:6px;">
-                                    <div class="song-info">
-                                        <div class="song-details">
-                                            <div class="title" style="font-size:13px;">${song.title}</div>
-                                            <div class="artist" style="font-size:11px;">${song.artist}</div>
-                                        </div>
-                                    </div>
-                                    <button class="play-btn-item" onclick="sarkiyiCal(${gerçekIndex})">Çal 🎵</button>
-                                </div>
-                            `;
-                        }
-                    });
-                }
-                html += `</div>`;
-            });
-            container.innerHTML = html;
+            if (!email || !password) return alert('E-posta ve şifre girin.');
+
+            const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+            if (error) return alert('Giriş hatası: ' + error.message);
+
+            currentUser = data.user;
+            let { data: profileData } = await supabaseClient.from('profiles').select('*').eq('id', currentUser.id).single();
+            if (profileData) currentUser.profile = profileData;
+
+            renderAuthScreen();
+            alert('Başarıyla giriş yapıldı!');
         }
 
-        function kuzeyfeProfiliKaydet() {
-            const aktifEmail = localStorage.getItem("aktifEmail");
-            if (aktifEmail !== KURUCU_EMAIL) {
-                alert("Yetkisiz işlem! Bu profili yalnızca kurucu (" + KURUCU_EMAIL + ") güncelleyebilir.");
-                return;
-            }
+        async function supabaseLogout() {
+            await supabaseClient.auth.signOut();
+            currentUser = null;
+            renderAuthScreen();
+            alert('Oturum kapatıldı.');
+        }
 
-            const yeniBio = document.getElementById("kuzeyfeBioInput").value.trim();
-            const resimInput = document.getElementById("kuzeyfeResimInput");
-            const yeniResim = resimInput.files.length > 0 ? resimInput.files[0] : null;
-
-            const transaction = db.transaction(["profile"], "readwrite");
-            const store = transaction.objectStore("profile");
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.nav-tab').forEach(el => el.classList.remove('active'));
             
-            let profileData = { id: "kuzeyfe", bio: yeniBio, image: yeniResim };
-            
-            const getReq = store.get("kuzeyfe");
-            getReq.onsuccess = function(e) {
-                let existing = e.target.result;
-                if (existing && !yeniResim) {
-                    profileData.image = existing.image;
-                }
-                store.put(profileData);
-                alert("Kuzeyfe Kalafat profili başarıyla güncellendi! 🎉");
-                kuzeyfeProfiliYukle();
-            };
+            document.getElementById('tab-' + tabId).classList.remove('hidden');
+            event && event.target.classList.add('active');
+
+            if (tabId === 'home') renderHome();
+            if (tabId === 'auth') renderAuthScreen();
+            if (tabId === 'songs') renderSongs();
+            if (tabId === 'favorites') renderFavorites();
+            if (tabId === 'playlists') renderPlaylists();
+            if (tabId === 'history') renderHistory();
+            if (tabId === 'artists') renderArtists();
         }
 
-        function kuzeyfeProfiliYukle() {
-            if (!db) return;
-            
-            const aktifEmail = localStorage.getItem("aktifEmail");
-            const duzenlemeBolumu = document.getElementById("kuzeyfeDuzenlemeBolumu");
-            const bilgiNotu = document.getElementById("kuzeyfeBilgiNotu");
-
-            // Sadece kurucu maili girilmişse Kuzeyfe profili sekmesinde düzenleme alanı açılır
-            if (aktifEmail === KURUCU_EMAIL) {
-                duzenlemeBolumu.style.display = "block";
-                bilgiNotu.style.display = "none";
-            } else {
-                duzenlemeBolumu.style.display = "none";
-                bilgiNotu.style.display = "block";
-            }
-
-            const transaction = db.transaction(["profile", "songs"], "readonly");
-            const profileStore = transaction.objectStore("profile");
-            const profReq = profileStore.get("kuzeyfe");
-
-            profReq.onsuccess = function(event) {
-                const profile = event.target.result;
-                if (profile) {
-                    if(profile.bio) {
-                        document.getElementById("kuzeyfeBioInput").value = profile.bio;
-                        document.getElementById("kuzeyfeBiyoGosterge").innerText = profile.bio;
-                    }
-                    if (profile.image) {
-                        let imgUrl = URL.createObjectURL(profile.image);
-                        document.getElementById("kuzeyfeAvatarAlan").innerHTML = `<img src="${imgUrl}" class="profile-avatar">`;
-                    }
-                }
-            };
-
-            const songStore = transaction.objectStore("songs");
-            const songReq = songStore.getAll();
-
-            songReq.onsuccess = function(event) {
-                const allSongs = event.target.result;
-                const kuzeyfeSarkilari = document.getElementById("kuzeyfeSarkilari");
-                const kuzeyfeSongs = allSongs.filter(s => s.artist === "Kuzeyfe Kalafat");
-                
-                if (kuzeyfeSongs.length === 0) {
-                    kuzeyfeSarkilari.innerHTML = "<p>Yüklenen parça bulunmuyor.</p>";
-                    return;
-                }
-
-                let html = "";
-                kuzeyfeSongs.forEach((song) => {
-                    let gerçekIndex = allSongs.indexOf(song);
-                    let coverUrl = song.imageFile ? URL.createObjectURL(song.imageFile) : "";
-                    let coverTag = coverUrl ? `<img src="${coverUrl}" class="song-thumb">` : `<div class="song-thumb">Kapak</div>`;
-                    let isFav = favoriIdler.includes(song.id);
-
-                    html += `
-                        <div class="song-card">
-                            <div class="song-info">
-                                ${coverTag}
-                                <div class="song-details">
-                                    <div class="title">${song.title}</div>
-                                    <div class="artist">${song.artist} ${song.album ? '• ' + song.album : ''}</div>
-                                </div>
-                            </div>
-                            <div class="actions-group">
-                                <button class="fav-btn-item" onclick="favoriDegistir(${song.id})">${isFav ? '❤️' : '🤍'}</button>
-                                <button class="play-btn-item" onclick="sarkiyiCal(${gerçekIndex})">Çal 🎵</button>
-                            </div>
-                        </div>
-                    `;
-                });
-                kuzeyfeSarkilari.innerHTML = html;
-            };
-        }
-
-        function authModDegistir(mod) {
-            if (mod === 'kayit') {
-                document.getElementById("girisFormuBolumu").style.display = "none";
-                document.getElementById("kayitFormuBolumu").style.display = "block";
-            } else {
-                document.getElementById("kayitFormuBolumu").style.display = "none";
-                document.getElementById("girisFormuBolumu").style.display = "block";
-            }
-        }
-
-        function uyeKayitOl() {
-            const ad = document.getElementById("regAd").value.trim();
-            const email = document.getElementById("regEmail").value.trim();
-            const password = document.getElementById("regPassword").value.trim();
-
-            if (!ad || !email || !password) {
-                alert("Lütfen tüm alanları doldurun!");
+        function renderHome() {
+            const container = document.getElementById('trending-container');
+            if (songs.length === 0) {
+                container.innerHTML = '<div class="card"><p style="color: var(--text-muted); text-align: center;">Henüz bulutta öne çıkan şarkı bulunmuyor.</p></div>';
                 return;
             }
-
-            const transaction = db.transaction(["users"], "readwrite");
-            const store = transaction.objectStore("users");
-            const req = store.add({ name: ad, email: email, password: password, bio: "", profileImage: null });
-
-            req.onsuccess = function() {
-                alert("Kayıt başarılı! Şimdi giriş yapabilirsiniz.");
-                authModDegistir('giris');
-            };
-            req.onerror = function() {
-                alert("Bu e-posta adresi zaten kayıtlı!");
-            };
-        }
-
-        function uyeGirisYap() {
-            const email = document.getElementById("authEmail").value.trim();
-            const password = document.getElementById("authPassword").value.trim();
-
-            if (!email || !password) {
-                alert("Lütfen bilgileri girin!");
-                return;
-            }
-
-            const transaction = db.transaction(["users"], "readonly");
-            const store = transaction.objectStore("users");
-            const req = store.get(email);
-
-            req.onsuccess = function(event) {
-                const user = event.target.result;
-                if (user && user.password === password) {
-                    localStorage.setItem("aktifEmail", user.email);
-                    localStorage.setItem("aktifKullanici", user.name);
-
-                    oturumKontrolEt();
-                    kuzeyfeProfiliYukle();
-                    alert("Giriş başarılı, hoş geldin " + user.name + "!");
-                    
-                    // Eğer kurucu girişi yaptıysa direkt Kuzeyfe profiline yönlendir ve düzenleme yetkisini aç
-                    if (user.email === KURUCU_EMAIL) {
-                        switchTab(null, 'kuzeyfe-profil');
-                    } else {
-                        switchTab(null, 'uye-profil');
-                    }
-                } else {
-                    alert("Hatalı e-posta veya şifre!");
-                }
-            };
-        }
-
-        function oturumKontrolEt() {
-            const aktifUser = localStorage.getItem("aktifKullanici");
-            const aktifEmail = localStorage.getItem("aktifEmail");
-            const ustGirisBtn = document.getElementById("ustGirisBtn");
-            const aktifKullaniciPaneli = document.getElementById("aktifKullaniciPaneli");
-            const girisFormuBolumu = document.getElementById("girisFormuBolumu");
-            const uyeSayfaTab = document.getElementById("uyeSayfaTab");
-
-            if (aktifUser) {
-                if (aktifEmail === KURUCU_EMAIL) {
-                    ustGirisBtn.innerText = "⭐ Kuzeyfe (Kurucu)";
-                    ustGirisBtn.setAttribute("onclick", "switchTab(event, 'kuzeyfe-profil')");
-                    uyeSayfaTab.style.display = "none"; // Kurucu kendi resmi profilini doğrudan düzenleyebilir
-                } else {
-                    ustGirisBtn.innerText = aktifUser;
-                    ustGirisBtn.setAttribute("onclick", "switchTab(event, 'uye-profil')");
-                    uyeSayfaTab.style.display = "block";
-                    uyeSayfaTab.innerText = "👤 " + aktifUser + " (Profilim)";
-                }
-                aktifKullaniciPaneli.style.display = "block";
-                girisFormuBolumu.style.display = "none";
-                document.getElementById("aktifKullaniciAdi").innerText = aktifUser;
-            } else {
-                ustGirisBtn.innerText = "Giriş / Üye Ol";
-                ustGirisBtn.setAttribute("onclick", "switchTab(event, 'giris-paneli')");
-                aktifKullaniciPaneli.style.display = "none";
-                girisFormuBolumu.style.display = "block";
-                uyeSayfaTab.style.display = "none";
-            }
-        }
-
-        function cikisYap() {
-            localStorage.removeItem("aktifKullanici");
-            localStorage.removeItem("aktifEmail");
-            oturumKontrolEt();
-            kuzeyfeProfiliYukle();
-            alert("Oturum kapatıldı.");
-            switchTab(null, 'ana-sayfa');
-        }
-
-        function uyeBilgileriniKaydet() {
-            const aktifEmail = localStorage.getItem("aktifEmail");
-            if (!aktifEmail) {
-                alert("Önce giriş yapmalısın!");
-                return;
-            }
-
-            const yeniBio = document.getElementById("uyeBioInput").value.trim();
-            const resimInput = document.getElementById("uyeResimInput");
-            const yeniResim = resimInput.files.length > 0 ? resimInput.files[0] : null;
-
-            const transaction = db.transaction(["users"], "readwrite");
-            const store = transaction.objectStore("users");
-            const req = store.get(aktifEmail);
-
-            req.onsuccess = function(event) {
-                let user = event.target.result;
-                if (user) {
-                    user.bio = yeniBio;
-                    if (yeniResim) {
-                        user.profileImage = yeniResim;
-                    }
-                    store.put(user);
-                    alert("Sanatçı profilin başarıyla kaydedildi! 🎉");
-                    uyeProfiliYukle();
-                }
-            };
-        }
-
-        function uyeProfiliYukle() {
-            const aktifEmail = localStorage.getItem("aktifEmail");
-            if (!aktifEmail || !db) return;
-
-            const transaction = db.transaction(["users", "songs"], "readonly");
-            const userStore = transaction.objectStore("users");
-            const userReq = userStore.get(aktifEmail);
-
-            userReq.onsuccess = function(event) {
-                const user = event.target.result;
-                if (user) {
-                    document.getElementById("uyeIsimBaslik").innerText = user.name;
-                    document.getElementById("uyeEmailGosterge").innerText = user.email;
-                    document.getElementById("uyeBioInput").value = user.bio || "";
-                    if (user.profileImage) {
-                        let imgUrl = URL.createObjectURL(user.profileImage);
-                        document.getElementById("uyeAvatarAlan").innerHTML = `<img src="${imgUrl}" class="profile-avatar">`;
-                    }
-                }
-            };
-
-            const songStore = transaction.objectStore("songs");
-            const songReq = songStore.getAll();
-
-            songReq.onsuccess = function(event) {
-                const allSongs = event.target.result;
-                const aktifUserAdi = localStorage.getItem("aktifKullanici");
-                const userSongs = allSongs.filter(s => s.artist === aktifUserAdi);
-                const uyeSarkilari = document.getElementById("uyeSarkilari");
-
-                if (userSongs.length === 0) {
-                    uyeSarkilari.innerHTML = "<p>Parça bulunmuyor.</p>";
-                    return;
-                }
-
-                let html = "";
-                userSongs.forEach((song) => {
-                    let gerçekIndex = allSongs.indexOf(song);
-                    let coverUrl = song.imageFile ? URL.createObjectURL(song.imageFile) : "";
-                    let coverTag = coverUrl ? `<img src="${coverUrl}" class="song-thumb">` : `<div class="song-thumb">Kapak</div>`;
-                    let isFav = favoriIdler.includes(song.id);
-
-                    html += `
-                        <div class="song-card">
-                            <div class="song-info">
-                                ${coverTag}
-                                <div class="song-details">
-                                    <div class="title">${song.title}</div>
-                                    <div class="artist">${song.artist}</div>
-                                </div>
-                            </div>
-                            <div class="actions-group">
-                                <button class="fav-btn-item" onclick="favoriDegistir(${song.id})">${isFav ? '❤️' : '🤍'}</button>
-                                <button class="play-btn-item" onclick="sarkiyiCal(${gerçekIndex})">Çal 🎵</button>
-                            </div>
-                        </div>
-                    `;
-                });
-                uyeSarkilari.innerHTML = html;
-            };
-        }
-
-        function sarkiyiYayinlaTikla() {
-            const titleInput = document.getElementById("sarkiAdiInput");
-            const mp3FileInput = document.getElementById("mp3Input");
-            const imgFileInput = document.getElementById("imageInput");
-            const albumInput = document.getElementById("albumAdiInput");
-            const sozlerInput = document.getElementById("sozlerInput");
-            const turInput = document.getElementById("turInput");
-
-            const title = titleInput.value.trim();
-            if (!title) {
-                alert("Lütfen şarkı adı girin!");
-                return;
-            }
-            if (mp3FileInput.files.length === 0) {
-                alert("Lütfen MP3 dosyası seçin!");
-                return;
-            }
-
-            const aktifUser = localStorage.getItem("aktifKullanici");
-            if (!aktifUser) {
-                alert("Lütfen önce giriş yapın!");
-                switchTab(null, 'giris-paneli');
-                return;
-            }
-
-            alert("Şarkı yükleniyor...");
-
-            const newSong = {
-                title: title,
-                artist: aktifUser,
-                album: albumInput.value.trim(),
-                category: turInput.value,
-                lyrics: sozlerInput.value.trim(),
-                audioFile: mp3FileInput.files[0],
-                imageFile: imgFileInput.files.length > 0 ? imgFileInput.files[0] : null
-            };
-
-            const transaction = db.transaction(["songs"], "readwrite");
-            const store = transaction.objectStore("songs");
-            const requestAdd = store.add(newSong);
-
-            requestAdd.onsuccess = function() {
-                alert("Şarkı başarıyla yayınlandı! 🎉");
-                titleInput.value = "";
-                mp3FileInput.value = "";
-                imgFileInput.value = "";
-                albumInput.value = "";
-                sozlerInput.value = "";
-                sarkilariYukle();
-                kuzeyfeProfiliYukle();
-                switchTab(null, 'sarkilar');
-            };
-        }
-
-        function sarkilariYukle() {
-            if (!db) {
-                setTimeout(sarkilariYukle, 200);
-                return;
-            }
-            const transaction = db.transaction(["songs"], "readonly");
-            const store = transaction.objectStore("songs");
-            const requestAll = store.getAll();
-
-            requestAll.onsuccess = function(event) {
-                tumSarkilarDizisi = event.target.result;
-                listeleriGuncelle(tumSarkilarDizisi);
-            };
-        }
-
-        function listeleriGuncelle(songs) {
-            const sarkilarListesi = document.getElementById("sarkilarListesi");
-            const teklilerListesi = document.getElementById("teklilerListesi");
-            const albumlerListesi = document.getElementById("albumlerListesi");
-            const oneCikanAlan = document.getElementById("oneCikanAlan");
-
-            if (!songs || songs.length === 0) {
-                sarkilarListesi.innerHTML = "<p>Listelenecek şarkı yok.</p>";
-                teklilerListesi.innerHTML = "<p>Tekli parça bulunmuyor.</p>";
-                albumlerListesi.innerHTML = "<p>Albüm bulunmuyor.</p>";
-                return;
-            }
-
-            let htmlContent = "";
-            let tekliHtml = "";
-            let albumHtml = "";
-
-            songs.forEach((song, index) => {
-                let coverUrl = song.imageFile ? URL.createObjectURL(song.imageFile) : "";
-                let coverTag = coverUrl ? `<img src="${coverUrl}" class="song-thumb">` : `<div class="song-thumb">Kapak</div>`;
-                let isFav = favoriIdler.includes(song.id);
-
-                let playlistSecenekleri = "";
-                calmaliListeleri.forEach(l => {
-                    playlistSecenekleri += `<option value="${l.name}">${l.name}</option>`;
-                });
-
-                let itemHtml = `
-                    <div class="song-card">
-                        <div class="song-info">
-                            ${coverTag}
-                            <div class="song-details">
-                                <div class="title">${song.title}</div>
-                                <div class="artist">${song.artist} ${song.album ? '• ' + song.album : ''}</div>
-                                ${playlistSecenekleri ? `<div style="margin-top:4px;"><select style="background:#222; color:#fff; font-size:11px; padding:2px; border-radius:4px;" onchange="sarkiyiListeyeEkle(this.value, ${song.id}); this.selectedIndex=0;"><option value="">➕ Listeye Ekle...</option>${playlistSecenekleri}</select></div>` : ''}
-                            </div>
-                        </div>
-                        <div class="actions-group">
-                            <button class="fav-btn-item" onclick="favoriDegistir(${song.id})">${isFav ? '❤️' : '🤍'}</button>
-                            <button class="play-btn-item" onclick="sarkiyiCal(${index})">Çal 🎵</button>
-                        </div>
+            container.innerHTML = songs.slice(0, 5).map(s => `
+                <div class="track-item">
+                    <div class="track-info">
+                        <h4>🔥 ${s.title}</h4>
+                        <p>${s.artist} <span class="verified-badge">✓</span></p>
                     </div>
-                `;
-
-                htmlContent += itemHtml;
-                if (song.category === "Tekli (Single)") {
-                    tekliHtml += itemHtml;
-                } else {
-                    albumHtml += itemHtml;
-                }
-            });
-
-            sarkilarListesi.innerHTML = htmlContent;
-            teklilerListesi.innerHTML = tekliHtml || "<p>Tekli parça bulunmuyor.</p>";
-            albumlerListesi.innerHTML = albumHtml || "<p>Albüm parçası bulunmuyor.</p>";
-
-            let sonSong = songs[songs.length - 1];
-            let sonCoverUrl = sonSong.imageFile ? URL.createObjectURL(sonSong.imageFile) : "";
-            let sonCoverTag = sonCoverUrl ? `<img src="${sonCoverUrl}" style="width:50px; height:50px; border-radius:4px; object-fit:cover;">` : `<div style="width:50px; height:50px; background:#333; border-radius:4px; display:flex; align-items:center; justify-content:center; color:#777;">Kapak</div>`;
-
-            oneCikanAlan.innerHTML = `
-                <div style="background: #181818; padding: 12px; border-radius: 8px; display: flex; gap: 12px; align-items: center; justify-content:space-between;">
-                    <div style="display:flex; gap:12px; align-items:center;">
-                        ${sonCoverTag}
-                        <div>
-                            <div style="font-weight: bold; font-size: 14px;">${sonSong.title}</div>
-                            <p>${sonSong.artist}</p>
-                        </div>
+                    <div class="track-actions">
+                        <button class="icon-btn" onclick="playSong('${s.id}')">▶</button>
                     </div>
-                    <button class="play-btn-item" onclick="sarkiyiCal(${songs.length - 1})">Çal 🎵</button>
                 </div>
+            `).join('');
+        }
+
+        function renderAuthScreen() {
+            if (currentUser) {
+                document.getElementById('auth-box').classList.add('hidden');
+                document.getElementById('profile-box').classList.remove('hidden');
+                const profile = currentUser.profile || { username: 'Bulut Kullanıcısı', followers: [] };
+                document.getElementById('profile-display-name').innerHTML = `${profile.username} <span class="verified-badge">✓</span>`;
+                document.getElementById('profile-followers-count').textContent = `Takipçi Sayısı: ${profile.followers ? profile.followers.length : 0}`;
+                document.getElementById('edit-bio').value = profile.bio || '';
+            } else {
+                document.getElementById('auth-box').classList.remove('hidden');
+                document.getElementById('profile-box').classList.add('hidden');
+            }
+        }
+
+        async function updateProfileData() {
+            if (!currentUser) return;
+            const newBio = document.getElementById('edit-bio').value;
+            await supabaseClient.from('profiles').update({ bio: newBio }).eq('id', currentUser.id);
+            alert('Profil bulutta güncellendi!');
+        }
+
+        function openProfile(username) {
+            let user = users.find(u => u.username === username);
+            if (!user) return;
+            viewedProfileUser = user;
+
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.getElementById('tab-user-profile').classList.remove('hidden');
+
+            document.getElementById('view-profile-name').innerHTML = `${user.username} <span class="verified-badge">✓</span>`;
+            document.getElementById('view-profile-bio').textContent = user.bio || 'Biyografi bulunmuyor.';
+            document.getElementById('view-profile-followers').textContent = `Takipçi: ${user.followers ? user.followers.length : 0}`;
+            
+            const followBtn = document.getElementById('follow-btn');
+            if (currentUser && currentUser.profile && currentUser.profile.username === user.username) {
+                followBtn.style.display = 'none';
+            } else {
+                followBtn.style.display = 'block';
+            }
+
+            const artistSongs = songs.filter(s => s.artist === user.username);
+            const container = document.getElementById('view-profile-tracks');
+            container.innerHTML = artistSongs.length === 0 ? '<p style="color: var(--text-muted);">Yayınlanmış şarkı yok.</p>' : artistSongs.map(s => `
+                <div class="track-item">
+                    <div class="track-info">
+                        <h4>${s.title}</h4>
+                        <p>${s.category}</p>
+                    </div>
+                    <button class="icon-btn" onclick="playSong('${s.id}')">▶</button>
+                </div>
+            `).join('');
+        }
+
+        function renderArtists() {
+            const grid = document.getElementById('artists-grid');
+            grid.innerHTML = users.map(u => `
+                <div class="artist-card" onclick="openProfile('${u.username}')">
+                    <img src="${u.avatar || 'https://via.placeholder.com/70'}" alt="Avatar">
+                    <h4 style="font-size: 0.9rem;">${u.username} <span class="verified-badge">✓</span></h4>
+                </div>
+            `).join('');
+        }
+
+        // OTOMATİK KÜNYELİ ŞARKI EKLEME (Supabase Storage entegre edilebilir)
+        async function addNewSong() {
+            const title = document.getElementById('song-title').value.trim();
+            const category = document.getElementById('song-category').value;
+            const album = document.getElementById('song-album').value.trim();
+            const rawLyrics = document.getElementById('song-lyrics').value.trim();
+            const fileInput = document.getElementById('song-file');
+
+            if (!title || !fileInput.files[0]) {
+                return alert('Lütfen şarkı adı ve ses dosyası seçin.');
+            }
+
+            const artistName = currentUser && currentUser.profile ? currentUser.profile.username : 'Kuzeyfe Kalafat';
+            const fullLyrics = `${rawLyrics}\n\n--------------------\nKünye & Yapım Bilgileri:\nSöz Yazarı: Kuzeyfe Kalafat\nYapım: Zaman Perdesi Music\nWebsitesi: zamanperdesimusic.com.tr`;
+
+            const readerAudio = new FileReader();
+            readerAudio.onload = async function(eAudio) {
+                const audioUrl = eAudio.target.result; // Base64 veya Supabase Storage URL
+
+                const newSong = {
+                    id: 'song_' + Date.now(),
+                    title, artist: artistName, category, album, lyrics: fullLyrics, audioUrl, coverUrl: ''
+                };
+
+                // Buluta kaydet
+                const { error } = await supabaseClient.from('songs').insert([newSong]);
+                if (error) {
+                    alert('Şarkı buluta kaydedilemedi: ' + error.message);
+                } else {
+                    songs.push(newSong);
+                    alert('Şarkı ve resmi künye buluta başarıyla yayınlandı!');
+                    switchTab('songs');
+                }
+            };
+            readerAudio.readAsDataURL(fileInput.files[0]);
+        }
+
+        function renderSongs() {
+            const list = document.getElementById('all-songs-list');
+            if (songs.length === 0) {
+                list.innerHTML = '<p style="color: var(--text-muted);">Listelenecek şarkı yok.</p>';
+                return;
+            }
+            list.innerHTML = songs.map(s => `
+                <div class="track-item">
+                    <div class="track-info">
+                        <h4>${s.title}</h4>
+                        <p>${s.artist} <span class="verified-badge">✓</span></p>
+                    </div>
+                    <div class="track-actions">
+                        <button class="icon-btn" onclick="openLyricsModal('${s.id}')">📜</button>
+                        <button class="icon-btn" onclick="toggleFavorite('${s.id}')">${favorites.includes(s.id) ? '❤️' : '🤍'}</button>
+                        <button class="icon-btn" onclick="playSong('${s.id}')">▶</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function openLyricsModal(id) {
+            const s = songs.find(x => x.id === id);
+            if (!s) return;
+            document.getElementById('modal-container').classList.remove('hidden');
+            document.getElementById('modal-body').innerHTML = `
+                <h3 style="color: var(--primary-color); margin-bottom: 10px;">${s.title} - Şarkı Sözleri & Künye</h3>
+                <pre style="white-space: pre-wrap; font-family: inherit; color: var(--text-main); font-size: 0.9rem; line-height: 1.5;">${s.lyrics || 'Söz eklenmemiş.'}</pre>
             `;
         }
 
-        function sarkiyiCal(index) {
-            aktifCalinanIndex = index;
-            const song = tumSarkilarDizisi[index];
-            const audioPlayer = document.getElementById("sesCalici");
+        function closeModal() {
+            document.getElementById('modal-container').classList.add('hidden');
+        }
 
-            document.getElementById("aktifBaslik").innerText = song.title;
-            document.getElementById("aktifSanatci").innerText = song.artist;
+        function playSong(id) {
+            currentTrackIndex = songs.findIndex(s => s.id === id);
+            if (currentTrackIndex === -1) return;
+            let song = songs[currentTrackIndex];
 
-            const kapakDiv = document.getElementById("aktifKapak");
-            if (song.imageFile) {
-                let imgUrl = URL.createObjectURL(song.imageFile);
-                kapakDiv.outerHTML = `<img src="${imgUrl}" class="player-thumb" id="aktifKapak">`;
+            audio.src = song.audioUrl;
+            audio.play();
+            document.getElementById('play-btn').textContent = '⏸';
+            document.getElementById('player-title').textContent = song.title;
+            document.getElementById('player-artist').textContent = song.artist;
+            document.getElementById('player-thumb').src = song.coverUrl || '';
+
+            history = history.filter(h => h.id !== song.id);
+            history.unshift(song);
+            localStorage.setItem('zp_history', JSON.stringify(history));
+        }
+
+        function togglePlay() {
+            if (audio.paused) {
+                if (audio.src) { audio.play(); document.getElementById('play-btn').textContent = '⏸'; }
             } else {
-                kapakDiv.outerHTML = `<div class="player-thumb" id="aktifKapak" style="display:flex; align-items:center; justify-content:center; color:#777; font-size:10px;">Kapak</div>`;
+                audio.pause();
+                document.getElementById('play-btn').textContent = '▶';
             }
-
-            audioPlayer.src = URL.createObjectURL(song.audioFile);
-            audioPlayer.play();
-            document.getElementById("oynatDurdurBtn").innerText = "⏸";
         }
 
-        function oynatmaKontrol() {
-            const audioPlayer = document.getElementById("sesCalici");
-            const btn = document.getElementById("oynatDurdurBtn");
+        function nextTrack() {
+            if (songs.length === 0) return;
+            currentTrackIndex = (currentTrackIndex + 1) % songs.length;
+            playSong(songs[currentTrackIndex].id);
+        }
 
-            if (audioPlayer.paused) {
-                if (audioPlayer.src) {
-                    audioPlayer.play();
-                    btn.innerText = "⏸";
-                } else if (tumSarkilarDizisi.length > 0) {
-                    sarkiyiCal(0);
-                }
+        function prevTrack() {
+            if (songs.length === 0) return;
+            currentTrackIndex = (currentTrackIndex - 1 + songs.length) % songs.length;
+            playSong(songs[currentTrackIndex].id);
+        }
+
+        function toggleFavorite(id) {
+            if (favorites.includes(id)) {
+                favorites = favorites.filter(f => f !== id);
             } else {
-                audioPlayer.pause();
-                btn.innerText = "▶";
+                favorites.push(id);
             }
+            localStorage.setItem('zp_favorites', JSON.stringify(favorites));
+            renderSongs();
         }
 
-        function sonrakiSarki() {
-            if (tumSarkilarDizisi.length === 0) return;
-            aktifCalinanIndex = (aktifCalinanIndex + 1) % tumSarkilarDizisi.length;
-            sarkiyiCal(aktifCalinanIndex);
+        function renderFavorites() {
+            const list = document.getElementById('favorites-list');
+            const favSongs = songs.filter(s => favorites.includes(s.id));
+            list.innerHTML = favSongs.length === 0 ? '<p style="color: var(--text-muted);">Favori şarkı yok.</p>' : favSongs.map(s => `
+                <div class="track-item">
+                    <div class="track-info"><h4>${s.title}</h4><p>${s.artist}</p></div>
+                    <button class="icon-btn" onclick="playSong('${s.id}')">▶</button>
+                </div>
+            `).join('');
         }
 
-        function oncekiSarki() {
-            if (tumSarkilarDizisi.length === 0) return;
-            aktifCalinanIndex = (aktifCalinanIndex - 1 + tumSarkilarDizisi.length) % tumSarkilarDizisi.length;
-            sarkiyiCal(aktifCalinanIndex);
+        function renderHistory() {
+            const list = document.getElementById('history-list');
+            list.innerHTML = history.length === 0 ? '<p style="color: var(--text-muted);">Geçmiş boş.</p>' : history.map(s => `
+                <div class="track-item">
+                    <div class="track-info"><h4>${s.title}</h4><p>${s.artist}</p></div>
+                    <button class="icon-btn" onclick="playSong('${s.id}')">▶</button>
+                </div>
+            `).join('');
         }
 
-        function aramaYap(query) {
-            const sonucDiv = document.getElementById("aramaSonuclari");
-            if (!query.trim()) {
-                sonucDiv.innerHTML = "";
-                return;
-            }
-            let filtrelenmis = tumSarkilarDizisi.filter(s => s.title.toLowerCase().includes(query.toLowerCase()) || (s.album && s.album.toLowerCase().includes(query.toLowerCase())));
-            
-            if (filtrelenmis.length === 0) {
-                sonucDiv.innerHTML = "<p style='margin-top:10px;'>Arama sonucu bulunamadı.</p>";
-                return;
-            }
-
-            let html = "<h3 style='font-size:16px; color:#ffb703; margin:15px 0 10px 0;'>Arama Sonuçları</h3>";
-            filtrelenmis.forEach((song) => {
-                let gerçekIndex = tumSarkilarDizisi.indexOf(song);
-                html += `
-                    <div class="song-card">
-                        <div class="song-info">
-                            <div class="song-details">
-                                <div class="title">${song.title}</div>
-                                <div class="artist">${song.artist}</div>
-                            </div>
-                        </div>
-                        <button class="play-btn-item" onclick="sarkiyiCal(${gerçekIndex})">Çal 🎵</button>
-                    </div>
-                `;
-            });
-            sonucDiv.innerHTML = html;
+        function createPlaylist() {
+            const name = document.getElementById('playlist-name-input').value.trim();
+            if (!name) return alert('Liste adı girin.');
+            playlists.push({ name, tracks: [] });
+            localStorage.setItem('zp_playlists', JSON.stringify(playlists));
+            renderPlaylists();
+            alert('Çalma listesi oluşturuldu!');
         }
+
+        function renderPlaylists() {
+            const container = document.getElementById('playlists-container');
+            container.innerHTML = playlists.length === 0 ? '<p style="color: var(--text-muted);">Çalma listesi yok.</p>' : playlists.map(p => `
+                <div class="card"><h4>${p.name}</h4><p style="color: var(--text-muted); font-size: 0.8rem;">Parça: ${p.tracks.length}</p></div>
+            `).join('');
+        }
+
+        function handleSearch() {
+            const query = document.getElementById('search-input').value.toLowerCase();
+            const resultsDiv = document.getElementById('search-results');
+            if (!query) { resultsDiv.innerHTML = ''; return; }
+            const filtered = songs.filter(s => s.title.toLowerCase().includes(query) || s.artist.toLowerCase().includes(query));
+            resultsDiv.innerHTML = filtered.length === 0 ? '<p style="color: var(--text-muted);">Sonuç bulunamadı.</p>' : filtered.map(s => `
+                <div class="track-item">
+                    <div class="track-info"><h4>${s.title}</h4><p>${s.artist}</p></div>
+                    <button class="icon-btn" onclick="playSong('${s.id}')">▶</button>
+                </div>
+            `).join('');
+        }
+
+        // Uygulamayı Başlat
+        initApp();
     </script>
 </body>
 </html>
