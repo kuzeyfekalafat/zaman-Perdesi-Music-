@@ -188,6 +188,20 @@
             padding: 10px 15px;
             border-radius: 10px;
             margin-bottom: 10px;
+            gap: 12px;
+        }
+
+        .track-thumb {
+            width: 40px;
+            height: 40px;
+            border-radius: 6px;
+            background: #333;
+            object-fit: cover;
+            flex-shrink: 0;
+        }
+
+        .track-info {
+            flex: 1;
         }
 
         .track-info h4 {
@@ -468,10 +482,14 @@
                     <input type="file" id="song-file" class="form-control" accept="audio/*">
                 </div>
                 <div class="form-group">
+                    <label>Görsel Dosyası (Kapak Resmi)</label>
+                    <input type="file" id="song-image" class="form-control" accept="image/*">
+                </div>
+                <div class="form-group">
                     <label>Şarkı Sözleri</label>
                     <textarea id="song-lyrics" class="form-control" placeholder="Şarkı sözlerini buraya yazın..."></textarea>
                 </div>
-                <button class="btn" onclick="addNewSong()">Şarkıyı Yayınla</button>
+                <button class="btn" id="publishBtn" onclick="addNewSong()">Şarkıyı Yayınla</button>
             </div>
         </div>
 
@@ -677,9 +695,10 @@
             }
             container.innerHTML = songs.slice(0, 5).map(s => `
                 <div class="track-item">
+                    <img src="${s.image_url || 'https://via.placeholder.com/40'}" class="track-thumb">
                     <div class="track-info">
                         <h4 onclick="playSong('${s.id}')">🔥 ${s.title}</h4>
-                        <p>${s.artist} <span class="verified-badge">✓</span></p>
+                        <p>${s.artist || s.username || 'Kuzeyfe Kalafat'} <span class="verified-badge">✓</span></p>
                     </div>
                     <div class="track-actions">
                         <button class="icon-btn" onclick="playSong('${s.id}')">▶</button>
@@ -764,13 +783,14 @@
                 avatarImg.style.display = 'none';
             }
 
-            const artistSongs = songs.filter(s => s.artist === username);
+            const artistSongs = songs.filter(s => (s.artist || s.username) === username);
             const container = document.getElementById('view-profile-tracks');
             container.innerHTML = artistSongs.length === 0 ? '<p style="color: var(--text-muted);">Yayınlanmış şarkı yok.</p>' : artistSongs.map(s => `
                 <div class="track-item">
+                    <img src="${s.image_url || 'https://via.placeholder.com/40'}" class="track-thumb">
                     <div class="track-info">
                         <h4 onclick="playSong('${s.id}')">${s.title}</h4>
-                        <p>${s.category}</p>
+                        <p>${s.category || s.genre}</p>
                     </div>
                     <button class="icon-btn" onclick="playSong('${s.id}')">▶</button>
                 </div>
@@ -788,7 +808,7 @@
                 follows = follows.filter(f => !(f.follower === followerName && f.following === followingName));
                 alert('Takipten çıkıldı.');
             } else {
-                const newFollow = { id: 'fol_' + Date.now(), follower: followerName, following: followingName };
+                const newFollow = { follower: followerName, following: followingName };
                 await supabaseClient.from('follows').insert([newFollow]);
                 follows.push(newFollow);
                 alert('Takibe alındı!');
@@ -842,9 +862,10 @@
             const container = document.getElementById('album-tracks-list');
             container.innerHTML = albumSongs.map(s => `
                 <div class="track-item">
+                    <img src="${s.image_url || 'https://via.placeholder.com/40'}" class="track-thumb">
                     <div class="track-info">
                         <h4 onclick="playSong('${s.id}')">${s.title}</h4>
-                        <p>${s.artist}</p>
+                        <p>${s.artist || s.username || 'Kuzeyfe Kalafat'}</p>
                     </div>
                     <button class="icon-btn" onclick="playSong('${s.id}')">▶</button>
                 </div>
@@ -856,28 +877,74 @@
             const category = document.getElementById('song-category').value;
             const album = document.getElementById('song-album').value.trim();
             const rawLyrics = document.getElementById('song-lyrics').value.trim();
-            const fileInput = document.getElementById('song-file');
+            const audioInput = document.getElementById('song-file').files[0];
+            const imageInput = document.getElementById('song-image').files[0];
+            const btn = document.getElementById('publishBtn');
 
-            if (!title || !fileInput.files[0]) return alert('Lütfen şarkı adı ve ses dosyası seçin.');
+            if (!title || !audioInput) return alert('Lütfen şarkı adı ve ses dosyası (.mp3) seçin.');
+
+            btn.innerText = 'Yükleniyor...';
+            btn.disabled = true;
 
             const artistName = currentUser && currentUser.profile ? currentUser.profile.username : 'Kuzeyfe Kalafat';
             const fullLyrics = `${rawLyrics}\n\n--------------------\nKünye & Yapım Bilgileri:\nSöz Yazarı: ${artistName}\nYapım: Zaman Perdesi Music`;
 
-            const readerAudio = new FileReader();
-            readerAudio.onload = async function(eAudio) {
-                const audioUrl = eAudio.target.result;
-                const newSong = { id: 'song_' + Date.now(), title, artist: artistName, category, album, lyrics: fullLyrics, audioUrl };
+            try {
+                // 1. MP3 Yükleme (sarkilar bucket'ına)
+                const audioExt = audioInput.name.split('.').pop();
+                const audioFileName = `${Date.now()}_audio.${audioExt}`;
+                const { error: audioError } = await supabaseClient.storage
+                    .from('sarkilar')
+                    .upload(`audio/${audioFileName}`, audioInput);
 
-                const { error } = await supabaseClient.from('songs').insert([newSong]);
-                if (error) {
-                    alert('Şarkı kaydedilemedi: ' + error.message);
-                } else {
-                    songs.push(newSong);
-                    alert('Şarkı başarıyla yayınlandı!');
-                    switchTab('songs');
+                if (audioError) throw audioError;
+
+                const { data: { publicUrl: audioUrl } } = supabaseClient.storage
+                    .from('sarkilar')
+                    .getPublicUrl(`audio/${audioFileName}`);
+
+                // 2. Görsel Yükleme (Eğer seçildiyse)
+                let imageUrl = '';
+                if (imageInput) {
+                    const imgExt = imageInput.name.split('.').pop();
+                    const imgFileName = `${Date.now()}_img.${imgExt}`;
+                    const { error: imgError } = await supabaseClient.storage
+                        .from('sarkilar')
+                        .upload(`images/${imgFileName}`, imageInput);
+
+                    if (!imgError) {
+                        const { data: { publicUrl } } = supabaseClient.storage
+                            .from('sarkilar')
+                            .getPublicUrl(`images/${imgFileName}`);
+                        imageUrl = publicUrl;
+                    }
                 }
-            };
-            readerAudio.readAsDataURL(fileInput.files[0]);
+
+                // 3. Veritabanına Kayıt
+                const newSong = {
+                    title: title,
+                    artist: artistName,
+                    username: artistName,
+                    category: category,
+                    genre: category,
+                    album: album,
+                    lyrics: fullLyrics,
+                    audio_url: audioUrl,
+                    audioUrl: audioUrl,
+                    image_url: imageUrl
+                };
+
+                const { error: dbError } = await supabaseClient.from('songs').insert([newSong]);
+                if (dbError) throw dbError;
+
+                alert('Şarkı başarıyla buluta yayınlandı kanka!');
+                location.reload();
+
+            } catch (error) {
+                alert('Yükleme hatası: ' + error.message);
+                btn.innerText = 'Şarkıyı Yayınla';
+                btn.disabled = false;
+            }
         }
 
         function renderSongs() {
@@ -888,9 +955,10 @@
             }
             list.innerHTML = songs.map(s => `
                 <div class="track-item">
+                    <img src="${s.image_url || 'https://via.placeholder.com/40'}" class="track-thumb">
                     <div class="track-info">
                         <h4 onclick="playSong('${s.id}')">${s.title}</h4>
-                        <p>${s.artist} <span class="verified-badge">✓</span></p>
+                        <p>${s.artist || s.username || 'Kuzeyfe Kalafat'} <span class="verified-badge">✓</span></p>
                     </div>
                     <div class="track-actions">
                         <button class="icon-btn" onclick="openDetailsModal('${s.id}')">💬</button>
@@ -907,16 +975,18 @@
                 list.innerHTML = '<p style="color: var(--text-muted);">Şarkılarınızı görmek için lütfen giriş yapın.</p>';
                 return;
             }
-            const mySongs = songs.filter(s => s.artist === currentUser.profile.username);
+            const myUsername = currentUser.profile.username;
+            const mySongs = songs.filter(s => (s.artist || s.username) === myUsername);
             if (mySongs.length === 0) {
                 list.innerHTML = '<p style="color: var(--text-muted);">Henüz yüklediğiniz bir şarkı yok.</p>';
                 return;
             }
             list.innerHTML = mySongs.map(s => `
                 <div class="track-item">
+                    <img src="${s.image_url || 'https://via.placeholder.com/40'}" class="track-thumb">
                     <div class="track-info">
                         <h4>${s.title}</h4>
-                        <p>${s.category}</p>
+                        <p>${s.category || s.genre}</p>
                     </div>
                     <div class="track-actions">
                         <button class="icon-btn" onclick="deleteSong('${s.id}')">🗑️</button>
@@ -943,13 +1013,19 @@
             if (!s) return;
             
             const songComments = comments.filter(c => c.song_id === id);
+            const mediaUrl = s.audio_url || s.audioUrl;
 
             document.getElementById('modal-container').classList.remove('hidden');
             document.getElementById('modal-body').innerHTML = `
-                <h3 style="color: var(--primary-color); margin-bottom: 5px;">${s.title}</h3>
-                <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 15px;">Sanatçı: ${s.artist}</p>
+                <div style="display: flex; gap: 15px; align-items: center; margin-bottom: 15px;">
+                    <img src="${s.image_url || 'https://via.placeholder.com/60'}" style="width: 60px; height: 60px; border-radius: 8px; object-fit: cover;">
+                    <div>
+                        <h3 style="color: var(--primary-color); margin-bottom: 2px;">${s.title}</h3>
+                        <p style="font-size: 0.85rem; color: var(--text-muted);">Sanatçı: ${s.artist || s.username || 'Kuzeyfe Kalafat'}</p>
+                    </div>
+                </div>
                 
-                <a href="${s.audioUrl}" download="${s.title}.mp3" class="btn" style="text-align: center; display: block; text-decoration: none; margin-bottom: 15px; font-size: 0.9rem;">📥 Şarkıyı İndir (.mp3)</a>
+                <a href="${mediaUrl}" download="${s.title}.mp3" class="btn" style="text-align: center; display: block; text-decoration: none; margin-bottom: 15px; font-size: 0.9rem;">📥 Şarkıyı İndir (.mp3)</a>
 
                 <h4 style="font-size: 1rem; margin-bottom: 5px;">📜 Sözler & Künye</h4>
                 <pre style="white-space: pre-wrap; font-family: inherit; color: var(--text-main); font-size: 0.85rem; line-height: 1.4; margin-bottom: 20px; background: #181818; padding: 10px; border-radius: 6px;">${s.lyrics || 'Söz eklenmemiş.'}</pre>
@@ -976,7 +1052,7 @@
             const text = document.getElementById('new-comment-text').value.trim();
             if (!text) return alert('Yorum boş olamaz.');
 
-            const newC = { id: 'com_' + Date.now(), song_id: songId, username: currentUser.profile.username, comment: text, created_at: new Date().toISOString() };
+            const newC = { song_id: songId, username: currentUser.profile.username, comment: text };
             const { error } = await supabaseClient.from('comments').insert([newC]);
             if (error) {
                 alert('Yorum gönderilemedi: ' + error.message);
@@ -995,11 +1071,16 @@
             if (currentTrackIndex === -1) return;
             let song = songs[currentTrackIndex];
 
-            audio.src = song.audioUrl;
+            const mediaUrl = song.audio_url || song.audioUrl;
+            audio.src = mediaUrl;
             audio.play();
             document.getElementById('play-btn').textContent = '⏸';
             document.getElementById('player-title').textContent = song.title;
-            document.getElementById('player-artist').textContent = song.artist;
+            document.getElementById('player-artist').textContent = song.artist || song.username || 'Kuzeyfe Kalafat';
+
+            if (song.image_url) {
+                document.getElementById('player-thumb').src = song.image_url;
+            }
 
             history = history.filter(h => h.id !== song.id);
             history.unshift(song);
@@ -1046,7 +1127,8 @@
             const favSongs = songs.filter(s => favorites.includes(s.id));
             list.innerHTML = favSongs.length === 0 ? '<p style="color: var(--text-muted);">Favori şarkı yok.</p>' : favSongs.map(s => `
                 <div class="track-item">
-                    <div class="track-info"><h4 onclick="playSong('${s.id}')">${s.title}</h4><p>${s.artist}</p></div>
+                    <img src="${s.image_url || 'https://via.placeholder.com/40'}" class="track-thumb">
+                    <div class="track-info"><h4 onclick="playSong('${s.id}')">${s.title}</h4><p>${s.artist || s.username || 'Kuzeyfe Kalafat'}</p></div>
                     <button class="icon-btn" onclick="playSong('${s.id}')">▶</button>
                 </div>
             `).join('');
@@ -1056,10 +1138,11 @@
             const query = document.getElementById('search-input').value.toLowerCase();
             const resultsDiv = document.getElementById('search-results');
             if (!query) { resultsDiv.innerHTML = ''; return; }
-            const filtered = songs.filter(s => s.title.toLowerCase().includes(query) || s.artist.toLowerCase().includes(query));
+            const filtered = songs.filter(s => s.title.toLowerCase().includes(query) || (s.artist || s.username || '').toLowerCase().includes(query));
             resultsDiv.innerHTML = filtered.length === 0 ? '<p style="color: var(--text-muted);">Sonuç bulunamadı.</p>' : filtered.map(s => `
                 <div class="track-item">
-                    <div class="track-info"><h4 onclick="playSong('${s.id}')">${s.title}</h4><p>${s.artist}</p></div>
+                    <img src="${s.image_url || 'https://via.placeholder.com/40'}" class="track-thumb">
+                    <div class="track-info"><h4 onclick="playSong('${s.id}')">${s.title}</h4><p>${s.artist || s.username || 'Kuzeyfe Kalafat'}</p></div>
                     <button class="icon-btn" onclick="playSong('${s.id}')">▶</button>
                 </div>
             `).join('');
