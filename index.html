@@ -11,7 +11,7 @@
     <!-- Firebase SDK v9 (Modular CDN) -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail, signOut, onAuthStateChanged, updateProfile } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getAuth, signInWithEmailAndPassword, sendPasswordResetEmail, signOut, onAuthStateChanged, updateProfile } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
         import { getFirestore, collection, addDoc, getDocs, doc, setDoc, updateDoc, deleteDoc, increment, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
         import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
 
@@ -29,9 +29,9 @@
         const db = getFirestore(app);
         const storage = getStorage(app);
 
-        window.firebaseApp = { auth, db, storage, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail, signOut, updateProfile, collection, addDoc, getDocs, doc, setDoc, updateDoc, deleteDoc, increment, ref, uploadBytes, getDownloadURL };
+        window.firebaseApp = { auth, db, storage, signInWithEmailAndPassword, sendPasswordResetEmail, signOut, updateProfile, collection, addDoc, getDocs, doc, setDoc, updateDoc, deleteDoc, increment, ref, uploadBytes, getDownloadURL };
 
-        // SENİN ANA YÖNETİCİ MAİLİN (Tam Yetki)
+        // SENİN ANA YÖNETİCİ MAİLİN (Ömür Boyu Tam Yetki)
         const ADMIN_EMAIL = "kuzeyfe198634@gmail.com";
 
         onAuthStateChanged(auth, (user) => {
@@ -45,59 +45,51 @@
             const existingAdminContent = document.getElementById('yoneticiPaneli');
             if (existingAdminContent) existingAdminContent.remove();
 
-            if (user) {
-                const displayName = user.displayName || user.email.split('@')[0];
-                profileTag.innerText = displayName + " ✓";
-                
-                const inputName = document.getElementById('inputName');
-                if(inputName && user.displayName) {
-                    inputName.value = user.displayName;
-                }
+            if (user && user.email === ADMIN_EMAIL) {
+                window.isAdminLoggedIn = true;
+                profileTag.innerText = "Patron Kuzeyfe ✓";
 
-                // EĞER GİRİŞ YAPAN KİŞİ SENİNSEK (KUZEYFE) -> GİZLİ YÖNETİCİ PANELİNİ VE SEKMESİNİ OLUŞTUR
-                if (user.email === ADMIN_EMAIL) {
-                    window.isAdminLoggedIn = true;
+                // 1. Sekmelere "Yönetici Paneli" butonunu ekle
+                const adminBtn = document.createElement('button');
+                adminBtn.className = 'tab-btn admin-tab-btn';
+                adminBtn.id = 'adminTabBtn';
+                adminBtn.innerHTML = '🛡 Patron Paneli';
+                adminBtn.onclick = () => switchTab('yoneticiPaneli');
+                navTabsContainer.appendChild(adminBtn);
 
-                    // 1. Sekmelere "Yönetici Paneli" butonunu sadece sana özel ekle
-                    const adminBtn = document.createElement('button');
-                    adminBtn.className = 'tab-btn admin-tab-btn';
-                    adminBtn.id = 'adminTabBtn';
-                    adminBtn.innerHTML = '🛡 Patron Paneli';
-                    adminBtn.onclick = () => switchTab('yoneticiPaneli');
-                    navTabsContainer.appendChild(adminBtn);
-
-                    // 2. Tam yetkili Yönetici Paneli HTML içeriğini oluştur
-                    const containerDiv = document.querySelector('.container');
-                    const adminSection = document.createElement('div');
-                    adminSection.id = 'yoneticiPaneli';
-                    adminSection.className = 'section-content';
-                    adminSection.innerHTML = `
-                        <h2 class="section-title" style="color: var(--admin-red);">🛡 Patron Yönetici Paneli (Tam Yetki)</h2>
-                        <div class="admin-card">
-                            <p style="font-size: 0.9rem; color: var(--gold); margin-bottom: 6px;">Hoş geldin Patron Kuzeyfe Kalafat! 👑</p>
-                            <p style="font-size: 0.82rem; color: var(--text-muted);">Bu panel, veritabanı silme, tüm içerikleri denetleme ve tam yetki yönetimi için sadece sana özel olarak şifrelenmiştir. Diğer üyeler bu paneli asla göremez ve bilemez.</p>
+                // 2. Tam yetkili Yönetici Paneli HTML içeriğini oluştur
+                const containerDiv = document.querySelector('.container');
+                const adminSection = document.createElement('div');
+                adminSection.id = 'yoneticiPaneli';
+                adminSection.className = 'section-content';
+                adminSection.innerHTML = `
+                    <h2 class="section-title" style="color: var(--admin-red);">🛡 Patron Yönetici Paneli (Tam Yetki)</h2>
+                    <div class="admin-card">
+                        <p style="font-size: 0.9rem; color: var(--gold); margin-bottom: 6px;">Hoş geldin Patron Kuzeyfe Kalafat! 👑</p>
+                        <p style="font-size: 0.82rem; color: var(--text-muted);">Bu panel, veritabanı yönetimi ve içerik denetimi için sadece sana özel olarak korunmaktadır.</p>
+                    </div>
+                    <div class="content-card">
+                        <h4 style="font-size: 0.95rem; color: var(--gold); margin-bottom: 10px;">⚡ Hızlı Patron İşlemleri</h4>
+                        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                            <button class="btn-gold" style="flex: 1; min-width: 150px;" onclick="switchTab('sarkiEkle')">➕ Hızlı Şarkı Ekle</button>
+                            <button class="btn-gold" style="flex: 1; min-width: 150px;" onclick="switchTab('albumEkle')">💿 Hızlı Albüm Ekle</button>
+                            <button class="btn-gold" style="flex: 1; min-width: 150px;" onclick="switchTab('videoEkle')">📹 Hızlı Video Ekle</button>
                         </div>
-                        <div class="content-card">
-                            <h4 style="font-size: 0.95rem; color: var(--gold); margin-bottom: 10px;">⚡ Hızlı Patron İşlemleri</h4>
-                            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-                                <button class="btn-gold" style="flex: 1; min-width: 150px;" onclick="switchTab('sarkiEkle')">➕ Hızlı Şarkı Ekle</button>
-                                <button class="btn-gold" style="flex: 1; min-width: 150px;" onclick="switchTab('albumEkle')">💿 Hızlı Albüm Ekle</button>
-                                <button class="btn-gold" style="flex: 1; min-width: 150px;" onclick="switchTab('videoEkle')">📹 Hızlı Video Ekle</button>
-                            </div>
-                        </div>
-                        <div class="content-card" style="margin-top: 15px;">
-                            <h4 style="font-size: 0.95rem; color: var(--admin-red); margin-bottom: 10px;">⚠️ Kritik Oturum İşlemi</h4>
-                            <button class="btn-gold" style="background: var(--admin-red); color: white;" onclick="cloudSignOut()">Güvenli Çıkış Yap</button>
-                        </div>
-                    `;
-                    containerDiv.appendChild(adminSection);
+                    </div>
+                    <div class="content-card" style="margin-top: 15px;">
+                        <h4 style="font-size: 0.95rem; color: var(--admin-red); margin-bottom: 10px;">⚠️ Kritik Oturum İşlemi</h4>
+                        <button class="btn-gold" style="background: var(--admin-red); color: white;" onclick="cloudSignOut()">Güvenli Çıkış Yap</button>
+                    </div>
+                `;
+                containerDiv.appendChild(adminSection);
 
-                } else {
-                    window.isAdminLoggedIn = false;
-                }
             } else {
-                profileTag.innerText = "Giriş Yap / Kayıt Ol";
                 window.isAdminLoggedIn = false;
+                if(user) {
+                    // Eğer yanlışlıkla başka bir mail girilirse oturumu kapat
+                    signOut(auth);
+                }
+                profileTag.innerText = "Patron Girişi";
             }
         });
     </script>
@@ -726,24 +718,20 @@
             <p>Cloud Music & Video Platform</p>
         </div>
         <div class="user-profile-tag" id="userProfileTag" onclick="switchTab('giris')">
-            Giriş Yap / Kayıt Ol
+            Patron Girişi
         </div>
     </header>
 
     <div class="nav-tabs" id="navTabs">
         <button class="tab-btn active" onclick="switchTab('anasayfa')">🏠 Ana Sayfa</button>
         <button class="tab-btn" onclick="switchTab('sarkilar')">🎵 Şarkılar</button>
-        <button class="tab-btn" onclick="switchTab('sarkiEkle')">➕ Şarkı Ekle</button>
         <button class="tab-btn" onclick="switchTab('albumler')">💿 Albümler</button>
-        <button class="tab-btn" onclick="switchTab('albumEkle')">💿 Albüm Ekle</button>
         <button class="tab-btn" onclick="switchTab('favorilerim')">⭐ Favorilerim</button>
         <button class="tab-btn" onclick="switchTab('videolar')">🎬 Videolar</button>
-        <button class="tab-btn" onclick="switchTab('videoEkle')">📹 Video Ekle</button>
         <button class="tab-btn" onclick="switchTab('sanatcilar')">🎤 Sanatçılar</button>
-        <button class="tab-btn" onclick="switchTab('profil')">✏ Profil Düzenle</button>
         <button class="tab-btn" onclick="switchTab('sosyalMedya')">🌐 Sosyal Medya</button>
         <button class="tab-btn" onclick="switchTab('mesajlar')">💬 Mesajlar</button>
-        <button class="tab-btn" onclick="switchTab('giris')">🔑 Giriş / Kayıt</button>
+        <button class="tab-btn" onclick="switchTab('giris')">🔑 Patron Girişi</button>
         <!-- Yönetici sekmesi (adminTabBtn) sadece kuzeyfe198634@gmail.com giriş yapınca dinamik buraya gelecek -->
     </div>
 
@@ -807,7 +795,7 @@
             </div>
         </div>
 
-        <!-- Şarkı Ekle -->
+        <!-- Şarkı Ekle (Sadece Patron) -->
         <div id="sarkiEkle" class="section-content">
             <h2 class="section-title">➕ Buluta Tekli (Single) Şarkı Ekle</h2>
             <div class="content-card">
@@ -868,7 +856,7 @@
             </div>
         </div>
 
-        <!-- Albüm Ekle (1 Kapak + 15 Şarkı Slotu) -->
+        <!-- Albüm Ekle (Sadece Patron) -->
         <div id="albumEkle" class="section-content">
             <h2 class="section-title">💿 Yeni Bulut Albüm Ekle (15 Parça Destekli)</h2>
             <div class="content-card">
@@ -898,9 +886,7 @@
 
                 <div class="form-group">
                     <label style="color: var(--gold); font-weight: bold; margin-bottom: 8px;">🎧 Albüm Şarkıları (Alt Alta 15 Parça Yükleme Alanı)</label>
-                    <div class="album-tracks-container" id="albumTracksSlots">
-                        <!-- Javascript ile otomatik 15 şarkı slotu buraya eklenecek -->
-                    </div>
+                    <div class="album-tracks-container" id="albumTracksSlots"></div>
                 </div>
 
                 <button class="btn-gold" onclick="addNewAlbumCloud()">Albümü ve 15 Parçayı Buluta Yayınla</button>
@@ -921,7 +907,7 @@
             <div class="empty-state">Video galerisi yükleniyor...</div>
         </div>
 
-        <!-- Video Ekle -->
+        <!-- Video Ekle (Sadece Patron) -->
         <div id="videoEkle" class="section-content">
             <h2 class="section-title">📹 Buluta Video Ekle</h2>
             <div class="content-card">
@@ -951,79 +937,23 @@
             </div>
         </div>
 
-        <!-- Profil Düzenle -->
-        <div id="profil" class="section-content">
-            <h2 class="section-title">✏ Profilini Düzenle & Sosyal Medya</h2>
-            <div class="content-card" style="margin-bottom: 20px;">
-                <div class="form-group">
-                    <label>Görünen Ad / Sanatçı Adı</label>
-                    <input type="text" id="inputName" value="Kuzeyfe Kalafat">
-                </div>
-                <div class="form-group">
-                    <label>Unvan</label>
-                    <input type="text" id="inputTitle" value="Müzik Prodüktörü & Sanatçı">
-                </div>
-                <div class="form-group">
-                    <label>Biyografi</label>
-                    <textarea id="inputBio" rows="3" placeholder="Kendinden bahset..."></textarea>
-                </div>
-                <button class="btn-gold" onclick="alert('Bulut profil güncellendi!')">Profili Kaydet</button>
-            </div>
-
-            <h3 style="font-size: 1rem; color: var(--gold); margin-bottom: 12px;"><i class="fa-solid fa-share-nodes"></i> Kayıtlı Sosyal Medya Hesapların</h3>
-            <div class="social-links-grid" id="profileSocialLinks"></div>
-        </div>
-
         <!-- Sosyal Medya Yönetimi -->
         <div id="sosyalMedya" class="section-content">
             <h2 class="section-title">🌐 Sosyal Medya & Web Bağlantıları</h2>
             <div class="content-card">
                 <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 15px;">Tüm mecralarını ve portfolyo sitelerini buraya gir, profilinde renkli butonlar olarak otomatik listelensin kanka.</p>
                 
-                <div class="form-group">
-                    <label><i class="fa-brands fa-instagram" style="color:#E1306C;"></i> Instagram Linki 1</label>
-                    <input type="text" id="inputInsta1" placeholder="instagram.com/kullanici1">
-                </div>
-                <div class="form-group">
-                    <label><i class="fa-brands fa-instagram" style="color:#E1306C;"></i> Instagram Linki 2</label>
-                    <input type="text" id="inputInsta2" placeholder="instagram.com/kullanici2">
-                </div>
-                <div class="form-group">
-                    <label><i class="fa-brands fa-youtube" style="color:#FF0000;"></i> YouTube Kanal Linki 1</label>
-                    <input type="text" id="inputYoutube1" placeholder="youtube.com/@kanal1">
-                </div>
-                <div class="form-group">
-                    <label><i class="fa-brands fa-youtube" style="color:#FF0000;"></i> YouTube Kanal Linki 2</label>
-                    <input type="text" id="inputYoutube2" placeholder="youtube.com/@kanal2">
-                </div>
-                <div class="form-group">
-                    <label><i class="fa-solid fa-globe" style="color:#3498db;"></i> Resmi Web Sitesi / Portfolyo 1</label>
-                    <input type="text" id="inputWebsite1" placeholder="kuzeyfekalafat.com.tr">
-                </div>
-                <div class="form-group">
-                    <label><i class="fa-solid fa-globe" style="color:#3498db;"></i> Resmi Web Sitesi / Portfolyo 2</label>
-                    <input type="text" id="inputWebsite2" placeholder="eksite.com.tr">
-                </div>
-                <div class="form-group">
-                    <label><i class="fa-brands fa-tiktok" style="color:#ff0050;"></i> TikTok Linki</label>
-                    <input type="text" id="inputTiktok" placeholder="tiktok.com/@kullanici">
-                </div>
-                <div class="form-group">
-                    <label><i class="fa-brands fa-x-twitter"></i> X (Twitter) Linki</label>
-                    <input type="text" id="inputTwitter" placeholder="x.com/kullanici">
-                </div>
-                <div class="form-group">
-                    <label><i class="fa-brands fa-twitch" style="color:#9146FF;"></i> Twitch Kanal Linki</label>
-                    <input type="text" id="inputTwitch" placeholder="twitch.tv/kullanici">
-                </div>
-                <div class="form-group">
-                    <label><i class="fa-brands fa-spotify" style="color:#1DB954;"></i> Spotify Sanatçı / Profil Linki</label>
-                    <input type="text" id="inputSpotify" placeholder="spotify.com/artist/...">
-                </div>
-                <div class="form-group">
-                    <label><i class="fa-brands fa-facebook" style="color:#1877F2;"></i> Facebook Sayfa / Profil Linki</label>
-                    <input type="text" id="inputFacebook" placeholder="facebook.com/kullanici">
-                </div>
+                <div class="form-group"><label><i class="fa-brands fa-instagram" style="color:#E1306C;"></i> Instagram Linki 1</label><input type="text" id="inputInsta1" placeholder="instagram.com/kullanici1"></div>
+                <div class="form-group"><label><i class="fa-brands fa-instagram" style="color:#E1306C;"></i> Instagram Linki 2</label><input type="text" id="inputInsta2" placeholder="instagram.com/kullanici2"></div>
+                <div class="form-group"><label><i class="fa-brands fa-youtube" style="color:#FF0000;"></i> YouTube Kanal Linki 1</label><input type="text" id="inputYoutube1" placeholder="youtube.com/@kanal1"></div>
+                <div class="form-group"><label><i class="fa-brands fa-youtube" style="color:#FF0000;"></i> YouTube Kanal Linki 2</label><input type="text" id="inputYoutube2" placeholder="youtube.com/@kanal2"></div>
+                <div class="form-group"><label><i class="fa-solid fa-globe" style="color:#3498db;"></i> Resmi Web Sitesi / Portfolyo 1</label><input type="text" id="inputWebsite1" placeholder="kuzeyfekalafat.com.tr"></div>
+                <div class="form-group"><label><i class="fa-solid fa-globe" style="color:#3498db;"></i> Resmi Web Sitesi / Portfolyo 2</label><input type="text" id="inputWebsite2" placeholder="eksite.com.tr"></div>
+                <div class="form-group"><label><i class="fa-brands fa-tiktok" style="color:#ff0050;"></i> TikTok Linki</label><input type="text" id="inputTiktok" placeholder="tiktok.com/@kullanici"></div>
+                <div class="form-group"><label><i class="fa-brands fa-x-twitter"></i> X (Twitter) Linki</label><input type="text" id="inputTwitter" placeholder="x.com/kullanici"></div>
+                <div class="form-group"><label><i class="fa-brands fa-twitch" style="color:#9146FF;"></i> Twitch Kanal Linki</label><input type="text" id="inputTwitch" placeholder="twitch.tv/kullanici"></div>
+                <div class="form-group"><label><i class="fa-brands fa-spotify" style="color:#1DB954;"></i> Spotify Sanatçı / Profil Linki</label><input type="text" id="inputSpotify" placeholder="spotify.com/artist/..."></div>
+                <div class="form-group"><label><i class="fa-brands fa-facebook" style="color:#1877F2;"></i> Facebook Sayfa / Profil Linki</label><input type="text" id="inputFacebook" placeholder="facebook.com/kullanici"></div>
 
                 <button class="btn-gold" onclick="saveAllSocialLinks()">Tümünü Kaydet ve Profilde Göster</button>
             </div>
@@ -1037,21 +967,21 @@
             </div>
         </div>
 
-        <!-- Giriş / Kayıt Ol -->
+        <!-- Patron Giriş Ekranı (Kayıt Ol Butonları Kaldırıldı) -->
         <div id="giris" class="section-content">
-            <h2 class="section-title">🔑 Bulut Üye Girişi & Şifre İşlemleri</h2>
+            <h2 class="section-title">🔑 Sadece Patron Girişi</h2>
             
             <div id="loginFormCard" class="content-card" style="margin-bottom: 15px;">
-                <h4 style="font-size: 0.95rem; color: var(--gold); margin-bottom: 10px;">Giriş Yap</h4>
+                <h4 style="font-size: 0.95rem; color: var(--gold); margin-bottom: 10px;">Yönetici Girişi (Kuzeyfe Kalafat)</h4>
                 <div class="form-group">
                     <label>E-Posta Adresi</label>
-                    <input type="email" id="loginEmail" placeholder="ornek@mail.com">
+                    <input type="email" id="loginEmail" placeholder="kuzeyfe198634@gmail.com">
                 </div>
                 <div class="form-group">
                     <label>Şifre</label>
                     <input type="password" id="loginPass" placeholder="Şifreniz...">
                 </div>
-                <button class="btn-gold" onclick="cloudLogin()">Giriş Yap</button>
+                <button class="btn-gold" onclick="cloudLogin()">Güvenli Giriş Yap</button>
                 <a class="auth-link" onclick="toggleForgotPassword(true)">Şifrenizi mi unuttunuz?</a>
             </div>
 
@@ -1063,23 +993,6 @@
                 </div>
                 <button class="btn-gold" onclick="cloudForgotPassword()">Sıfırlama Bağlantısı Gönder</button>
                 <a class="auth-link" onclick="toggleForgotPassword(false)">← Giriş ekranına dön</a>
-            </div>
-
-            <div class="content-card">
-                <h4 style="font-size: 0.95rem; color: var(--gold); margin-bottom: 10px;">Hesabın Yok mu? Kayıt Ol</h4>
-                <div class="form-group">
-                    <label>Ad Soyad / Sanatçı Adı</label>
-                    <input type="text" id="regName" placeholder="Örn: Kuzeyfe Kalafat">
-                </div>
-                <div class="form-group">
-                    <label>E-Posta Adresi</label>
-                    <input type="email" id="regEmail" placeholder="ornek@mail.com">
-                </div>
-                <div class="form-group">
-                    <label>Şifre Belirle</label>
-                    <input type="password" id="regPass" placeholder="Şifreniz (En az 6 karakter)...">
-                </div>
-                <button class="btn-gold" onclick="cloudRegister()">Hemen Kayıt Ol</button>
             </div>
         </div>
 
@@ -1104,7 +1017,6 @@
     </div>
 
     <script>
-        // Sayfa açıldığında 15 albüm şarkı slotunu otomatik oluştur
         window.addEventListener('DOMContentLoaded', () => {
             const container = document.getElementById('albumTracksSlots');
             if(container) {
@@ -1121,10 +1033,9 @@
             }
         });
 
-        // Üst logoya 2 kez hızlı tıklayınca direkt giriş sekmesine atar ve uyarır
         function triggerSecretAdminAccess() {
             switchTab('giris');
-            alert("🛡 Gizli Yönetici Kapısı Algılandı! Lütfen patron mailinle giriş yap kanka.");
+            alert("🛡 Gizli Patron Kapısı Algılandı!");
         }
 
         function switchTab(tabId) {
@@ -1150,9 +1061,7 @@
 
         function toggleComments(sectionId) {
             const commentSec = document.getElementById(sectionId);
-            if(commentSec) {
-                commentSec.classList.toggle('open');
-            }
+            if(commentSec) commentSec.classList.toggle('open');
         }
 
         function toggleFavorite(btn, itemId) {
@@ -1236,59 +1145,31 @@
             ];
 
             const profileContainer = document.getElementById('profileSocialLinks');
+            if(!profileContainer) return;
             profileContainer.innerHTML = '';
 
             let addedCount = 0;
-
             linksData.forEach(item => {
-                const val = document.getElementById(item.id).value.trim();
-                if(val) {
-                    addedCount++;
-                    let fullUrl = val.startsWith('http') ? val : 'https://' + val;
-                    
-                    const btnHTML = `
-                        <a href="${fullUrl}" target="_blank" class="social-btn ${item.class}">
-                            <div class="social-left">
-                                <i class="${item.icon}"></i>
-                                <span>${item.name}</span>
-                            </div>
-                            <i class="fa-solid fa-arrow-right social-arrow"></i>
-                        </a>
-                    `;
-                    profileContainer.innerHTML += btnHTML;
+                const inputEl = document.getElementById(item.id);
+                if(inputEl) {
+                    const val = inputEl.value.trim();
+                    if(val) {
+                        addedCount++;
+                        let fullUrl = val.startsWith('http') ? val : 'https://' + val;
+                        profileContainer.innerHTML += `
+                            <a href="${fullUrl}" target="_blank" class="social-btn ${item.class}">
+                                <div class="social-left">
+                                    <i class="${item.icon}"></i>
+                                    <span>${item.name}</span>
+                                </div>
+                                <i class="fa-solid fa-arrow-right social-arrow"></i>
+                            </a>
+                        `;
+                    }
                 }
             });
 
-            if(addedCount === 0) {
-                profileContainer.innerHTML = '<div class="empty-state" style="padding: 20px 0;">Henüz sosyal medya veya web bağlantısı eklemedin kanka.</div>';
-            }
-
-            alert("🌐 Tüm sosyal medya hesapların ve web linklerin kaydedildi! Profil sekmesinde hepsi listeleniyor kanka.");
-            switchTab('profil');
-        }
-
-        async function cloudRegister() {
-            const name = document.getElementById('regName').value.trim();
-            const email = document.getElementById('regEmail').value.trim();
-            const pass = document.getElementById('regPass').value.trim();
-            const { auth, createUserWithEmailAndPassword, updateProfile } = window.firebaseApp;
-
-            if(!name) {
-                alert("Lütfen adını ve soyadını gir kanka.");
-                return;
-            }
-
-            try {
-                const userCredential = await createUserWithEmailAndPassword(auth, email, pass);
-                await updateProfile(userCredential.user, {
-                    displayName: name
-                });
-
-                alert("✨ Bulut kayıt başarılı! Ailemize hoş geldin " + name + ".");
-                switchTab('anasayfa');
-            } catch (error) {
-                alert("Kayıt hatası: " + error.message);
-            }
+            alert("🌐 Tüm sosyal medya hesapların ve web linklerin kaydedildi kanka.");
         }
 
         async function cloudLogin() {
@@ -1296,9 +1177,14 @@
             const pass = document.getElementById('loginPass').value.trim();
             const { auth, signInWithEmailAndPassword } = window.firebaseApp;
 
+            if(email !== "kuzeyfe198634@gmail.com") {
+                alert("⛔ Bu sisteme sadece Patron Kuzeyfe giriş yapabilir!");
+                return;
+            }
+
             try {
                 await signInWithEmailAndPassword(auth, email, pass);
-                alert("Giriş başarılı kanka!");
+                alert("Hoş geldin Patron!");
                 switchTab('anasayfa');
             } catch (error) {
                 alert("Giriş hatası: " + error.message);
@@ -1331,7 +1217,7 @@
 
         async function addNewSongCloud() {
             if(!window.isAdminLoggedIn) {
-                alert("⛔ Bu işlem için yönetici yetkiniz yok kanka! Sadece patron içerik ekleyebilir.");
+                alert("⛔ Bu işlem için yönetici yetkiniz yok kanka!");
                 return;
             }
 
@@ -1344,25 +1230,16 @@
                 return;
             }
 
-            const autoCredits = `🎵 ${name} - KÜNYE\n` +
-                                `--------------------------------------------------\n` +
-                                `• Söz & Müzik : Kuzeyfe Kalafat\n` +
-                                `• Aranjör & Prodüktör : Zaman Perdesi Music & Kuzeyfe Kalafat\n` +
-                                `• Görsel & Kapak Tasarımı : Kuzeyfe Kalafat\n` +
-                                `• Yapım & Yönetim : Zaman Perdesi Music & Kuzeyfe Kalafat`;
-
             try {
                 await addDoc(collection(db, "songs"), {
                     title: name,
                     lyrics: lyrics,
-                    credits: autoCredits,
                     plays: 0,
                     createdAt: new Date()
                 });
-                alert("🎵 Şarkı ve otomatik künyesi bulut veritabanına başarıyla kaydedildi!");
+                alert("🎵 Şarkı buluta başarıyla kaydedildi!");
                 document.getElementById('newSongName').value = '';
                 document.getElementById('newSongLyrics').value = '';
-                updateSongCreditsPreview();
                 switchTab('sarkilar');
             } catch (error) {
                 alert("Veritabanı hatası: " + error.message);
@@ -1384,37 +1261,22 @@
                 return;
             }
 
-            // 15 şarkı slotundaki dolu olanları topla
             let tracksList = [];
             for(let i = 1; i <= 15; i++) {
                 const trackNameInput = document.getElementById(`albumTrackName_${i}`);
                 if(trackNameInput && trackNameInput.value.trim()) {
-                    tracksList.push({
-                        trackNumber: i,
-                        title: trackNameInput.value.trim()
-                    });
+                    tracksList.push({ trackNumber: i, title: trackNameInput.value.trim() });
                 }
             }
-
-            const autoAlbumCredits = `💿 ${name} - KÜNYE\n` +
-                                     `--------------------------------------------------\n` +
-                                     `• Konsept & Müzik : Kuzeyfe Kalafat\n` +
-                                     `• Aranjör & Prodüktör : Zaman Perdesi Music & Kuzeyfe Kalafat\n` +
-                                     `• Görsel & Kapak Tasarımı : Kuzeyfe Kalafat\n` +
-                                     `• Yapım & Yönetim : Zaman Perdesi Music & Kuzeyfe Kalafat`;
 
             try {
                 await addDoc(collection(db, "albums"), {
                     title: name,
                     description: desc,
                     tracks: tracksList,
-                    credits: autoAlbumCredits,
                     createdAt: new Date()
                 });
-                alert(`💿 "${name}" albümü ve eklenen ${tracksList.length} parça buluta başarıyla yayınlandı kanka!`);
-                document.getElementById('newAlbumName').value = '';
-                document.getElementById('newAlbumDesc').value = '';
-                updateAlbumCreditsPreview();
+                alert(`💿 "${name}" albümü ve eklenen ${tracksList.length} parça buluta yayınlandı kanka!`);
                 switchTab('albumler');
             } catch (error) {
                 alert("Hata: " + error.message);
@@ -1442,7 +1304,6 @@
                     createdAt: new Date()
                 });
                 alert("📹 Video buluta yüklendi!");
-                document.getElementById('newVideoName').value = '';
                 switchTab('videolar');
             } catch (error) {
                 alert("Hata: " + error.message);
