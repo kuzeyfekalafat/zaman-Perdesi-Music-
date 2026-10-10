@@ -71,20 +71,53 @@
             const anasayfaContainer = document.getElementById('dynamicSongList');
             const sarkilarContainer = document.getElementById('dynamicSongListAll');
 
+            // Dopdolu başlangıç için muazzam demo/hazır içerikler
+            let htmlContent = `
+                <div class="content-card">
+                    <div class="content-main-row">
+                        <div class="content-info">
+                            <h4>Zamanın Ötesinde (Örnek Hit Konsept)</h4>
+                            <p>Kuzeyfe Kalafat <span class="verified-tick">✓</span></p>
+                        </div>
+                        <div class="view-count-badge">🎧 1,450 Dinlenme</div>
+                    </div>
+                    <div style="margin-top: 10px;">
+                        <label style="font-size: 0.75rem; color: var(--gold); margin-bottom: 3px;">Şarkı Sözleri:</label>
+                        <p style="font-size:0.82rem; color:var(--text-main); white-space:pre-line; background: rgba(0,0,0,0.25); padding: 10px; border-radius: 6px; border: 1px solid var(--panel-border);">Zamanın ötesinde bir yolculuk başlar,
+Karanlık gecelere güneş yeniden aydınlık bağışlar...</p>
+                    </div>
+                    <div style="margin-top: 10px;">
+                        <label style="font-size: 0.75rem; color: var(--gold); margin-bottom: 3px;">Resmi Künye:</label>
+                        <textarea rows="5" readonly style="color: var(--gold); background: #0a0a0a; font-size: 0.78rem; width: 100%; border: 1px solid var(--panel-border); border-radius: 6px; padding: 8px; cursor: not-allowed;">🎵 Zamanın Ötesinde - KÜNYE
+--------------------------------------------------
+• Söz & Müzik : Kuzeyfe Kalafat
+• Aranjör & Prodüktör : Zaman Perdesi Music & Kuzeyfe Kalafat
+• Görsel & Kapak Tasarımı : Kuzeyfe Kalafat
+• Yapım & Yönetim : Zaman Perdesi Music & Kuzeyfe Kalafat</textarea>
+                    </div>
+                    <div class="card-actions-row">
+                        <button class="btn-favorite-action" onclick="toggleFavorite(this, 'demo_1')">⭐ Favorilere Ekle</button>
+                        <button class="btn-comment-toggle" onclick="toggleComments('comment_box_demo_1')">💬 Yorumlar (2)</button>
+                    </div>
+                    <div id="comment_box_demo_1" class="comments-section">
+                        <div class="comment-item" style="background:rgba(255,255,255,0.03); padding:8px; border-radius:6px; margin-bottom:6px; font-size:0.8rem;">
+                            <strong style="color:var(--gold);">Züleyha:</strong> Altyapı muazzam olmuş kanka eline sağlık!
+                        </div>
+                        <div class="comment-input-box">
+                            <input type="text" placeholder="Yorum yaz...">
+                            <button onclick="alert('Yorum buluta eklendi!')">Gönder</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+
             try {
                 const querySnapshot = await getDocs(collection(db, "songs"));
-                if(querySnapshot.empty) {
-                    if(anasayfaContainer) anasayfaContainer.innerHTML = '<div class="empty-state">Bulutta henüz şarkı yok kanka.</div>';
-                    if(sarkilarContainer) sarkilarContainer.innerHTML = '<div class="empty-state">Bulutta henüz şarkı yok kanka.</div>';
-                    return;
-                }
-
-                let htmlContent = '';
                 querySnapshot.forEach((docSnap) => {
                     const song = docSnap.data();
                     const creditsText = song.credits || `🎵 ${song.title} - KÜNYE\n--------------------------------------------------\n• Söz & Müzik : Kuzeyfe Kalafat\n• Aranjör & Prodüktör : Zaman Perdesi Music & Kuzeyfe Kalafat\n• Görsel & Kapak Tasarımı : Kuzeyfe Kalafat\n• Yapım & Yönetim : Zaman Perdesi Music & Kuzeyfe Kalafat`;
 
-                    htmlContent += `
+                    htmlContent = `
                         <div class="content-card">
                             <div class="content-main-row">
                                 <div class="content-info">
@@ -126,13 +159,14 @@
                                 </div>
                             </div>
                         </div>
-                    `;
+                    ` + htmlContent; // Gerçek veritabanı şarkılarını en üste koyuyoruz
                 });
 
                 if(anasayfaContainer) anasayfaContainer.innerHTML = htmlContent;
                 if(sarkilarContainer) sarkilarContainer.innerHTML = htmlContent;
             } catch (e) {
                 console.error("Şarkı yükleme hatası:", e);
+                if(anasayfaContainer) anasayfaContainer.innerHTML = htmlContent;
             }
         }
         window.loadCloudSongs = loadCloudSongs;
@@ -341,7 +375,15 @@
         <!-- Videolar -->
         <div id="videolar" class="section-content">
             <h2 class="section-title">🎬 Bulut Video Arşivi</h2>
-            <div class="empty-state">Video arşivi boş.</div>
+            <div class="content-card">
+                <div class="content-main-row">
+                    <div class="content-info">
+                        <h4>Zaman Perdesi - Resmi Klip Serisi</h4>
+                        <p>Kuzeyfe Kalafat <span class="verified-tick">✓</span></p>
+                    </div>
+                    <div class="view-count-badge">🎬 Video</div>
+                </div>
+            </div>
         </div>
 
         <!-- Video Ekle -->
