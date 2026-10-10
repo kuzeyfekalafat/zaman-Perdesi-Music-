@@ -91,6 +91,55 @@
                 profileTag.innerText = "Patron Girişi";
             }
         });
+
+        // Sayfa açıldığında buluttaki şarkıları otomatik yükle ve listele
+        window.addEventListener('DOMContentLoaded', () => {
+            loadCloudSongs();
+        });
+
+        async function loadCloudSongs() {
+            const { db, collection, getDocs } = window.firebaseApp;
+            const anasayfaContainer = document.getElementById('dynamicSongList');
+            const sarkilarContainer = document.getElementById('dynamicSongListAll');
+
+            try {
+                const querySnapshot = await getDocs(collection(db, "songs"));
+                if(querySnapshot.empty) return;
+
+                let htmlContent = '';
+                querySnapshot.forEach((docSnap) => {
+                    const song = docSnap.data();
+                    htmlContent += `
+                        <div class="content-card">
+                            <div class="content-main-row">
+                                <div class="content-info">
+                                    <h4>${song.title || 'İsimsiz Parça'}</h4>
+                                    <p>Kuzeyfe Kalafat <span class="verified-tick">✓</span></p>
+                                </div>
+                                <div class="view-count-badge">🎧 ${song.plays || 0} Dinlenme</div>
+                            </div>
+                            ${song.lyrics ? `<p style="font-size:0.82rem; color:var(--text-muted); margin-top:8px; white-space:pre-line;">${song.lyrics}</p>` : ''}
+                            <div class="card-actions-row">
+                                <button class="btn-favorite-action" onclick="toggleFavorite(this, '${docSnap.id}')">⭐ Favorilere Ekle</button>
+                                <button class="btn-comment-toggle" onclick="toggleComments('comment_box_${docSnap.id}')">💬 Yorumlar (0)</button>
+                            </div>
+                            <div id="comment_box_${docSnap.id}" class="comments-section">
+                                <div class="comment-input-box">
+                                    <input type="text" placeholder="Yorum yaz...">
+                                    <button onclick="alert('Yorum buluta eklendi!')">Gönder</button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                if(anasayfaContainer) anasayfaContainer.innerHTML = htmlContent;
+                if(sarkilarContainer) sarkilarContainer.innerHTML = htmlContent;
+            } catch (e) {
+                console.error("Şarkı listeleme hatası:", e);
+            }
+        }
+        window.loadCloudSongs = loadCloudSongs;
     </script>
 
     <style>
@@ -687,57 +736,15 @@
         <div id="anasayfa" class="section-content active">
             <h2 class="section-title">🔥 Bulut Trendler & Öne Çıkanlar</h2>
             <div id="dynamicSongList">
-                <div class="content-card">
-                    <div class="content-main-row">
-                        <div class="content-info">
-                            <h4>İçimde Kalan (Örnek Parça)</h4>
-                            <p>Kuzeyfe Kalafat <span class="verified-tick">✓</span></p>
-                        </div>
-                        <div class="view-count-badge">🎧 0 Dinlenme</div>
-                    </div>
-                    <div class="card-actions-row">
-                        <button class="btn-favorite-action" onclick="toggleFavorite(this, 'song_1')">⭐ Favorilere Ekle</button>
-                        <button class="btn-comment-toggle" onclick="toggleComments('comment_box_home_1')">💬 Yorumlar (0)</button>
-                    </div>
-                    <div id="comment_box_home_1" class="comments-section">
-                        <div class="comment-item">
-                            <div class="comment-author">Kuzeyfe Kalafat ✓</div>
-                            <div class="comment-text">Harika bir konsept parça oldu kanka!</div>
-                        </div>
-                        <div class="comment-input-box">
-                            <input type="text" placeholder="Yorum yaz...">
-                            <button onclick="alert('Yorum buluta eklendi!')">Gönder</button>
-                        </div>
-                    </div>
-                </div>
+                <div class="empty-state">Bulut şarkılar yükleniyor...</div>
             </div>
         </div>
 
         <!-- Şarkılar -->
         <div id="sarkilar" class="section-content">
             <h2 class="section-title">🎵 Tüm Bulut Şarkılar</h2>
-            <div class="content-card">
-                <div class="content-main-row">
-                    <div class="content-info">
-                        <h4>Zamanın Ötesinde (Single)</h4>
-                        <p>Kuzeyfe Kalafat <span class="verified-tick">✓</span></p>
-                    </div>
-                    <div class="view-count-badge">🎧 142 Dinlenme</div>
-                </div>
-                <div class="card-actions-row">
-                    <button class="btn-favorite-action" onclick="toggleFavorite(this, 'song_2')">⭐ Favorilere Ekle</button>
-                    <button class="btn-comment-toggle" onclick="toggleComments('comment_box_song_2')">💬 Yorumlar (1)</button>
-                </div>
-                <div id="comment_box_song_2" class="comments-section">
-                    <div class="comment-item">
-                        <div class="comment-author">Züleyha</div>
-                        <div class="comment-text">Altyapı muazzam olmuş eline sağlık!</div>
-                    </div>
-                    <div class="comment-input-box">
-                        <input type="text" placeholder="Yorum yaz...">
-                        <button onclick="alert('Yorum buluta eklendi!')">Gönder</button>
-                    </div>
-                </div>
+            <div id="dynamicSongListAll">
+                <div class="empty-state">Tüm şarkılar yükleniyor...</div>
             </div>
         </div>
 
@@ -977,7 +984,53 @@
                     `;
                 }
             }
+            // Sayfa açıldığında şarkıları buluttan çek ve listele
+            loadCloudSongs();
         });
+
+        async function loadCloudSongs() {
+            const { db, collection, getDocs } = window.firebaseApp;
+            const anasayfaContainer = document.getElementById('dynamicSongList');
+            const sarkilarContainer = document.getElementById('dynamicSongListAll');
+
+            try {
+                const querySnapshot = await getDocs(collection(db, "songs"));
+                if(querySnapshot.empty) return;
+
+                let htmlContent = '';
+                querySnapshot.forEach((docSnap) => {
+                    const song = docSnap.data();
+                    htmlContent += `
+                        <div class="content-card">
+                            <div class="content-main-row">
+                                <div class="content-info">
+                                    <h4>${song.title || 'İsimsiz Parça'}</h4>
+                                    <p>Kuzeyfe Kalafat <span class="verified-tick">✓</span></p>
+                                </div>
+                                <div class="view-count-badge">🎧 ${song.plays || 0} Dinlenme</div>
+                            </div>
+                            ${song.lyrics ? `<p style="font-size:0.82rem; color:var(--text-muted); margin-top:8px; white-space:pre-line;">${song.lyrics}</p>` : ''}
+                            <div class="card-actions-row">
+                                <button class="btn-favorite-action" onclick="toggleFavorite(this, '${docSnap.id}')">⭐ Favorilere Ekle</button>
+                                <button class="btn-comment-toggle" onclick="toggleComments('comment_box_${docSnap.id}')">💬 Yorumlar (0)</button>
+                            </div>
+                            <div id="comment_box_${docSnap.id}" class="comments-section">
+                                <div class="comment-input-box">
+                                    <input type="text" placeholder="Yorum yaz...">
+                                    <button onclick="alert('Yorum buluta eklendi!')">Gönder</button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                if(anasayfaContainer) anasayfaContainer.innerHTML = htmlContent;
+                if(sarkilarContainer) sarkilarContainer.innerHTML = htmlContent;
+            } catch (e) {
+                console.error("Şarkı listeleme hatası:", e);
+            }
+        }
+        window.loadCloudSongs = loadCloudSongs;
 
         function triggerSecretAdminAccess() {
             switchTab('giris');
@@ -998,6 +1051,10 @@
                 }
             });
             window.scrollTo(0, 0);
+
+            if(tabId === 'anasayfa' || tabId === 'sarkilar') {
+                loadCloudSongs();
+            }
         }
 
         function toggleForgotPassword(show) {
@@ -1186,6 +1243,7 @@
                 alert("🎵 Şarkı buluta başarıyla kaydedildi!");
                 document.getElementById('newSongName').value = '';
                 document.getElementById('newSongLyrics').value = '';
+                loadCloudSongs();
                 switchTab('sarkilar');
             } catch (error) {
                 alert("Veritabanı hatası: " + error.message);
