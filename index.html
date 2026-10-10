@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Zaman Perdesi - Music & Video Platform (Cloud)</title>
+    <title>Zaman Perdesi - Ultimate Cloud Music & Video Platform</title>
     
-    <!-- FontAwesome Orijinal İkonlar için Kütüphane -->
+    <!-- FontAwesome Orijinal İkonlar -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <!-- Firebase SDK v9 (Modular CDN) -->
@@ -39,12 +39,12 @@
 
             if (user && user.email === ADMIN_EMAIL) {
                 window.isAdminLoggedIn = true;
-                profileTag.innerText = "Patron Kuzeyfe ✓";
+                if(profileTag) profileTag.innerText = "Patron Kuzeyfe ✓";
                 if(adminTabBtn) adminTabBtn.style.display = 'inline-block';
             } else {
                 window.isAdminLoggedIn = false;
                 if(user) { signOut(auth); }
-                profileTag.innerText = "Patron Girişi";
+                if(profileTag) profileTag.innerText = "Patron Girişi";
                 if(adminTabBtn) adminTabBtn.style.display = 'none';
             }
         });
@@ -101,7 +101,7 @@
                                         Tarayıcınız ses oynatıcısını desteklemiyor.
                                     </audio>
                                 </div>
-                            ` : '<p style="font-size:0.75rem; color:#ff4757; margin-top:8px;">⚠️ Bu şarkıda ses dosyası bağlantısı yok.</p>'}
+                            ` : '<p style="font-size:0.75rem; color:#ff4757; margin-top:8px;">⚠️ Ses dosyası bulunmuyor.</p>'}
 
                             ${song.lyrics ? `
                                 <div style="margin-top: 12px;">
@@ -192,4 +192,448 @@
         .comments-section { display: none; margin-top: 12px; padding-top: 10px; border-top: 1px dashed var(--panel-border); }
         .comments-section.open { display: block; }
         .comment-input-box { display: flex; gap: 6px; margin-top: 8px; }
-        .comment-input
+        .comment-input-box input { padding: 8px; font-size: 0.85rem; }
+        .comment-input-box button { background: var(--gold); color: #000; border: none; padding: 0 14px; border-radius: 6px; font-weight: bold; cursor: pointer; }
+        .artist-list-item { display: flex; justify-content: space-between; align-items: center; background: var(--panel-bg); border: 1px solid var(--panel-border); padding: 12px 16px; border-radius: 8px; margin-bottom: 10px; }
+        .artist-list-info h4 { font-size: 0.95rem; color: var(--text-main); display: flex; align-items: center; gap: 6px; }
+        .artist-list-info p { font-size: 0.78rem; color: var(--text-muted); }
+        .btn-dm-action { background: rgba(212, 175, 55, 0.15); border: 1px solid var(--gold); color: var(--gold); padding: 6px 12px; border-radius: 6px; font-size: 0.8rem; font-weight: 600; cursor: pointer; }
+        .dm-box-container { background: var(--panel-bg); border: 1px solid var(--panel-border); border-radius: 8px; padding: 15px; margin-top: 15px; }
+        .dm-chat-history { height: 180px; overflow-y: auto; border: 1px solid var(--panel-border); border-radius: 6px; padding: 10px; background: rgba(0,0,0,0.2); margin-bottom: 10px; font-size: 0.85rem; }
+        .dm-msg { margin-bottom: 8px; padding: 6px 10px; border-radius: 6px; max-width: 80%; }
+        .dm-msg.sent { background: rgba(212, 175, 55, 0.2); color: var(--text-main); margin-left: auto; text-align: right; }
+        .dm-msg.received { background: rgba(255,255,255,0.05); color: var(--text-muted); }
+        .admin-card { background: rgba(255, 71, 87, 0.05); border: 1px solid rgba(255, 71, 87, 0.3); border-radius: 8px; padding: 15px; margin-bottom: 15px; }
+        .auth-link { font-size: 0.8rem; color: var(--gold); text-decoration: none; display: inline-block; margin-top: 8px; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="brand-box" ondblclick="triggerSecretAdminAccess()" title="Zaman Perdesi">
+            <h1>Zaman Perdesi</h1>
+            <p>Ultimate Cloud Music & Video Platform</p>
+        </div>
+        <div class="user-profile-tag" id="userProfileTag" onclick="switchTab('giris')">
+            Patron Girişi
+        </div>
+    </header>
+
+    <div class="nav-tabs" id="navTabs">
+        <button class="tab-btn active" onclick="switchTab('anasayfa')">🏠 Ana Sayfa</button>
+        <button class="tab-btn" onclick="switchTab('sarkilar')">🎵 Şarkılar</button>
+        <button class="tab-btn" onclick="switchTab('albumler')">💿 Albümler</button>
+        <button class="tab-btn" onclick="switchTab('favorilerim')">⭐ Favorilerim</button>
+        <button class="tab-btn" onclick="switchTab('videolar')">🎬 Videolar</button>
+        <button class="tab-btn" onclick="switchTab('sanatcilar')">🎤 Sanatçılar</button>
+        <button class="tab-btn" onclick="switchTab('sosyalMedya')">🌐 Sosyal Medya</button>
+        <button class="tab-btn" onclick="switchTab('mesajlar')">💬 Mesajlar</button>
+        <button class="tab-btn admin-tab-btn" id="adminTabBtn" onclick="switchTab('yoneticiPaneli')">🛡 Patron Paneli</button>
+        <button class="tab-btn" onclick="switchTab('giris')">🔑 Patron Girişi</button>
+    </div>
+
+    <div class="container">
+
+        <!-- Ana Sayfa -->
+        <div id="anasayfa" class="section-content active">
+            <h2 class="section-title">🔥 Bulut Trendler & Öne Çıkanlar</h2>
+            <div id="dynamicSongList">
+                <div class="empty-state">Şarkılar yükleniyor kanka...</div>
+            </div>
+        </div>
+
+        <!-- Şarkılar -->
+        <div id="sarkilar" class="section-content">
+            <h2 class="section-title">🎵 Tüm Bulut Şarkılar</h2>
+            <div id="dynamicSongListAll">
+                <div class="empty-state">Tüm şarkılar yükleniyor...</div>
+            </div>
+        </div>
+
+        <!-- Şarkı Ekle -->
+        <div id="sarkiEkle" class="section-content">
+            <h2 class="section-title">➕ Buluta Tekli (Single) Şarkı Ekle</h2>
+            <div class="content-card">
+                <div class="form-group">
+                    <label>Şarkı Adı</label>
+                    <input type="text" id="newSongName" placeholder="Örn: Ateş Ve Kumsal" oninput="updateSongCreditsPreview()">
+                </div>
+                <div class="form-group">
+                    <label>Şarkı Sözleri (Lyrics)</label>
+                    <textarea id="newSongLyrics" rows="5" placeholder="Şarkının sözlerini buraya yaz kanka..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Otomatik Eklenecek Resmi Künye (Önizleme)</label>
+                    <textarea id="previewSongCredits" rows="5" readonly style="color: var(--gold); background: #0a0a0a; font-size: 0.85rem; cursor: not-allowed;">🎵 Şarkı Adı - KÜNYE
+--------------------------------------------------
+• Söz & Müzik : Kuzeyfe Kalafat
+• Aranjör & Prodüktör : Zaman Perdesi Music & Kuzeyfe Kalafat
+• Görsel & Kapak Tasarımı : Kuzeyfe Kalafat
+• Yapım & Yönetim : Zaman Perdesi Music & Kuzeyfe Kalafat</textarea>
+                </div>
+                <div class="form-group">
+                    <label>Şarkı Kapak Görseli (1 Adet)</label>
+                    <div class="file-input-wrapper"><input type="file" id="newSongCoverFile"></div>
+                </div>
+                <div class="form-group">
+                    <label>Ses Dosyası (.mp3 / Ses Dosyası)</label>
+                    <div class="file-input-wrapper"><input type="file" id="newSongAudioFile"></div>
+                </div>
+                <button class="btn-gold" onclick="addNewSongCloud()">Şarkıyı Buluta Yükle (Otomatik Künye ile)</button>
+            </div>
+        </div>
+
+        <!-- Albüm Ekle -->
+        <div id="albumEkle" class="section-content">
+            <h2 class="section-title">💿 Yeni Bulut Albüm Ekle (15 Parça Destekli)</h2>
+            <div class="content-card">
+                <div class="form-group">
+                    <label>Albüm Adı / Konsepti</label>
+                    <input type="text" id="newAlbumName" placeholder="Örn: İçimde Kalan" oninput="updateAlbumCreditsPreview()">
+                </div>
+                <div class="form-group">
+                    <label>Albüm Açıklaması / Detaylar</label>
+                    <textarea id="newAlbumDesc" rows="3" placeholder="Albüm detayları..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Otomatik Eklenecek Albüm Künyesi (Önizleme)</label>
+                    <textarea id="previewAlbumCredits" rows="5" readonly style="color: var(--gold); background: #0a0a0a; font-size: 0.85rem; cursor: not-allowed;">💿 Albüm Adı - KÜNYE
+--------------------------------------------------
+• Konsept & Müzik : Kuzeyfe Kalafat
+• Aranjör & Prodüktör : Zaman Perdesi Music & Kuzeyfe Kalafat
+• Görsel & Kapak Tasarımı : Kuzeyfe Kalafat
+• Yapım & Yönetim : Zaman Perdesi Music & Kuzeyfe Kalafat</textarea>
+                </div>
+                <div class="form-group">
+                    <label>Albüm Kapak Görseli</label>
+                    <div class="file-input-wrapper"><input type="file" id="newAlbumCoverFile"></div>
+                </div>
+                <div class="form-group">
+                    <label style="color: var(--gold); font-weight: bold; margin-bottom: 8px;">🎧 Albüm Şarkıları (Alt Alta 15 Parça Yükleme Alanı)</label>
+                    <div class="album-tracks-container" id="albumTracksSlots"></div>
+                </div>
+                <button class="btn-gold" onclick="addNewAlbumCloud()">Albümü ve Parçaları Buluta Yayınla</button>
+            </div>
+        </div>
+
+        <!-- Albümler -->
+        <div id="albumler" class="section-content">
+            <h2 class="section-title">💿 Bulut Albümler</h2>
+            <div class="content-card">
+                <div class="content-main-row">
+                    <div class="content-info">
+                        <h4>İçimde Kalan - Albüm Serisi</h4>
+                        <p>Zaman Perdesi Music</p>
+                    </div>
+                    <div class="view-count-badge">💿 Albüm</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Favorilerim -->
+        <div id="favorilerim" class="section-content">
+            <h2 class="section-title">⭐ Favoriye Eklenenler</h2>
+            <div id="favoritesListContainer">
+                <div class="empty-state">Henüz favorilere eklenen bir parça yok kanka.</div>
+            </div>
+        </div>
+
+        <!-- Videolar -->
+        <div id="videolar" class="section-content">
+            <h2 class="section-title">🎬 Bulut Video Arşivi</h2>
+            <div class="empty-state">Video arşivi boş.</div>
+        </div>
+
+        <!-- Video Ekle -->
+        <div id="videoEkle" class="section-content">
+            <h2 class="section-title">📹 Buluta Video Ekle</h2>
+            <div class="content-card">
+                <div class="form-group">
+                    <label>Video Başlığı</label>
+                    <input type="text" id="newVideoName" placeholder="Video adı...">
+                </div>
+                <div class="form-group">
+                    <label>Video Dosyası</label>
+                    <div class="file-input-wrapper"><input type="file" id="newVideoFile"></div>
+                </div>
+                <button class="btn-gold" onclick="addNewVideoCloud()">Videoyu Buluta Yükle</button>
+            </div>
+        </div>
+
+        <!-- Sanatçılar -->
+        <div id="sanatcilar" class="section-content">
+            <h2 class="section-title">🎤 Sanatçılar & Platform Üyeleri</h2>
+            <div class="artist-list-item">
+                <div class="artist-list-info">
+                    <h4>Kuzeyfe Kalafat <span class="verified-tick">✓</span></h4>
+                    <p>Kurucu & Müzik Prodüktörü</p>
+                </div>
+                <button class="btn-dm-action" onclick="openDM('Kuzeyfe Kalafat')">💬 Mesaj Gönder</button>
+            </div>
+        </div>
+
+        <!-- Sosyal Medya -->
+        <div id="sosyalMedya" class="section-content">
+            <h2 class="section-title">🌐 Sosyal Medya & Web Bağlantıları</h2>
+            <div class="content-card">
+                <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 15px;">Tüm mecralarını buraya gir kanka.</p>
+                <div class="form-group"><label>Instagram Linki</label><input type="text" id="inputInsta1" placeholder="instagram.com/kullanici"></div>
+                <div class="form-group"><label>YouTube Kanal Linki</label><input type="text" id="inputYoutube1" placeholder="youtube.com/@kanal"></div>
+                <button class="btn-gold" onclick="alert('Sosyal medya bağlantıları kaydedildi!')">Kaydet</button>
+            </div>
+        </div>
+
+        <!-- Mesajlar -->
+        <div id="mesajlar" class="section-content">
+            <h2 class="section-title">💬 Bulut Özel Mesajlar (DM)</h2>
+            <div id="dmActivePanel"><div class="empty-state">Sanatçılar sekmesinden DM başlatabilirsin kanka.</div></div>
+        </div>
+
+        <!-- Patron Yönetici Paneli -->
+        <div id="yoneticiPaneli" class="section-content">
+            <h2 class="section-title" style="color: var(--admin-red);">🛡 Patron Yönetici Paneli (Tam Yetki)</h2>
+            <div class="admin-card">
+                <p style="font-size: 0.9rem; color: var(--gold); margin-bottom: 6px;">Hoş geldin Patron Kuzeyfe Kalafat! 👑</p>
+            </div>
+            <div class="content-card">
+                <h4 style="font-size: 0.95rem; color: var(--gold); margin-bottom: 10px;">⚡ Hızlı Patron İşlemleri</h4>
+                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                    <button class="btn-gold" style="flex: 1; min-width: 150px;" onclick="switchTab('sarkiEkle')">➕ Hızlı Şarkı Ekle</button>
+                    <button class="btn-gold" style="flex: 1; min-width: 150px;" onclick="switchTab('albumEkle')">💿 Hızlı Albüm Ekle</button>
+                    <button class="btn-gold" style="flex: 1; min-width: 150px;" onclick="switchTab('videoEkle')">📹 Hızlı Video Ekle</button>
+                </div>
+            </div>
+            <div class="content-card" style="margin-top: 15px;">
+                <button class="btn-gold" style="background: var(--admin-red); color: white;" onclick="cloudSignOut()">Güvenli Çıkış Yap</button>
+            </div>
+        </div>
+
+        <!-- Patron Giriş Ekranı -->
+        <div id="giris" class="section-content">
+            <h2 class="section-title">🔑 Sadece Patron Girişi</h2>
+            <div class="content-card">
+                <div class="form-group"><label>E-Posta Adresi</label><input type="email" id="loginEmail" placeholder="kuzeyfe198634@gmail.com"></div>
+                <div class="form-group"><label>Şifre</label><input type="password" id="loginPass" placeholder="Şifreniz..."></div>
+                <button class="btn-gold" onclick="cloudLogin()">Güvenli Giriş Yap</button>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        function triggerSecretAdminAccess() {
+            switchTab('giris');
+            alert("🛡 Gizli Patron Kapısı Algılandı!");
+        }
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.section-content').forEach(sec => sec.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+
+            const targetSection = document.getElementById(tabId);
+            if(targetSection) targetSection.classList.add('active');
+            
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                const onclickAttr = btn.getAttribute('onclick');
+                if(onclickAttr && onclickAttr.includes("'" + tabId + "'")) {
+                    btn.classList.add('active');
+                }
+            });
+            window.scrollTo(0, 0);
+
+            if(tabId === 'anasayfa' || tabId === 'sarkilar') {
+                loadCloudSongs();
+            }
+        }
+
+        function toggleComments(sectionId) {
+            const commentSec = document.getElementById(sectionId);
+            if(commentSec) commentSec.classList.toggle('open');
+        }
+
+        function toggleFavorite(btn, itemId) {
+            btn.classList.toggle('favorited');
+            if(btn.classList.contains('favorited')) {
+                btn.innerText = "⭐ Favorilerde";
+                alert("⭐ Başarıyla favorilere eklendi kanka!");
+            } else {
+                btn.innerText = "⭐ Favorilere Ekle";
+            }
+        }
+
+        function openDM(targetUser) {
+            switchTab('mesajlar');
+            document.getElementById('dmActivePanel').innerHTML = `
+                <div class="dm-box-container">
+                    <h4 style="color: var(--gold); margin-bottom: 10px; font-size: 0.95rem;">💬 Bulut Sohbet: ${targetUser}</h4>
+                    <div class="dm-chat-history">
+                        <div class="dm-msg received"><strong>${targetUser}:</strong> Selam kanka, bulut sistemine hoş geldin!</div>
+                    </div>
+                    <div class="comment-input-box">
+                        <input type="text" id="dmInput" placeholder="Mesaj yaz...">
+                        <button onclick="alert('DM gönderildi!')">Gönder</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function updateSongCreditsPreview() {
+            const songNameInput = document.getElementById('newSongName').value.trim();
+            const displayName = songNameInput ? songNameInput : "Şarkı Adı";
+            const previewBox = document.getElementById('previewSongCredits');
+            previewBox.value = `🎵 ${displayName} - KÜNYE\n--------------------------------------------------\n• Söz & Müzik : Kuzeyfe Kalafat\n• Aranjör & Prodüktör : Zaman Perdesi Music & Kuzeyfe Kalafat\n• Görsel & Kapak Tasarımı : Kuzeyfe Kalafat\n• Yapım & Yönetim : Zaman Perdesi Music & Kuzeyfe Kalafat`;
+        }
+
+        function updateAlbumCreditsPreview() {
+            const albumNameInput = document.getElementById('newAlbumName').value.trim();
+            const displayName = albumNameInput ? albumNameInput : "Albüm Adı";
+            const previewBox = document.getElementById('previewAlbumCredits');
+            previewBox.value = `💿 ${displayName} - KÜNYE\n--------------------------------------------------\n• Konsept & Müzik : Kuzeyfe Kalafat\n• Aranjör & Prodüktör : Zaman Perdesi Music & Kuzeyfe Kalafat\n• Görsel & Kapak Tasarımı : Kuzeyfe Kalafat\n• Yapım & Yönetim : Zaman Perdesi Music & Kuzeyfe Kalafat`;
+        }
+
+        async function cloudLogin() {
+            const email = document.getElementById('loginEmail').value.trim();
+            const pass = document.getElementById('loginPass').value.trim();
+            const { auth, signInWithEmailAndPassword } = window.firebaseApp;
+
+            if(email !== "kuzeyfe198634@gmail.com") {
+                alert("⛔ Bu sisteme sadece Patron Kuzeyfe giriş yapabilir!");
+                return;
+            }
+
+            try {
+                await signInWithEmailAndPassword(auth, email, pass);
+                alert("Hoş geldin Patron!");
+                switchTab('yoneticiPaneli');
+            } catch (error) {
+                alert("Giriş hatası: " + error.message);
+            }
+        }
+
+        async function cloudSignOut() {
+            const { auth, signOut } = window.firebaseApp;
+            try {
+                await signOut(auth);
+                alert("Güvenli çıkış yapıldı kanka.");
+                switchTab('anasayfa');
+            } catch(e) {
+                alert("Çıkış hatası: " + e.message);
+            }
+        }
+
+        async function addNewSongCloud() {
+            if(!window.isAdminLoggedIn) {
+                alert("⛔ Bu işlem için yönetici yetkiniz yok kanka!");
+                return;
+            }
+
+            const name = document.getElementById('newSongName').value.trim();
+            const lyrics = document.getElementById('newSongLyrics').value.trim();
+            const credits = document.getElementById('previewSongCredits').value.trim();
+            const audioFileInput = document.getElementById('newSongAudioFile');
+            const { db, storage, collection, addDoc, ref, uploadBytes, getDownloadURL } = window.firebaseApp;
+
+            if(!name) {
+                alert("Lütfen şarkı adı gir kanka.");
+                return;
+            }
+
+            try {
+                let audioUrl = "";
+                if(audioFileInput.files && audioFileInput.files[0]) {
+                    alert("⏳ Ses dosyası buluta yükleniyor, lütfen bekleyin kanka...");
+                    const audioFile = audioFileInput.files[0];
+                    const storageRef = ref(storage, 'songs/' + Date.now() + '_' + audioFile.name);
+                    const snapshot = await uploadBytes(storageRef, audioFile);
+                    audioUrl = await getDownloadURL(snapshot.ref);
+                } else {
+                    alert("⚠️ Lütfen bir ses dosyası (.mp3) seç kanka!");
+                    return;
+                }
+
+                await addDoc(collection(db, "songs"), {
+                    title: name,
+                    lyrics: lyrics,
+                    credits: credits,
+                    audioUrl: audioUrl,
+                    plays: 0,
+                    createdAt: new Date()
+                });
+
+                alert("🎵 Şarkı ve ses dosyası buluta başarıyla kaydedildi!");
+                document.getElementById('newSongName').value = '';
+                document.getElementById('newSongLyrics').value = '';
+                audioFileInput.value = '';
+                loadCloudSongs();
+                switchTab('sarkilar');
+            } catch (error) {
+                alert("Veritabanı/Yükleme hatası: " + error.message);
+            }
+        }
+
+        async function addNewAlbumCloud() {
+            if(!window.isAdminLoggedIn) {
+                alert("⛔ Bu işlem için yönetici yetkiniz yok kanka!");
+                return;
+            }
+
+            const name = document.getElementById('newAlbumName').value.trim();
+            const desc = document.getElementById('newAlbumDesc').value.trim();
+            const { db, collection, addDoc } = window.firebaseApp;
+
+            if(!name) {
+                alert("Lütfen albüm adı gir kanka.");
+                return;
+            }
+
+            let tracksList = [];
+            for(let i = 1; i <= 15; i++) {
+                const trackNameInput = document.getElementById(`albumTrackName_${i}`);
+                if(trackNameInput && trackNameInput.value.trim()) {
+                    tracksList.push({ trackNumber: i, title: trackNameInput.value.trim() });
+                }
+            }
+
+            try {
+                await addDoc(collection(db, "albums"), {
+                    title: name,
+                    description: desc,
+                    tracks: tracksList,
+                    createdAt: new Date()
+                });
+                alert(`💿 "${name}" albümü buluta yayınlandı!`);
+                switchTab('albumler');
+            } catch (error) {
+                alert("Hata: " + error.message);
+            }
+        }
+
+        async function addNewVideoCloud() {
+            if(!window.isAdminLoggedIn) {
+                alert("⛔ Bu işlem için yönetici yetkiniz yok kanka!");
+                return;
+            }
+
+            const name = document.getElementById('newVideoName').value.trim();
+            const { db, collection, addDoc } = window.firebaseApp;
+
+            if(!name) {
+                alert("Lütfen video başlığı gir kanka.");
+                return;
+            }
+
+            try {
+                await addDoc(collection(db, "videos"), {
+                    title: name,
+                    views: 0,
+                    createdAt: new Date()
+                });
+                alert("📹 Video buluta yüklendi!");
+                switchTab('videolar');
+            } catch (error) {
+                alert("Hata: " + error.message);
+            }
+        }
+    </script>
+</body>
+</html>
