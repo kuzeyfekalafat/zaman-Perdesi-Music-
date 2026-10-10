@@ -75,10 +75,10 @@
                 <div class="content-card enterprise-card">
                     <div class="content-main-row">
                         <div class="content-info">
-                            <h4>Zamanın Ötesinde (Özel Master Konsept)</h4>
-                            <p>Kuzeyfe Kalafat <span class="verified-tick">✓</span> <span class="exclusive-badge">0-Nokta Özel</span></p>
+                            <h4>Zamanın Ötesinde (0-NOKTA MASTER KONSEPT)</h4>
+                            <p>Kuzeyfe Kalafat <span class="verified-tick">✓</span> <span class="exclusive-badge">Özel Sürüm</span></p>
                         </div>
-                        <div class="view-count-badge">🎧 3,450 Dinlenme</div>
+                        <div class="view-count-badge">🎧 5,420 Dinlenme</div>
                     </div>
                     <div style="margin-top: 12px;">
                         <label style="font-size: 0.75rem; color: var(--gold); margin-bottom: 3px;">Şarkı Sözleri & Akış Senkronu:</label>
@@ -98,11 +98,11 @@ Zaman Perdesi kalplerde hep var olur.</p>
                     </div>
                     <div class="card-actions-row">
                         <button class="btn-favorite-action" onclick="toggleFavorite(this, 'master_1')">⭐ Favorilere Ekle</button>
-                        <button class="btn-comment-toggle" onclick="toggleComments('comment_box_master_1')">💬 Tartışmalar & Yorumlar (8)</button>
+                        <button class="btn-comment-toggle" onclick="toggleComments('comment_box_master_1')">💬 Tartışmalar & Yorumlar (12)</button>
                     </div>
                     <div id="comment_box_master_1" class="comments-section">
                         <div class="comment-item" style="background:rgba(255,255,255,0.03); padding:8px; border-radius:6px; margin-bottom:6px; font-size:0.8rem;">
-                            <strong style="color:var(--gold);">Müziksever_34:</strong> Platformdaki en muazzam prodüksiyon olmuş kanka!
+                            <strong style="color:var(--gold);">Kuzeyfe Kalafat:</strong> 0-Nokta Yapım Holding güvencesiyle yayında kanka!
                         </div>
                         <div class="comment-input-box">
                             <input type="text" placeholder="Yorum yaz...">
@@ -175,8 +175,8 @@ Zaman Perdesi kalplerde hep var olur.</p>
 
     <style>
         :root {
-            --bg-color: #080808;
-            --panel-bg: #111111;
+            --bg-color: #050505;
+            --panel-bg: #0f0f0f;
             --panel-border: #222222;
             --gold: #d4af37;
             --gold-hover: #e5c158;
@@ -184,22 +184,21 @@ Zaman Perdesi kalplerde hep var olur.</p>
             --text-muted: #888888;
             --verified-blue: #1d9bf0;
             --admin-red: #ff4757;
-            --enterprise-glow: rgba(212, 175, 55, 0.15);
+            --enterprise-glow: rgba(212, 175, 55, 0.2);
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
         body { background-color: var(--bg-color); color: var(--text-main); padding-bottom: 120px; }
         
-        header { padding: 14px 20px; border-bottom: 1px solid var(--panel-border); display: flex; justify-content: space-between; align-items: center; background: rgba(8,8,8,0.95); backdrop-filter: blur(12px); position: sticky; top: 0; z-index: 100; }
+        header { padding: 14px 20px; border-bottom: 1px solid var(--panel-border); display: flex; justify-content: space-between; align-items: center; background: rgba(5,5,5,0.98); backdrop-filter: blur(15px); position: sticky; top: 0; z-index: 100; }
         .brand-box h1 { font-size: 1.25rem; color: var(--gold); font-weight: 800; letter-spacing: 0.5px; cursor: pointer; }
-        .brand-box p { font-size: 0.68rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
+        .brand-box p { font-size: 0.68rem; color: #ff4757; text-transform: uppercase; letter-spacing: 1px; font-weight: bold; }
         
         .user-profile-tag { display: flex; align-items: center; gap: 6px; font-size: 0.85rem; font-weight: 600; color: var(--text-main); background: var(--panel-bg); border: 1px solid var(--panel-border); padding: 6px 12px; border-radius: 20px; cursor: pointer; transition: 0.2s; white-space: nowrap; }
         .user-profile-tag:hover { border-color: var(--gold); }
         .verified-tick { background: var(--verified-blue); color: #fff; border-radius: 50%; width: 14px; height: 14px; font-size: 8px; display: inline-flex; align-items: center; justify-content: center; font-weight: bold; }
-        .exclusive-badge { background: rgba(212,175,55,0.2); color: var(--gold); font-size: 0.65rem; padding: 2px 6px; border-radius: 4px; border: 1px solid rgba(212,175,55,0.4); margin-left: 6px; font-weight: bold; }
+        .exclusive-badge { background: rgba(212,175,55,0.25); color: var(--gold); font-size: 0.65rem; padding: 2px 6px; border-radius: 4px; border: 1px solid rgba(212,175,55,0.5); margin-left: 6px; font-weight: bold; }
         
-        /* KAYDIRILABİLİR VE DÜZGÜN HİZALANMIŞ ÜST MENÜ */
         .nav-tabs { display: flex; gap: 6px; padding: 12px 16px; overflow-x: auto; background: var(--bg-color); border-bottom: 1px solid var(--panel-border); white-space: nowrap; -webkit-overflow-scrolling: touch; scrollbar-width: thin; scrollbar-color: var(--gold) var(--panel-bg); }
         .nav-tabs::-webkit-scrollbar { height: 4px; }
         .nav-tabs::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 4px; }
@@ -270,9 +269,9 @@ Zaman Perdesi kalplerde hep var olur.</p>
 <body>
 
     <header>
-        <div class="brand-box" ondblclick="triggerSecretAdminAccess()" title="Zaman Perdesi Enterprise">
+        <div class="brand-box" ondblclick="triggerSecretAdminAccess()" title="0-Nokta Yapim Enterprise">
             <h1>Zaman Perdesi</h1>
-            <p>Ultimate Cloud Music & Video Platform</p>
+            <p>0-NOKTA YAPIM ENTERPRISE v3.5</p>
         </div>
         <div class="user-profile-tag" id="userProfileTag" onclick="switchTab('giris')">
             Patron Girişi
@@ -296,7 +295,7 @@ Zaman Perdesi kalplerde hep var olur.</p>
 
         <!-- Ana Sayfa -->
         <div id="anasayfa" class="section-content active">
-            <h2 class="section-title"><i class="fa-solid fa-fire" style="color:var(--gold);"></i> Bulut Trendler & Öne Çıkanlar</h2>
+            <h2 class="section-title"><i class="fa-solid fa-fire" style="color:var(--gold);"></i> 0-Nokta Yapım & Bulut Trendler</h2>
             <div id="dynamicSongList">
                 <div class="empty-state">Şarkılar yükleniyor kanka...</div>
             </div>
