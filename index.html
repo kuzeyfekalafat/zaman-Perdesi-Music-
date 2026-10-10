@@ -765,13 +765,13 @@
                 <div class="form-group">
                     <label>Şarkı Kapak Görseli (1 Adet)</label>
                     <div class="file-input-wrapper">
-                        <input type="file" id="newSongCoverFile" accept="image/*">
+                        <input type="file" id="newSongCoverFile">
                     </div>
                 </div>
                 <div class="form-group">
-                    <label>Ses Dosyası (.mp3)</label>
+                    <label>Ses Dosyası (Tüm Formatlar Serbest)</label>
                     <div class="file-input-wrapper">
-                        <input type="file" id="newSongAudioFile" accept="audio/mp3">
+                        <input type="file" id="newSongAudioFile">
                     </div>
                 </div>
                 <button class="btn-gold" onclick="addNewSongCloud()">Şarkıyı Buluta Yükle (Otomatik Künye ile)</button>
@@ -826,7 +826,7 @@
                 <div class="form-group">
                     <label>Albüm Kapak Görseli (Tek Görsel)</label>
                     <div class="file-input-wrapper">
-                        <input type="file" id="newAlbumCoverFile" accept="image/*">
+                        <input type="file" id="newAlbumCoverFile">
                     </div>
                 </div>
 
@@ -862,9 +862,9 @@
                     <input type="text" id="newVideoName" placeholder="Video adı...">
                 </div>
                 <div class="form-group">
-                    <label>Video Dosyası (.mp4)</label>
+                    <label>Video Dosyası</label>
                     <div class="file-input-wrapper">
-                        <input type="file" id="newVideoFile" accept="video/*">
+                        <input type="file" id="newVideoFile">
                     </div>
                 </div>
                 <button class="btn-gold" onclick="addNewVideoCloud()">Videoyu Buluta Yükle</button>
@@ -972,7 +972,7 @@
                         <div class="track-slot-row">
                             <span>#${i}</span>
                             <input type="text" id="albumTrackName_${i}" placeholder="${i}. Şarkı Adı">
-                            <input type="file" id="albumTrackFile_${i}" accept="audio/mp3">
+                            <input type="file" id="albumTrackFile_${i}">
                         </div>
                     `;
                 }
