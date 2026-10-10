@@ -93,11 +93,13 @@
         async function loadCloudSongs() {
             const { db, collection, getDocs } = window.firebaseApp;
             const anasayfaContainer = document.getElementById('dynamicSongList');
+            const sarkilarContainer = document.getElementById('dynamicSongListAll');
 
             try {
                 const querySnapshot = await getDocs(collection(db, "songs"));
                 if(querySnapshot.empty) {
                     if(anasayfaContainer) anasayfaContainer.innerHTML = '<div class="empty-state">Bulutta henüz şarkı yok kanka.</div>';
+                    if(sarkilarContainer) sarkilarContainer.innerHTML = '<div class="empty-state">Bulutta henüz şarkı yok kanka.</div>';
                     return;
                 }
 
@@ -123,7 +125,7 @@
                                         Tarayıcınız ses oynatıcısını desteklemiyor.
                                     </audio>
                                 </div>
-                            ` : '<p style="font-size:0.75rem; color:#ff4757; margin-top:8px;">⚠️ Bu şarkıya ses dosyası yüklenmemiş.</p>'}
+                            ` : '<p style="font-size:0.75rem; color:#ff4757; margin-top:8px;">⚠️ Bu şarkıda ses dosyası bağlantısı yok.</p>'}
 
                             ${song.lyrics ? `
                                 <div style="margin-top: 12px;">
@@ -152,11 +154,135 @@
                 });
 
                 if(anasayfaContainer) anasayfaContainer.innerHTML = htmlContent;
+                if(sarkilarContainer) sarkilarContainer.innerHTML = htmlContent;
             } catch (e) {
                 console.error("Şarkı yükleme hatası:", e);
             }
         }
         window.loadCloudSongs = loadCloudSongs;
+
+        function triggerSecretAdminAccess() {
+            switchTab('giris');
+            alert("🛡 Gizli Patron Kapısı Algılandı!");
+        }
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.section-content').forEach(sec => sec.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+
+            const targetSection = document.getElementById(tabId);
+            if(targetSection) targetSection.classList.add('active');
+            
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                const onclickAttr = btn.getAttribute('onclick');
+                if(onclickAttr && onclickAttr.includes("'" + tabId + "'")) {
+                    btn.classList.add('active');
+                }
+            });
+            window.scrollTo(0, 0);
+
+            if(tabId === 'anasayfa' || tabId === 'sarkilar') {
+                loadCloudSongs();
+            }
+        }
+
+        function toggleComments(sectionId) {
+            const commentSec = document.getElementById(sectionId);
+            if(commentSec) commentSec.classList.toggle('open');
+        }
+
+        function toggleFavorite(btn, itemId) {
+            btn.classList.toggle('favorited');
+            if(btn.classList.contains('favorited')) {
+                btn.innerText = "⭐ Favorilerde";
+                alert("⭐ Başarıyla favorilere eklendi kanka!");
+            } else {
+                btn.innerText = "⭐ Favorilere Ekle";
+            }
+        }
+
+        function updateSongCreditsPreview() {
+            const songNameInput = document.getElementById('newSongName').value.trim();
+            const displayName = songNameInput ? songNameInput : "Şarkı Adı";
+            const previewBox = document.getElementById('previewSongCredits');
+            
+            previewBox.value = `🎵 ${displayName} - KÜNYE\n` +
+                               `--------------------------------------------------\n` +
+                               `• Söz & Müzik : Kuzeyfe Kalafat\n` +
+                               `• Aranjör & Prodüktör : Zaman Perdesi Music & Kuzeyfe Kalafat\n` +
+                               `• Görsel & Kapak Tasarımı : Kuzeyfe Kalafat\n` +
+                               `• Yapım & Yönetim : Zaman Perdesi Music & Kuzeyfe Kalafat`;
+        }
+
+        async function cloudLogin() {
+            const email = document.getElementById('loginEmail').value.trim();
+            const pass = document.getElementById('loginPass').value.trim();
+            const { auth, signInWithEmailAndPassword } = window.firebaseApp;
+
+            if(email !== "kuzeyfe198634@gmail.com") {
+                alert("⛔ Bu sisteme sadece Patron Kuzeyfe giriş yapabilir!");
+                return;
+            }
+
+            try {
+                await signInWithEmailAndPassword(auth, email, pass);
+                alert("Hoş geldin Patron!");
+                switchTab('anasayfa');
+            } catch (error) {
+                alert("Giriş hatası: " + error.message);
+            }
+        }
+
+        async function addNewSongCloud() {
+            if(!window.isAdminLoggedIn) {
+                alert("⛔ Bu işlem için yönetici yetkiniz yok kanka!");
+                return;
+            }
+
+            const name = document.getElementById('newSongName').value.trim();
+            const lyrics = document.getElementById('newSongLyrics').value.trim();
+            const credits = document.getElementById('previewSongCredits').value.trim();
+            const audioFileInput = document.getElementById('newSongAudioFile');
+            const { db, storage, collection, addDoc, ref, uploadBytes, getDownloadURL } = window.firebaseApp;
+
+            if(!name) {
+                alert("Lütfen şarkı adı gir kanka.");
+                return;
+            }
+
+            try {
+                let audioUrl = "";
+                if(audioFileInput.files && audioFileInput.files[0]) {
+                    alert("⏳ Ses dosyası buluta yükleniyor, lütfen bekleyin kanka...");
+                    const audioFile = audioFileInput.files[0];
+                    const storageRef = ref(storage, 'songs/' + Date.now() + '_' + audioFile.name);
+                    const snapshot = await uploadBytes(storageRef, audioFile);
+                    audioUrl = await getDownloadURL(snapshot.ref);
+                } else {
+                    alert("⚠️ Lütfen bir ses dosyası (.mp3) seç kanka!");
+                    return;
+                }
+
+                await addDoc(collection(db, "songs"), {
+                    title: name,
+                    lyrics: lyrics,
+                    credits: credits,
+                    audioUrl: audioUrl,
+                    plays: 0,
+                    createdAt: new Date()
+                });
+
+                alert("🎵 Şarkı, ses dosyası, künyesi ve sözleriyle buluta başarıyla kaydedildi!");
+                document.getElementById('newSongName').value = '';
+                document.getElementById('newSongLyrics').value = '';
+                audioFileInput.value = '';
+                loadCloudSongs();
+                switchTab('sarkilar');
+            } catch (error) {
+                alert("Veritabanı/Yükleme hatası: " + error.message);
+                console.error(error);
+            }
+        }
     </script>
 
     <style>
@@ -361,203 +487,5 @@
         </div>
 
     </div>
-
-    <script>
-        window.addEventListener('DOMContentLoaded', () => {
-            loadCloudSongs();
-        });
-
-        async function loadCloudSongs() {
-            const { db, collection, getDocs } = window.firebaseApp;
-            const anasayfaContainer = document.getElementById('dynamicSongList');
-            const sarkilarContainer = document.getElementById('dynamicSongListAll');
-
-            try {
-                const querySnapshot = await getDocs(collection(db, "songs"));
-                if(querySnapshot.empty) {
-                    if(anasayfaContainer) anasayfaContainer.innerHTML = '<div class="empty-state">Bulutta henüz şarkı yok kanka.</div>';
-                    if(sarkilarContainer) sarkilarContainer.innerHTML = '<div class="empty-state">Bulutta henüz şarkı yok kanka.</div>';
-                    return;
-                }
-
-                let htmlContent = '';
-                querySnapshot.forEach((docSnap) => {
-                    const song = docSnap.data();
-                    const creditsText = song.credits || `🎵 ${song.title} - KÜNYE\n--------------------------------------------------\n• Söz & Müzik : Kuzeyfe Kalafat\n• Aranjör & Prodüktör : Zaman Perdesi Music & Kuzeyfe Kalafat\n• Görsel & Kapak Tasarımı : Kuzeyfe Kalafat\n• Yapım & Yönetim : Zaman Perdesi Music & Kuzeyfe Kalafat`;
-
-                    htmlContent += `
-                        <div class="content-card">
-                            <div class="content-main-row">
-                                <div class="content-info">
-                                    <h4>${song.title || 'İsimsiz Parça'}</h4>
-                                    <p>Kuzeyfe Kalafat <span class="verified-tick">✓</span></p>
-                                </div>
-                                <div class="view-count-badge">🎧 ${song.plays || 0} Dinlenme</div>
-                            </div>
-
-                            ${song.audioUrl ? `
-                                <div style="margin-top: 12px;">
-                                    <audio controls style="width: 100%; height: 38px;">
-                                        <source src="${song.audioUrl}" type="audio/mp3">
-                                        Tarayıcınız ses oynatıcısını desteklemiyor.
-                                    </audio>
-                                </div>
-                            ` : '<p style="font-size:0.75rem; color:#ff4757; margin-top:8px;">⚠️ Bu şarkıda ses dosyası bağlantısı yok.</p>'}
-
-                            ${song.lyrics ? `
-                                <div style="margin-top: 12px;">
-                                    <label style="font-size: 0.75rem; color: var(--gold); margin-bottom: 3px;">Şarkı Sözleri:</label>
-                                    <p style="font-size:0.82rem; color:var(--text-main); white-space:pre-line; background: rgba(0,0,0,0.25); padding: 10px; border-radius: 6px; border: 1px solid var(--panel-border);">${song.lyrics}</p>
-                                </div>
-                            ` : ''}
-
-                            <div style="margin-top: 12px;">
-                                <label style="font-size: 0.75rem; color: var(--gold); margin-bottom: 3px;">Resmi Künye:</label>
-                                <textarea rows="5" readonly style="color: var(--gold); background: #0a0a0a; font-size: 0.78rem; width: 100%; border: 1px solid var(--panel-border); border-radius: 6px; padding: 8px; cursor: not-allowed;">${creditsText}</textarea>
-                            </div>
-
-                            <div class="card-actions-row">
-                                <button class="btn-favorite-action" onclick="toggleFavorite(this, '${docSnap.id}')">⭐ Favorilere Ekle</button>
-                                <button class="btn-comment-toggle" onclick="toggleComments('comment_box_${docSnap.id}')">💬 Yorumlar (0)</button>
-                            </div>
-                            <div id="comment_box_${docSnap.id}" class="comments-section">
-                                <div class="comment-input-box">
-                                    <input type="text" placeholder="Yorum yaz...">
-                                    <button onclick="alert('Yorum buluta eklendi!')">Gönder</button>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                });
-
-                if(anasayfaContainer) anasayfaContainer.innerHTML = htmlContent;
-                if(sarkilarContainer) sarkilarContainer.innerHTML = htmlContent;
-            } catch (e) {
-                console.error("Şarkı yükleme hatası:", e);
-            }
-        }
-        window.loadCloudSongs = loadCloudSongs;
-
-        function triggerSecretAdminAccess() {
-            switchTab('giris');
-            alert("🛡 Gizli Patron Kapısı Algılandı!");
-        }
-
-        function switchTab(tabId) {
-            document.querySelectorAll('.section-content').forEach(sec => sec.classList.remove('active'));
-            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-
-            const targetSection = document.getElementById(tabId);
-            if(targetSection) targetSection.classList.add('active');
-            
-            document.querySelectorAll('.tab-btn').forEach(btn => {
-                const onclickAttr = btn.getAttribute('onclick');
-                if(onclickAttr && onclickAttr.includes("'" + tabId + "'")) {
-                    btn.classList.add('active');
-                }
-            });
-            window.scrollTo(0, 0);
-
-            if(tabId === 'anasayfa' || tabId === 'sarkilar') {
-                loadCloudSongs();
-            }
-        }
-
-        function toggleComments(sectionId) {
-            const commentSec = document.getElementById(sectionId);
-            if(commentSec) commentSec.classList.toggle('open');
-        }
-
-        function toggleFavorite(btn, itemId) {
-            btn.classList.toggle('favorited');
-            if(btn.classList.contains('favorited')) {
-                btn.innerText = "⭐ Favorilerde";
-                alert("⭐ Başarıyla favorilere eklendi kanka!");
-            } else {
-                btn.innerText = "⭐ Favorilere Ekle";
-            }
-        }
-
-        function updateSongCreditsPreview() {
-            const songNameInput = document.getElementById('newSongName').value.trim();
-            const displayName = songNameInput ? songNameInput : "Şarkı Adı";
-            const previewBox = document.getElementById('previewSongCredits');
-            
-            previewBox.value = `🎵 ${displayName} - KÜNYE\n` +
-                               `--------------------------------------------------\n` +
-                               `• Söz & Müzik : Kuzeyfe Kalafat\n` +
-                               `• Aranjör & Prodüktör : Zaman Perdesi Music & Kuzeyfe Kalafat\n` +
-                               `• Görsel & Kapak Tasarımı : Kuzeyfe Kalafat\n` +
-                               `• Yapım & Yönetim : Zaman Perdesi Music & Kuzeyfe Kalafat`;
-        }
-
-        async function cloudLogin() {
-            const email = document.getElementById('loginEmail').value.trim();
-            const pass = document.getElementById('loginPass').value.trim();
-            const { auth, signInWithEmailAndPassword } = window.firebaseApp;
-
-            if(email !== "kuzeyfe198634@gmail.com") {
-                alert("⛔ Bu sisteme sadece Patron Kuzeyfe giriş yapabilir!");
-                return;
-            }
-
-            try {
-                await signInWithEmailAndPassword(auth, email, pass);
-                alert("Hoş geldin Patron!");
-                switchTab('anasayfa');
-            } catch (error) {
-                alert("Giriş hatası: " + error.message);
-            }
-        }
-
-        async function addNewSongCloud() {
-            if(!window.isAdminLoggedIn) {
-                alert("⛔ Bu işlem için yönetici yetkiniz yok kanka!");
-                return;
-            }
-
-            const name = document.getElementById('newSongName').value.trim();
-            const lyrics = document.getElementById('newSongLyrics').value.trim();
-            const credits = document.getElementById('previewSongCredits').value.trim();
-            const audioFileInput = document.getElementById('newSongAudioFile');
-            const { db, storage, collection, addDoc, ref, uploadBytes, getDownloadURL } = window.firebaseApp;
-
-            if(!name) {
-                alert("Lütfen şarkı adı gir kanka.");
-                return;
-            }
-
-            try {
-                let audioUrl = "";
-                if(audioFileInput.files && audioFileInput.files[0]) {
-                    const audioFile = audioFileInput.files[0];
-                    const storageRef = ref(storage, 'songs/' + Date.now() + '_' + audioFile.name);
-                    const snapshot = await uploadBytes(storageRef, audioFile);
-                    audioUrl = await getDownloadURL(snapshot.ref);
-                } else {
-                    alert("⚠️ Lütfen bir ses dosyası (.mp3) seç kanka!");
-                    return;
-                }
-
-                await addDoc(collection(db, "songs"), {
-                    title: name,
-                    lyrics: lyrics,
-                    credits: credits,
-                    audioUrl: audioUrl,
-                    plays: 0,
-                    createdAt: new Date()
-                });
-
-                alert("🎵 Şarkı, ses dosyası, künyesi ve sözleriyle buluta başarıyla kaydedildi!");
-                document.getElementById('newSongName').value = '';
-                document.getElementById('newSongLyrics').value = '';
-                audioFileInput.value = '';
-                loadCloudSongs();
-                switchTab('sarkilar');
-            } catch (error) {
-                alert("Veritabanı/Yükleme hatası: " + error.message);
-            }
-        }
-    </script>
 </body>
 </html>
