@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Zaman Perdesi - Ultimate Cloud Music & Video Platform (v3.0 Enterprise)</title>
+    <title>Zaman Perdesi - Ultimate Cloud Music & Video Platform</title>
     
     <!-- FontAwesome Orijinal İkonlar -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -64,21 +64,7 @@
                 }
             }
             loadCloudSongs();
-            initVisualizerBars();
         });
-
-        function initVisualizerBars() {
-            const viz = document.getElementById('liveEqualizer');
-            if(viz) {
-                viz.innerHTML = '';
-                for(let i=0; i<24; i++) {
-                    const bar = document.createElement('div');
-                    bar.className = 'eq-bar';
-                    bar.style.height = `${Math.floor(Math.random() * 80 + 15)}%`;
-                    viz.appendChild(bar);
-                }
-            }
-        }
 
         async function loadCloudSongs() {
             const { db, collection, getDocs } = window.firebaseApp;
@@ -89,10 +75,10 @@
                 <div class="content-card enterprise-card">
                     <div class="content-main-row">
                         <div class="content-info">
-                            <h4>Zamanın Ötesinde (Özel Konsept Master)</h4>
-                            <p>Kuzeyfe Kalafat <span class="verified-tick">✓</span> <span class="exclusive-badge">Özel Sürüm</span></p>
+                            <h4>Zamanın Ötesinde (Özel Master Konsept)</h4>
+                            <p>Kuzeyfe Kalafat <span class="verified-tick">✓</span> <span class="exclusive-badge">0-Nokta Özel</span></p>
                         </div>
-                        <div class="view-count-badge">🎧 2,840 Dinlenme</div>
+                        <div class="view-count-badge">🎧 3,450 Dinlenme</div>
                     </div>
                     <div style="margin-top: 12px;">
                         <label style="font-size: 0.75rem; color: var(--gold); margin-bottom: 3px;">Şarkı Sözleri & Akış Senkronu:</label>
@@ -112,11 +98,11 @@ Zaman Perdesi kalplerde hep var olur.</p>
                     </div>
                     <div class="card-actions-row">
                         <button class="btn-favorite-action" onclick="toggleFavorite(this, 'master_1')">⭐ Favorilere Ekle</button>
-                        <button class="btn-comment-toggle" onclick="toggleComments('comment_box_master_1')">💬 Tartışmalar & Yorumlar (5)</button>
+                        <button class="btn-comment-toggle" onclick="toggleComments('comment_box_master_1')">💬 Tartışmalar & Yorumlar (8)</button>
                     </div>
                     <div id="comment_box_master_1" class="comments-section">
                         <div class="comment-item" style="background:rgba(255,255,255,0.03); padding:8px; border-radius:6px; margin-bottom:6px; font-size:0.8rem;">
-                            <strong style="color:var(--gold);">Müziksever_34:</strong> Platformdaki en muazzam prodüksiyon olmuş!
+                            <strong style="color:var(--gold);">Müziksever_34:</strong> Platformdaki en muazzam prodüksiyon olmuş kanka!
                         </div>
                         <div class="comment-input-box">
                             <input type="text" placeholder="Yorum yaz...">
@@ -189,9 +175,9 @@ Zaman Perdesi kalplerde hep var olur.</p>
 
     <style>
         :root {
-            --bg-color: #0b0b0b;
-            --panel-bg: #121212;
-            --panel-border: #242424;
+            --bg-color: #080808;
+            --panel-bg: #111111;
+            --panel-border: #222222;
             --gold: #d4af37;
             --gold-hover: #e5c158;
             --text-main: #f5f5f5;
@@ -202,86 +188,83 @@ Zaman Perdesi kalplerde hep var olur.</p>
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
-        body { background-color: var(--bg-color); color: var(--text-main); padding-bottom: 110px; }
-        header { padding: 16px 24px; border-bottom: 1px solid var(--panel-border); display: flex; justify-content: space-between; align-items: center; background: rgba(11,11,11,0.95); backdrop-filter: blur(10px); position: sticky; top: 0; z-index: 100; }
-        .brand-box h1 { font-size: 1.3rem; color: var(--gold); font-weight: 800; letter-spacing: 0.5px; cursor: pointer; }
-        .brand-box p { font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
-        .user-profile-tag { display: flex; align-items: center; gap: 6px; font-size: 0.9rem; font-weight: 600; color: var(--text-main); background: var(--panel-bg); border: 1px solid var(--panel-border); padding: 6px 14px; border-radius: 20px; cursor: pointer; transition: 0.2s; }
+        body { background-color: var(--bg-color); color: var(--text-main); padding-bottom: 120px; }
+        
+        header { padding: 14px 20px; border-bottom: 1px solid var(--panel-border); display: flex; justify-content: space-between; align-items: center; background: rgba(8,8,8,0.95); backdrop-filter: blur(12px); position: sticky; top: 0; z-index: 100; }
+        .brand-box h1 { font-size: 1.25rem; color: var(--gold); font-weight: 800; letter-spacing: 0.5px; cursor: pointer; }
+        .brand-box p { font-size: 0.68rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
+        
+        .user-profile-tag { display: flex; align-items: center; gap: 6px; font-size: 0.85rem; font-weight: 600; color: var(--text-main); background: var(--panel-bg); border: 1px solid var(--panel-border); padding: 6px 12px; border-radius: 20px; cursor: pointer; transition: 0.2s; white-space: nowrap; }
         .user-profile-tag:hover { border-color: var(--gold); }
-        .verified-tick { background: var(--verified-blue); color: #fff; border-radius: 50%; width: 15px; height: 15px; font-size: 9px; display: inline-flex; align-items: center; justify-content: center; font-weight: bold; }
+        .verified-tick { background: var(--verified-blue); color: #fff; border-radius: 50%; width: 14px; height: 14px; font-size: 8px; display: inline-flex; align-items: center; justify-content: center; font-weight: bold; }
         .exclusive-badge { background: rgba(212,175,55,0.2); color: var(--gold); font-size: 0.65rem; padding: 2px 6px; border-radius: 4px; border: 1px solid rgba(212,175,55,0.4); margin-left: 6px; font-weight: bold; }
         
-        .nav-tabs { display: flex; gap: 8px; padding: 14px 20px; overflow-x: auto; background: var(--bg-color); border-bottom: 1px solid var(--panel-border); white-space: nowrap; scrollbar-width: thin; scrollbar-color: var(--gold) var(--panel-bg); }
-        .tab-btn { background: var(--panel-bg); border: 1px solid var(--panel-border); color: var(--text-muted); padding: 9px 16px; border-radius: 22px; font-size: 0.85rem; cursor: pointer; transition: all 0.2s ease; flex-shrink: 0; }
+        /* KAYDIRILABİLİR VE DÜZGÜN HİZALANMIŞ ÜST MENÜ */
+        .nav-tabs { display: flex; gap: 6px; padding: 12px 16px; overflow-x: auto; background: var(--bg-color); border-bottom: 1px solid var(--panel-border); white-space: nowrap; -webkit-overflow-scrolling: touch; scrollbar-width: thin; scrollbar-color: var(--gold) var(--panel-bg); }
+        .nav-tabs::-webkit-scrollbar { height: 4px; }
+        .nav-tabs::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 4px; }
+
+        .tab-btn { background: var(--panel-bg); border: 1px solid var(--panel-border); color: var(--text-muted); padding: 8px 14px; border-radius: 20px; font-size: 0.82rem; cursor: pointer; transition: all 0.2s ease; flex-shrink: 0; display: inline-flex; align-items: center; gap: 5px; }
         .tab-btn:hover { color: var(--text-main); border-color: #444; }
-        .tab-btn.active { background: var(--gold); color: #000; border-color: var(--gold); font-weight: 700; box-shadow: 0 0 15px rgba(212,175,55,0.3); }
+        .tab-btn.active { background: var(--gold); color: #000; border-color: var(--gold); font-weight: 700; box-shadow: 0 0 12px rgba(212,175,55,0.3); }
         .tab-btn.admin-tab-btn { background: rgba(255, 71, 87, 0.15); border-color: var(--admin-red); color: var(--admin-red); font-weight: bold; display: none; }
         .tab-btn.admin-tab-btn.active { background: var(--admin-red); color: #fff; }
 
-        .container { padding: 24px; max-width: 900px; margin: 0 auto; }
-        .section-content { display: none; animation: fadeIn 0.3s ease; }
+        .container { padding: 20px; max-width: 900px; margin: 0 auto; }
+        .section-content { display: none; animation: fadeIn 0.25s ease; }
         .section-content.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(3px); } to { opacity: 1; transform: translateY(0); } }
 
-        h2.section-title { font-size: 1.3rem; color: var(--gold); margin-bottom: 18px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
-        
-        /* Ekolayzer Canlı Görselleştirici Paneli */
-        .live-visualizer-bar { background: linear-gradient(135deg, #161616, #1c1c1c); border: 1px solid var(--panel-border); border-radius: 12px; padding: 16px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 4px 20px rgba(0,0,0,0.5); }
-        .eq-bars-container { display: flex; align-items: flex-end; gap: 3px; height: 32px; width: 140px; }
-        .eq-bar { flex: 1; background: var(--gold); border-radius: 2px; animation: eqPulse 1.2s infinite alternate ease-in-out; }
-        .eq-bar:nth-child(odd) { animation-duration: 0.8s; }
-        .eq-bar:nth-child(even) { animation-duration: 1.5s; }
-        @keyframes eqPulse { 0% { height: 15%; } 100% { height: 100%; } }
+        h2.section-title { font-size: 1.2rem; color: var(--gold); margin-bottom: 16px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
 
-        .form-group { margin-bottom: 18px; }
-        label { display: block; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 6px; font-weight: 500; }
-        input[type="text"], input[type="email"], input[type="password"], select, textarea { width: 100%; background: var(--panel-bg); border: 1px solid var(--panel-border); color: var(--text-main); padding: 13px; border-radius: 10px; font-size: 0.95rem; transition: 0.2s; }
-        input:focus, select:focus, textarea:focus { outline: none; border-color: var(--gold); box-shadow: 0 0 10px var(--enterprise-glow); }
+        .form-group { margin-bottom: 16px; }
+        label { display: block; font-size: 0.82rem; color: var(--text-muted); margin-bottom: 5px; font-weight: 500; }
+        input[type="text"], input[type="email"], input[type="password"], select, textarea { width: 100%; background: var(--panel-bg); border: 1px solid var(--panel-border); color: var(--text-main); padding: 12px; border-radius: 8px; font-size: 0.92rem; transition: 0.2s; }
+        input:focus, select:focus, textarea:focus { outline: none; border-color: var(--gold); box-shadow: 0 0 8px var(--enterprise-glow); }
         
-        .btn-gold { background: var(--gold); color: #000; border: none; width: 100%; padding: 13px; border-radius: 10px; font-weight: 700; font-size: 1rem; cursor: pointer; transition: 0.2s; box-shadow: 0 4px 15px rgba(212,175,55,0.2); }
-        .btn-gold:hover { background: var(--gold-hover); transform: translateY(-1px); }
+        .btn-gold { background: var(--gold); color: #000; border: none; width: 100%; padding: 12px; border-radius: 8px; font-weight: 700; font-size: 0.95rem; cursor: pointer; transition: 0.2s; box-shadow: 0 4px 12px rgba(212,175,55,0.2); }
+        .btn-gold:hover { background: var(--gold-hover); }
         
-        .file-input-wrapper { background: var(--panel-bg); border: 1px solid var(--panel-border); padding: 12px; border-radius: 10px; }
-        .album-tracks-container { border: 1px dashed var(--panel-border); background: rgba(0,0,0,0.2); padding: 14px; border-radius: 10px; margin-bottom: 18px; max-height: 250px; overflow-y: auto; }
-        .track-slot-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; background: var(--panel-bg); padding: 8px 12px; border-radius: 8px; border: 1px solid var(--panel-border); }
-        .track-slot-row span { font-size: 0.8rem; color: var(--gold); font-weight: bold; min-width: 25px; }
-        .track-slot-row input[type="text"] { padding: 7px 10px; font-size: 0.85rem; flex: 1; }
-        .track-slot-row input[type="file"] { font-size: 0.75rem; color: var(--text-muted); flex: 1.2; }
+        .file-input-wrapper { background: var(--panel-bg); border: 1px solid var(--panel-border); padding: 10px; border-radius: 8px; }
+        .album-tracks-container { border: 1px dashed var(--panel-border); background: rgba(0,0,0,0.2); padding: 12px; border-radius: 8px; margin-bottom: 16px; max-height: 240px; overflow-y: auto; }
+        .track-slot-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; background: var(--panel-bg); padding: 6px 10px; border-radius: 6px; border: 1px solid var(--panel-border); }
+        .track-slot-row span { font-size: 0.78rem; color: var(--gold); font-weight: bold; min-width: 22px; }
+        .track-slot-row input[type="text"] { padding: 6px 8px; font-size: 0.82rem; flex: 1; }
+        .track-slot-row input[type="file"] { font-size: 0.72rem; color: var(--text-muted); flex: 1.2; }
 
-        .empty-state { color: var(--text-muted); font-size: 0.95rem; text-align: center; padding: 50px 0; background: var(--panel-bg); border: 1px solid var(--panel-border); border-radius: 12px; }
-        .content-card { background: var(--panel-bg); border: 1px solid var(--panel-border); border-radius: 12px; padding: 18px; margin-bottom: 16px; transition: 0.2s; box-shadow: 0 4px 20px rgba(0,0,0,0.3); }
-        .content-card:hover { border-color: #333; }
+        .empty-state { color: var(--text-muted); font-size: 0.9rem; text-align: center; padding: 45px 0; background: var(--panel-bg); border: 1px solid var(--panel-border); border-radius: 10px; }
+        .content-card { background: var(--panel-bg); border: 1px solid var(--panel-border); border-radius: 10px; padding: 16px; margin-bottom: 14px; transition: 0.2s; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
         .enterprise-card { border-left: 3px solid var(--gold); }
         
         .content-main-row { display: flex; justify-content: space-between; align-items: center; }
-        .content-info h4 { font-size: 1.05rem; color: var(--text-main); margin-bottom: 4px; font-weight: 700; }
-        .content-info p { font-size: 0.8rem; color: var(--text-muted); display: flex; align-items: center; gap: 4px; }
-        .view-count-badge { background: rgba(212, 175, 55, 0.12); color: var(--gold); border: 1px solid rgba(212, 175, 55, 0.3); padding: 5px 12px; border-radius: 14px; font-size: 0.78rem; font-weight: bold; }
+        .content-info h4 { font-size: 1rem; color: var(--text-main); margin-bottom: 3px; font-weight: 700; }
+        .content-info p { font-size: 0.78rem; color: var(--text-muted); display: flex; align-items: center; gap: 4px; }
+        .view-count-badge { background: rgba(212, 175, 55, 0.12); color: var(--gold); border: 1px solid rgba(212, 175, 55, 0.3); padding: 4px 10px; border-radius: 12px; font-size: 0.75rem; font-weight: bold; }
         
-        .card-actions-row { display: flex; justify-content: space-between; align-items: center; margin-top: 14px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.06); }
-        .btn-comment-toggle { background: none; border: none; color: var(--gold); font-size: 0.82rem; cursor: pointer; font-weight: 600; }
-        .btn-favorite-action { background: none; border: 1px solid var(--panel-border); color: var(--text-muted); padding: 5px 12px; border-radius: 8px; font-size: 0.8rem; cursor: pointer; transition: 0.2s; }
+        .card-actions-row { display: flex; justify-content: space-between; align-items: center; margin-top: 12px; padding-top: 8px; border-top: 1px solid rgba(255,255,255,0.05); }
+        .btn-comment-toggle { background: none; border: none; color: var(--gold); font-size: 0.8rem; cursor: pointer; font-weight: 600; }
+        .btn-favorite-action { background: none; border: 1px solid var(--panel-border); color: var(--text-muted); padding: 4px 10px; border-radius: 6px; font-size: 0.78rem; cursor: pointer; transition: 0.2s; }
         .btn-favorite-action.favorited { background: rgba(212, 175, 55, 0.2); border-color: var(--gold); color: var(--gold); font-weight: bold; }
         
-        .comments-section { display: none; margin-top: 14px; padding-top: 12px; border-top: 1px dashed var(--panel-border); }
+        .comments-section { display: none; margin-top: 12px; padding-top: 10px; border-top: 1px dashed var(--panel-border); }
         .comments-section.open { display: block; }
-        .comment-input-box { display: flex; gap: 8px; margin-top: 10px; }
-        .comment-input-box input { padding: 9px; font-size: 0.85rem; }
-        .comment-input-box button { background: var(--gold); color: #000; border: none; padding: 0 16px; border-radius: 8px; font-weight: bold; cursor: pointer; }
+        .comment-input-box { display: flex; gap: 6px; margin-top: 8px; }
+        .comment-input-box input { padding: 8px; font-size: 0.82rem; }
+        .comment-input-box button { background: var(--gold); color: #000; border: none; padding: 0 14px; border-radius: 6px; font-weight: bold; cursor: pointer; }
 
-        .artist-list-item { display: flex; justify-content: space-between; align-items: center; background: var(--panel-bg); border: 1px solid var(--panel-border); padding: 14px 18px; border-radius: 10px; margin-bottom: 12px; }
-        .artist-list-info h4 { font-size: 1rem; color: var(--text-main); display: flex; align-items: center; gap: 6px; font-weight: 700; }
-        .artist-list-info p { font-size: 0.8rem; color: var(--text-muted); }
-        .btn-dm-action { background: rgba(212, 175, 55, 0.15); border: 1px solid var(--gold); color: var(--gold); padding: 7px 14px; border-radius: 8px; font-size: 0.82rem; font-weight: 600; cursor: pointer; transition: 0.2s; }
+        .artist-list-item { display: flex; justify-content: space-between; align-items: center; background: var(--panel-bg); border: 1px solid var(--panel-border); padding: 12px 16px; border-radius: 8px; margin-bottom: 10px; }
+        .artist-list-info h4 { font-size: 0.95rem; color: var(--text-main); display: flex; align-items: center; gap: 6px; font-weight: 700; }
+        .artist-list-info p { font-size: 0.78rem; color: var(--text-muted); }
+        .btn-dm-action { background: rgba(212, 175, 55, 0.15); border: 1px solid var(--gold); color: var(--gold); padding: 6px 12px; border-radius: 6px; font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: 0.2s; }
         .btn-dm-action:hover { background: var(--gold); color: #000; }
 
-        .dm-box-container { background: var(--panel-bg); border: 1px solid var(--panel-border); border-radius: 12px; padding: 18px; margin-top: 18px; }
-        .dm-chat-history { height: 220px; overflow-y: auto; border: 1px solid var(--panel-border); border-radius: 8px; padding: 12px; background: rgba(0,0,0,0.3); margin-bottom: 12px; font-size: 0.85rem; }
-        .dm-msg { margin-bottom: 10px; padding: 8px 12px; border-radius: 8px; max-width: 80%; }
+        .dm-box-container { background: var(--panel-bg); border: 1px solid var(--panel-border); border-radius: 10px; padding: 16px; margin-top: 16px; }
+        .dm-chat-history { height: 200px; overflow-y: auto; border: 1px solid var(--panel-border); border-radius: 6px; padding: 10px; background: rgba(0,0,0,0.3); margin-bottom: 10px; font-size: 0.82rem; }
+        .dm-msg { margin-bottom: 8px; padding: 6px 10px; border-radius: 6px; max-width: 80%; }
         .dm-msg.sent { background: rgba(212, 175, 55, 0.25); color: var(--text-main); margin-left: auto; text-align: right; }
-        .dm-msg.received { background: rgba(255,255,255,0.06); color: var(--text-muted); }
+        .dm-msg.received { background: rgba(255,255,255,0.05); color: var(--text-muted); }
 
-        .admin-card { background: rgba(255, 71, 87, 0.05); border: 1px solid rgba(255, 71, 87, 0.3); border-radius: 12px; padding: 18px; margin-bottom: 18px; }
+        .admin-card { background: rgba(255, 71, 87, 0.05); border: 1px solid rgba(255, 71, 87, 0.3); border-radius: 10px; padding: 16px; margin-bottom: 16px; }
     </style>
 </head>
 <body>
@@ -297,30 +280,22 @@ Zaman Perdesi kalplerde hep var olur.</p>
     </header>
 
     <div class="nav-tabs" id="navTabs">
-        <button class="tab-btn active" onclick="switchTab('anasayfa')">🏠 Ana Sayfa</button>
-        <button class="tab-btn" onclick="switchTab('sarkilar')">🎵 Şarkılar</button>
-        <button class="tab-btn" onclick="switchTab('albumler')">💿 Albümler</button>
-        <button class="tab-btn" onclick="switchTab('favorilerim')">⭐ Favorilerim</button>
-        <button class="tab-btn" onclick="switchTab('videolar')">🎬 Videolar</button>
-        <button class="tab-btn" onclick="switchTab('sanatcilar')">🎤 Sanatçılar</button>
-        <button class="tab-btn" onclick="switchTab('sosyalMedya')">🌐 Sosyal Medya</button>
-        <button class="tab-btn" onclick="switchTab('mesajlar')">💬 Mesajlar</button>
-        <button class="tab-btn admin-tab-btn" id="adminTabBtn" onclick="switchTab('yoneticiPaneli')">🛡 Patron Paneli</button>
-        <button class="tab-btn" onclick="switchTab('giris')">🔑 Patron Girişi</button>
+        <button class="tab-btn active" onclick="switchTab('anasayfa')"><i class="fa-solid fa-house"></i> Ana Sayfa</button>
+        <button class="tab-btn" onclick="switchTab('sarkilar')"><i class="fa-solid fa-music"></i> Şarkılar</button>
+        <button class="tab-btn" onclick="switchTab('albumler')"><i class="fa-solid fa-compact-disc"></i> Albümler</button>
+        <button class="tab-btn" onclick="switchTab('favorilerim')"><i class="fa-solid fa-star"></i> Favorilerim</button>
+        <button class="tab-btn" onclick="switchTab('videolar')"><i class="fa-solid fa-video"></i> Videolar</button>
+        <button class="tab-btn" onclick="switchTab('sanatcilar')"><i class="fa-solid fa-microphone"></i> Sanatçılar</button>
+        <button class="tab-btn" onclick="switchTab('sosyalMedya')"><i class="fa-solid fa-globe"></i> Sosyal Medya</button>
+        <button class="tab-btn" onclick="switchTab('mesajlar')"><i class="fa-solid fa-comments"></i> Mesajlar</button>
+        <button class="tab-btn admin-tab-btn" id="adminTabBtn" onclick="switchTab('yoneticiPaneli')"><i class="fa-solid fa-shield-halved"></i> Patron Paneli</button>
+        <button class="tab-btn" onclick="switchTab('giris')"><i class="fa-solid fa-key"></i> Patron Girişi</button>
     </div>
 
     <div class="container">
 
         <!-- Ana Sayfa -->
         <div id="anasayfa" class="section-content active">
-            <div class="live-visualizer-bar">
-                <div>
-                    <h4 style="color: var(--gold); font-size: 0.95rem; font-weight: 700;">📡 Zaman Perdesi Canlı Frekans Akışı</h4>
-                    <p style="font-size: 0.75rem; color: var(--text-muted);">Master Stüdyo Kalitesinde Aktif Bulut Yayın</p>
-                </div>
-                <div class="eq-bars-container" id="liveEqualizer"></div>
-            </div>
-
             <h2 class="section-title"><i class="fa-solid fa-fire" style="color:var(--gold);"></i> Bulut Trendler & Öne Çıkanlar</h2>
             <div id="dynamicSongList">
                 <div class="empty-state">Şarkılar yükleniyor kanka...</div>
@@ -370,7 +345,7 @@ Zaman Perdesi kalplerde hep var olur.</p>
 
         <!-- Albüm Ekle -->
         <div id="albumEkle" class="section-content">
-            <h2 class="section-title"><i class="fa-solid compact-disc" style="color:var(--gold);"></i> Yeni Bulut Albüm Ekle (15 Parça Destekli)</h2>
+            <h2 class="section-title"><i class="fa-solid fa-compact-disc" style="color:var(--gold);"></i> Yeni Bulut Albüm Ekle (15 Parça Destekli)</h2>
             <div class="content-card">
                 <div class="form-group">
                     <label>Albüm Adı / Konsepti</label>
@@ -412,7 +387,7 @@ Zaman Perdesi kalplerde hep var olur.</p>
                     </div>
                     <div class="view-count-badge">💿 Master Albüm</div>
                 </div>
-                <p style="font-size:0.82rem; color:var(--text-muted); margin-top:10px;">Zaman Perdesi Music etiketiyle yayınlanan tüm özel albümler ve konsept seriler bu alanda listelenmektedir.</p>
+                <p style="font-size:0.8rem; color:var(--text-muted); margin-top:8px;">Zaman Perdesi Music etiketiyle yayınlanan tüm özel albümler ve konsept seriler bu alanda listelenmektedir.</p>
             </div>
         </div>
 
@@ -488,14 +463,14 @@ Zaman Perdesi kalplerde hep var olur.</p>
             <h2 class="section-title" style="color: var(--admin-red);"><i class="fa-solid fa-shield-halved"></i> Patron Yönetici Paneli (Tam Yetki)</h2>
             <div class="admin-card">
                 <p style="font-size: 0.95rem; color: var(--gold); margin-bottom: 6px; font-weight: bold;">Hoş geldin Patron Kuzeyfe Kalafat! 👑</p>
-                <p style="font-size: 0.82rem; color: var(--text-muted);">Bu panel 0-Nokta Yapım Holding ve Zaman Perdesi ekosistemini tam yetkiyle yönetmen için koruma altındadır.</p>
+                <p style="font-size: 0.8rem; color: var(--text-muted);">Bu panel 0-Nokta Yapım Holding ve Zaman Perdesi ekosistemini tam yetkiyle yönetmen için koruma altındadır.</p>
             </div>
             <div class="content-card">
-                <h4 style="font-size: 0.95rem; color: var(--gold); margin-bottom: 12px;">⚡ Hızlı Patron İşlemleri</h4>
+                <h4 style="font-size: 0.92rem; color: var(--gold); margin-bottom: 10px;">⚡ Hızlı Patron İşlemleri</h4>
                 <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-                    <button class="btn-gold" style="flex: 1; min-width: 150px;" onclick="switchTab('sarkiEkle')">➕ Hızlı Şarkı Ekle</button>
-                    <button class="btn-gold" style="flex: 1; min-width: 150px;" onclick="switchTab('albumEkle')">💿 Hızlı Albüm Ekle</button>
-                    <button class="btn-gold" style="flex: 1; min-width: 150px;" onclick="switchTab('videoEkle')">📹 Hızlı Video Ekle</button>
+                    <button class="btn-gold" style="flex: 1; min-width: 140px;" onclick="switchTab('sarkiEkle')">➕ Hızlı Şarkı Ekle</button>
+                    <button class="btn-gold" style="flex: 1; min-width: 140px;" onclick="switchTab('albumEkle')">💿 Hızlı Albüm Ekle</button>
+                    <button class="btn-gold" style="flex: 1; min-width: 140px;" onclick="switchTab('videoEkle')">📹 Hızlı Video Ekle</button>
                 </div>
             </div>
             <div class="content-card" style="margin-top: 15px;">
