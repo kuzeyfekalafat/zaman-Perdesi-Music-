@@ -31,7 +31,6 @@
 
         window.firebaseApp = { auth, db, storage, signInWithEmailAndPassword, sendPasswordResetEmail, signOut, updateProfile, collection, addDoc, getDocs, doc, setDoc, updateDoc, deleteDoc, increment, ref, uploadBytes, getDownloadURL };
 
-        // SENİN ANA YÖNETİCİ MAİLİN (Ömür Boyu Tam Yetki)
         const ADMIN_EMAIL = "kuzeyfe198634@gmail.com";
 
         onAuthStateChanged(auth, (user) => {
@@ -87,7 +86,6 @@
             }
         });
 
-        // Sayfa açıldığında şarkıları buluttan yükle
         window.addEventListener('DOMContentLoaded', () => {
             loadCloudSongs();
         });
@@ -95,16 +93,18 @@
         async function loadCloudSongs() {
             const { db, collection, getDocs } = window.firebaseApp;
             const anasayfaContainer = document.getElementById('dynamicSongList');
-            const sarkilarContainer = document.getElementById('dynamicSongListAll');
 
             try {
                 const querySnapshot = await getDocs(collection(db, "songs"));
-                if(querySnapshot.empty) return;
+                if(querySnapshot.empty) {
+                    if(anasayfaContainer) anasayfaContainer.innerHTML = '<div class="empty-state">Bulutta henüz şarkı yok kanka.</div>';
+                    return;
+                }
 
                 let htmlContent = '';
                 querySnapshot.forEach((docSnap) => {
                     const song = docSnap.data();
-                    const defaultCredits = `🎵 ${song.title} - KÜNYE\n--------------------------------------------------\n• Söz & Müzik : Kuzeyfe Kalafat\n• Aranjör & Prodüktör : Zaman Perdesi Music & Kuzeyfe Kalafat\n• Görsel & Kapak Tasarımı : Kuzeyfe Kalafat\n• Yapım & Yönetim : Zaman Perdesi Music & Kuzeyfe Kalafat`;
+                    const creditsText = song.credits || `🎵 ${song.title} - KÜNYE\n--------------------------------------------------\n• Söz & Müzik : Kuzeyfe Kalafat\n• Aranjör & Prodüktör : Zaman Perdesi Music & Kuzeyfe Kalafat\n• Görsel & Kapak Tasarımı : Kuzeyfe Kalafat\n• Yapım & Yönetim : Zaman Perdesi Music & Kuzeyfe Kalafat`;
 
                     htmlContent += `
                         <div class="content-card">
@@ -115,26 +115,26 @@
                                 </div>
                                 <div class="view-count-badge">🎧 ${song.plays || 0} Dinlenme</div>
                             </div>
-                            
+
                             ${song.audioUrl ? `
                                 <div style="margin-top: 12px;">
-                                    <audio controls style="width: 100%; height: 36px;">
+                                    <audio controls style="width: 100%; height: 38px;">
                                         <source src="${song.audioUrl}" type="audio/mp3">
                                         Tarayıcınız ses oynatıcısını desteklemiyor.
                                     </audio>
                                 </div>
-                            ` : ''}
+                            ` : '<p style="font-size:0.75rem; color:#ff4757; margin-top:8px;">⚠️ Bu şarkıya ses dosyası yüklenmemiş.</p>'}
 
                             ${song.lyrics ? `
-                                <div style="margin-top: 10px;">
+                                <div style="margin-top: 12px;">
                                     <label style="font-size: 0.75rem; color: var(--gold); margin-bottom: 3px;">Şarkı Sözleri:</label>
-                                    <p style="font-size:0.82rem; color:var(--text-main); white-space:pre-line; background: rgba(0,0,0,0.2); padding: 8px; border-radius: 6px;">${song.lyrics}</p>
+                                    <p style="font-size:0.82rem; color:var(--text-main); white-space:pre-line; background: rgba(0,0,0,0.25); padding: 10px; border-radius: 6px; border: 1px solid var(--panel-border);">${song.lyrics}</p>
                                 </div>
                             ` : ''}
 
-                            <div style="margin-top: 10px;">
+                            <div style="margin-top: 12px;">
                                 <label style="font-size: 0.75rem; color: var(--gold); margin-bottom: 3px;">Resmi Künye:</label>
-                                <textarea rows="5" readonly style="color: var(--gold); background: #0a0a0a; font-size: 0.78rem; width: 100%; border: 1px solid var(--panel-border); border-radius: 6px; padding: 8px; cursor: not-allowed;">${song.credits || defaultCredits}</textarea>
+                                <textarea rows="5" readonly style="color: var(--gold); background: #0a0a0a; font-size: 0.78rem; width: 100%; border: 1px solid var(--panel-border); border-radius: 6px; padding: 8px; cursor: not-allowed;">${creditsText}</textarea>
                             </div>
 
                             <div class="card-actions-row">
@@ -152,7 +152,6 @@
                 });
 
                 if(anasayfaContainer) anasayfaContainer.innerHTML = htmlContent;
-                if(sarkilarContainer) sarkilarContainer.innerHTML = htmlContent;
             } catch (e) {
                 console.error("Şarkı yükleme hatası:", e);
             }
@@ -403,7 +402,7 @@
                                         Tarayıcınız ses oynatıcısını desteklemiyor.
                                     </audio>
                                 </div>
-                            ` : ''}
+                            ` : '<p style="font-size:0.75rem; color:#ff4757; margin-top:8px;">⚠️ Bu şarkıda ses dosyası bağlantısı yok.</p>'}
 
                             ${song.lyrics ? `
                                 <div style="margin-top: 12px;">
@@ -535,6 +534,9 @@
                     const storageRef = ref(storage, 'songs/' + Date.now() + '_' + audioFile.name);
                     const snapshot = await uploadBytes(storageRef, audioFile);
                     audioUrl = await getDownloadURL(snapshot.ref);
+                } else {
+                    alert("⚠️ Lütfen bir ses dosyası (.mp3) seç kanka!");
+                    return;
                 }
 
                 await addDoc(collection(db, "songs"), {
