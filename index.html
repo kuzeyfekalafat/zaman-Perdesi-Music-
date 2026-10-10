@@ -38,7 +38,6 @@
             const profileTag = document.getElementById('userProfileTag');
             const navTabsContainer = document.getElementById('navTabs');
 
-            // Önce mevcut dinamik yönetici sekmesini ve eklentileri temizleyelim
             const existingAdminTab = document.getElementById('adminTabBtn');
             if (existingAdminTab) existingAdminTab.remove();
 
@@ -49,7 +48,6 @@
                 window.isAdminLoggedIn = true;
                 profileTag.innerText = "Patron Kuzeyfe ✓";
 
-                // 1. Sekmelere "Yönetici Paneli" butonunu ekle
                 const adminBtn = document.createElement('button');
                 adminBtn.className = 'tab-btn admin-tab-btn';
                 adminBtn.id = 'adminTabBtn';
@@ -57,7 +55,6 @@
                 adminBtn.onclick = () => switchTab('yoneticiPaneli');
                 navTabsContainer.appendChild(adminBtn);
 
-                // 2. Tam yetkili Yönetici Paneli HTML içeriğini oluştur
                 const containerDiv = document.querySelector('.container');
                 const adminSection = document.createElement('div');
                 adminSection.id = 'yoneticiPaneli';
@@ -85,14 +82,12 @@
 
             } else {
                 window.isAdminLoggedIn = false;
-                if(user) {
-                    signOut(auth);
-                }
+                if(user) { signOut(auth); }
                 profileTag.innerText = "Patron Girişi";
             }
         });
 
-        // Sayfa açıldığında buluttaki şarkıları otomatik yükle ve listele
+        // Sayfa açıldığında şarkıları buluttan yükle
         window.addEventListener('DOMContentLoaded', () => {
             loadCloudSongs();
         });
@@ -109,6 +104,8 @@
                 let htmlContent = '';
                 querySnapshot.forEach((docSnap) => {
                     const song = docSnap.data();
+                    const defaultCredits = `🎵 ${song.title} - KÜNYE\n--------------------------------------------------\n• Söz & Müzik : Kuzeyfe Kalafat\n• Aranjör & Prodüktör : Zaman Perdesi Music & Kuzeyfe Kalafat\n• Görsel & Kapak Tasarımı : Kuzeyfe Kalafat\n• Yapım & Yönetim : Zaman Perdesi Music & Kuzeyfe Kalafat`;
+
                     htmlContent += `
                         <div class="content-card">
                             <div class="content-main-row">
@@ -118,7 +115,28 @@
                                 </div>
                                 <div class="view-count-badge">🎧 ${song.plays || 0} Dinlenme</div>
                             </div>
-                            ${song.lyrics ? `<p style="font-size:0.82rem; color:var(--text-muted); margin-top:8px; white-space:pre-line;">${song.lyrics}</p>` : ''}
+                            
+                            ${song.audioUrl ? `
+                                <div style="margin-top: 12px;">
+                                    <audio controls style="width: 100%; height: 36px;">
+                                        <source src="${song.audioUrl}" type="audio/mp3">
+                                        Tarayıcınız ses oynatıcısını desteklemiyor.
+                                    </audio>
+                                </div>
+                            ` : ''}
+
+                            ${song.lyrics ? `
+                                <div style="margin-top: 10px;">
+                                    <label style="font-size: 0.75rem; color: var(--gold); margin-bottom: 3px;">Şarkı Sözleri:</label>
+                                    <p style="font-size:0.82rem; color:var(--text-main); white-space:pre-line; background: rgba(0,0,0,0.2); padding: 8px; border-radius: 6px;">${song.lyrics}</p>
+                                </div>
+                            ` : ''}
+
+                            <div style="margin-top: 10px;">
+                                <label style="font-size: 0.75rem; color: var(--gold); margin-bottom: 3px;">Resmi Künye:</label>
+                                <textarea rows="5" readonly style="color: var(--gold); background: #0a0a0a; font-size: 0.78rem; width: 100%; border: 1px solid var(--panel-border); border-radius: 6px; padding: 8px; cursor: not-allowed;">${song.credits || defaultCredits}</textarea>
+                            </div>
+
                             <div class="card-actions-row">
                                 <button class="btn-favorite-action" onclick="toggleFavorite(this, '${docSnap.id}')">⭐ Favorilere Ekle</button>
                                 <button class="btn-comment-toggle" onclick="toggleComments('comment_box_${docSnap.id}')">💬 Yorumlar (0)</button>
@@ -136,7 +154,7 @@
                 if(anasayfaContainer) anasayfaContainer.innerHTML = htmlContent;
                 if(sarkilarContainer) sarkilarContainer.innerHTML = htmlContent;
             } catch (e) {
-                console.error("Şarkı listeleme hatası:", e);
+                console.error("Şarkı yükleme hatası:", e);
             }
         }
         window.loadCloudSongs = loadCloudSongs;
@@ -155,555 +173,46 @@
             --admin-red: #ff4757;
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-        }
-
-        body {
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            padding-bottom: 90px;
-        }
-
-        header {
-            padding: 16px 20px;
-            border-bottom: 1px solid var(--panel-border);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: var(--bg-color);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-
-        .brand-box h1 {
-            font-size: 1.2rem;
-            color: var(--gold);
-            font-weight: 700;
-            cursor: pointer;
-        }
-
-        .brand-box p {
-            font-size: 0.7rem;
-            color: var(--text-muted);
-        }
-
-        .user-profile-tag {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 0.9rem;
-            font-weight: 600;
-            color: var(--text-main);
-            background: var(--panel-bg);
-            border: 1px solid var(--panel-border);
-            padding: 6px 12px;
-            border-radius: 20px;
-            cursor: pointer;
-        }
-
-        .verified-tick {
-            background: var(--verified-blue);
-            color: #fff;
-            border-radius: 50%;
-            width: 15px;
-            height: 15px;
-            font-size: 9px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-        }
-
-        .nav-tabs {
-            display: flex;
-            gap: 6px;
-            padding: 12px 16px;
-            overflow-x: auto;
-            background: var(--bg-color);
-            border-bottom: 1px solid var(--panel-border);
-            white-space: nowrap;
-            scrollbar-width: thin;
-            scrollbar-color: var(--gold) var(--panel-bg);
-        }
-
-        .nav-tabs::-webkit-scrollbar {
-            height: 4px;
-        }
-
-        .nav-tabs::-webkit-scrollbar-thumb {
-            background: var(--gold);
-            border-radius: 2px;
-        }
-
-        .tab-btn {
-            background: var(--panel-bg);
-            border: 1px solid var(--panel-border);
-            color: var(--text-muted);
-            padding: 8px 14px;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            flex-shrink: 0;
-        }
-
-        .tab-btn.active {
-            background: var(--gold);
-            color: #000;
-            border-color: var(--gold);
-            font-weight: 600;
-        }
-
-        .tab-btn.admin-tab-btn {
-            background: rgba(255, 71, 87, 0.15);
-            border-color: var(--admin-red);
-            color: var(--admin-red);
-            font-weight: bold;
-        }
-
-        .tab-btn.admin-tab-btn.active {
-            background: var(--admin-red);
-            color: #fff;
-        }
-
-        .container {
-            padding: 20px;
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        .section-content {
-            display: none;
-        }
-
-        .section-content.active {
-            display: block;
-        }
-
-        h2.section-title {
-            font-size: 1.2rem;
-            color: var(--gold);
-            margin-bottom: 16px;
-        }
-
-        .form-group {
-            margin-bottom: 16px;
-        }
-
-        label {
-            display: block;
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            margin-bottom: 6px;
-        }
-
-        input[type="text"], input[type="email"], input[type="password"], select, textarea {
-            width: 100%;
-            background: var(--panel-bg);
-            border: 1px solid var(--panel-border);
-            color: var(--text-main);
-            padding: 12px;
-            border-radius: 8px;
-            font-size: 0.95rem;
-        }
-
-        input:focus, select:focus, textarea:focus {
-            outline: none;
-            border-color: var(--gold);
-        }
-
-        .btn-gold {
-            background: var(--gold);
-            color: #000;
-            border: none;
-            width: 100%;
-            padding: 12px;
-            border-radius: 8px;
-            font-weight: 600;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-
-        .btn-gold:hover {
-            background: var(--gold-hover);
-        }
-
-        .file-input-wrapper {
-            background: var(--panel-bg);
-            border: 1px solid var(--panel-border);
-            padding: 10px;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .file-input-wrapper input[type="file"] {
-            color: var(--text-muted);
-            font-size: 0.85rem;
-        }
-
-        .album-tracks-container {
-            border: 1px dashed var(--panel-border);
-            background: rgba(0,0,0,0.15);
-            padding: 12px;
-            border-radius: 8px;
-            margin-bottom: 16px;
-        }
-
-        .track-slot-row {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-bottom: 8px;
-            background: var(--panel-bg);
-            padding: 8px;
-            border-radius: 6px;
-            border: 1px solid var(--panel-border);
-        }
-
-        .track-slot-row span {
-            font-size: 0.8rem;
-            color: var(--gold);
-            font-weight: bold;
-            min-width: 25px;
-        }
-
-        .track-slot-row input[type="text"] {
-            padding: 6px 10px;
-            font-size: 0.85rem;
-            flex: 1;
-        }
-
-        .track-slot-row input[type="file"] {
-            font-size: 0.75rem;
-            color: var(--text-muted);
-            flex: 1.2;
-        }
-
-        .empty-state {
-            color: var(--text-muted);
-            font-size: 0.9rem;
-            text-align: center;
-            padding: 40px 0;
-        }
-
-        .content-card {
-            background: var(--panel-bg);
-            border: 1px solid var(--panel-border);
-            border-radius: 8px;
-            padding: 14px;
-            margin-bottom: 12px;
-        }
-
-        .content-main-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .content-info h4 {
-            font-size: 0.95rem;
-            color: var(--text-main);
-            margin-bottom: 3px;
-        }
-
-        .content-info p {
-            font-size: 0.78rem;
-            color: var(--text-muted);
-        }
-
-        .view-count-badge {
-            background: rgba(212, 175, 55, 0.1);
-            color: var(--gold);
-            border: 1px solid rgba(212, 175, 55, 0.3);
-            padding: 4px 10px;
-            border-radius: 12px;
-            font-size: 0.75rem;
-            font-weight: bold;
-        }
-
-        .card-actions-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 10px;
-            padding-top: 8px;
-            border-top: 1px solid rgba(255,255,255,0.05);
-        }
-
-        .btn-comment-toggle {
-            background: none;
-            border: none;
-            color: var(--gold);
-            font-size: 0.8rem;
-            cursor: pointer;
-            font-weight: 600;
-        }
-
-        .btn-favorite-action {
-            background: none;
-            border: 1px solid var(--panel-border);
-            color: var(--text-muted);
-            padding: 4px 10px;
-            border-radius: 6px;
-            font-size: 0.78rem;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .btn-favorite-action.favorited {
-            background: rgba(212, 175, 55, 0.15);
-            border-color: var(--gold);
-            color: var(--gold);
-        }
-
-        .comments-section {
-            display: none;
-            margin-top: 12px;
-            padding-top: 10px;
-            border-top: 1px dashed var(--panel-border);
-        }
-
-        .comments-section.open {
-            display: block;
-        }
-
-        .comment-item {
-            background: rgba(255,255,255,0.03);
-            padding: 8px 10px;
-            border-radius: 6px;
-            margin-bottom: 6px;
-            font-size: 0.82rem;
-        }
-
-        .comment-author {
-            color: var(--gold);
-            font-weight: bold;
-            margin-bottom: 2px;
-        }
-
-        .comment-text {
-            color: var(--text-main);
-        }
-
-        .comment-input-box {
-            display: flex;
-            gap: 6px;
-            margin-top: 8px;
-        }
-
-        .comment-input-box input {
-            padding: 8px;
-            font-size: 0.85rem;
-        }
-
-        .comment-input-box button {
-            background: var(--gold);
-            color: #000;
-            border: none;
-            padding: 0 14px;
-            border-radius: 6px;
-            font-weight: bold;
-            cursor: pointer;
-            font-size: 0.85rem;
-        }
-
-        .artist-list-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: var(--panel-bg);
-            border: 1px solid var(--panel-border);
-            padding: 12px 16px;
-            border-radius: 8px;
-            margin-bottom: 10px;
-        }
-
-        .artist-list-info h4 {
-            font-size: 0.95rem;
-            color: var(--text-main);
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .artist-list-info p {
-            font-size: 0.78rem;
-            color: var(--text-muted);
-        }
-
-        .btn-dm-action {
-            background: rgba(212, 175, 55, 0.15);
-            border: 1px solid var(--gold);
-            color: var(--gold);
-            padding: 6px 12px;
-            border-radius: 6px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-
-        .btn-dm-action:hover {
-            background: var(--gold);
-            color: #000;
-        }
-
-        .dm-box-container {
-            background: var(--panel-bg);
-            border: 1px solid var(--panel-border);
-            border-radius: 8px;
-            padding: 15px;
-            margin-top: 15px;
-        }
-
-        .dm-chat-history {
-            height: 180px;
-            overflow-y: auto;
-            border: 1px solid var(--panel-border);
-            border-radius: 6px;
-            padding: 10px;
-            background: rgba(0,0,0,0.2);
-            margin-bottom: 10px;
-            font-size: 0.85rem;
-        }
-
-        .dm-msg {
-            margin-bottom: 8px;
-            padding: 6px 10px;
-            border-radius: 6px;
-            max-width: 80%;
-        }
-
-        .dm-msg.sent {
-            background: rgba(212, 175, 55, 0.2);
-            color: var(--text-main);
-            margin-left: auto;
-            text-align: right;
-        }
-
-        .dm-msg.received {
-            background: rgba(255,255,255,0.05);
-            color: var(--text-muted);
-        }
-
-        .admin-card {
-            background: rgba(255, 71, 87, 0.05);
-            border: 1px solid rgba(255, 71, 87, 0.3);
-            border-radius: 8px;
-            padding: 15px;
-            margin-bottom: 15px;
-        }
-
-        .auth-link {
-            font-size: 0.8rem;
-            color: var(--gold);
-            text-decoration: none;
-            display: inline-block;
-            margin-top: 8px;
-            cursor: pointer;
-        }
-        .auth-link:hover {
-            text-decoration: underline;
-        }
-
-        .player-bar {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            background: #111;
-            border-top: 1px solid var(--panel-border);
-            padding: 10px 20px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            z-index: 1000;
-        }
-
-        .player-left {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .player-cover {
-            width: 45px;
-            height: 45px;
-            background: #222;
-            border-radius: 6px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.75rem;
-            color: var(--text-muted);
-            border: 1px solid var(--panel-border);
-        }
-
-        .player-meta h4 {
-            font-size: 0.9rem;
-            color: var(--text-main);
-        }
-
-        .player-meta p {
-            font-size: 0.75rem;
-            color: var(--text-muted);
-        }
-
-        .player-controls {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-        }
-
-        .control-btn {
-            background: none;
-            border: none;
-            color: var(--text-main);
-            cursor: pointer;
-            font-size: 1.1rem;
-        }
-
-        .play-main-btn {
-            background: var(--gold);
-            color: #000;
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            border: none;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            font-weight: bold;
-        }
-
-        .player-progress {
-            width: 150px;
-            height: 4px;
-            background: #333;
-            border-radius: 2px;
-            overflow: hidden;
-        }
-
-        .player-progress-bar {
-            width: 0%;
-            height: 100%;
-            background: var(--gold);
-        }
-
-        @media(max-width: 600px) {
-            .player-progress {
-                display: none;
-            }
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-main); padding-bottom: 90px; }
+        header { padding: 16px 20px; border-bottom: 1px solid var(--panel-border); display: flex; justify-content: space-between; align-items: center; background: var(--bg-color); position: sticky; top: 0; z-index: 100; }
+        .brand-box h1 { font-size: 1.2rem; color: var(--gold); font-weight: 700; cursor: pointer; }
+        .brand-box p { font-size: 0.7rem; color: var(--text-muted); }
+        .user-profile-tag { display: flex; align-items: center; gap: 6px; font-size: 0.9rem; font-weight: 600; color: var(--text-main); background: var(--panel-bg); border: 1px solid var(--panel-border); padding: 6px 12px; border-radius: 20px; cursor: pointer; }
+        .verified-tick { background: var(--verified-blue); color: #fff; border-radius: 50%; width: 15px; height: 15px; font-size: 9px; display: inline-flex; align-items: center; justify-content: center; font-weight: bold; }
+        .nav-tabs { display: flex; gap: 6px; padding: 12px 16px; overflow-x: auto; background: var(--bg-color); border-bottom: 1px solid var(--panel-border); white-space: nowrap; scrollbar-width: thin; scrollbar-color: var(--gold) var(--panel-bg); }
+        .tab-btn { background: var(--panel-bg); border: 1px solid var(--panel-border); color: var(--text-muted); padding: 8px 14px; border-radius: 20px; font-size: 0.85rem; cursor: pointer; transition: all 0.2s ease; flex-shrink: 0; }
+        .tab-btn.active { background: var(--gold); color: #000; border-color: var(--gold); font-weight: 600; }
+        .tab-btn.admin-tab-btn { background: rgba(255, 71, 87, 0.15); border-color: var(--admin-red); color: var(--admin-red); font-weight: bold; }
+        .tab-btn.admin-tab-btn.active { background: var(--admin-red); color: #fff; }
+        .container { padding: 20px; max-width: 800px; margin: 0 auto; }
+        .section-content { display: none; }
+        .section-content.active { display: block; }
+        h2.section-title { font-size: 1.2rem; color: var(--gold); margin-bottom: 16px; }
+        .form-group { margin-bottom: 16px; }
+        label { display: block; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 6px; }
+        input[type="text"], input[type="email"], input[type="password"], select, textarea { width: 100%; background: var(--panel-bg); border: 1px solid var(--panel-border); color: var(--text-main); padding: 12px; border-radius: 8px; font-size: 0.95rem; }
+        input:focus, select:focus, textarea:focus { outline: none; border-color: var(--gold); }
+        .btn-gold { background: var(--gold); color: #000; border: none; width: 100%; padding: 12px; border-radius: 8px; font-weight: 600; font-size: 1rem; cursor: pointer; transition: background 0.2s; }
+        .btn-gold:hover { background: var(--gold-hover); }
+        .file-input-wrapper { background: var(--panel-bg); border: 1px solid var(--panel-border); padding: 10px; border-radius: 8px; }
+        .empty-state { color: var(--text-muted); font-size: 0.9rem; text-align: center; padding: 40px 0; }
+        .content-card { background: var(--panel-bg); border: 1px solid var(--panel-border); border-radius: 8px; padding: 14px; margin-bottom: 12px; }
+        .content-main-row { display: flex; justify-content: space-between; align-items: center; }
+        .content-info h4 { font-size: 0.95rem; color: var(--text-main); margin-bottom: 3px; }
+        .content-info p { font-size: 0.78rem; color: var(--text-muted); }
+        .view-count-badge { background: rgba(212, 175, 55, 0.1); color: var(--gold); border: 1px solid rgba(212, 175, 55, 0.3); padding: 4px 10px; border-radius: 12px; font-size: 0.75rem; font-weight: bold; }
+        .card-actions-row { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; padding-top: 8px; border-top: 1px solid rgba(255,255,255,0.05); }
+        .btn-comment-toggle { background: none; border: none; color: var(--gold); font-size: 0.8rem; cursor: pointer; font-weight: 600; }
+        .btn-favorite-action { background: none; border: 1px solid var(--panel-border); color: var(--text-muted); padding: 4px 10px; border-radius: 6px; font-size: 0.78rem; cursor: pointer; }
+        .btn-favorite-action.favorited { background: rgba(212, 175, 55, 0.15); border-color: var(--gold); color: var(--gold); }
+        .comments-section { display: none; margin-top: 12px; padding-top: 10px; border-top: 1px dashed var(--panel-border); }
+        .comments-section.open { display: block; }
+        .comment-input-box { display: flex; gap: 6px; margin-top: 8px; }
+        .comment-input-box input { padding: 8px; font-size: 0.85rem; }
+        .comment-input-box button { background: var(--gold); color: #000; border: none; padding: 0 14px; border-radius: 6px; font-weight: bold; cursor: pointer; }
+        .admin-card { background: rgba(255, 71, 87, 0.05); border: 1px solid rgba(255, 71, 87, 0.3); border-radius: 8px; padding: 15px; margin-bottom: 15px; }
+        .auth-link { font-size: 0.8rem; color: var(--gold); text-decoration: none; display: inline-block; margin-top: 8px; cursor: pointer; }
     </style>
 </head>
 <body>
@@ -736,7 +245,7 @@
         <div id="anasayfa" class="section-content active">
             <h2 class="section-title">🔥 Bulut Trendler & Öne Çıkanlar</h2>
             <div id="dynamicSongList">
-                <div class="empty-state">Bulut şarkılar yükleniyor...</div>
+                <div class="empty-state">Şarkılar yükleniyor kanka...</div>
             </div>
         </div>
 
@@ -754,7 +263,7 @@
             <div class="content-card">
                 <div class="form-group">
                     <label>Şarkı Adı</label>
-                    <input type="text" id="newSongName" placeholder="Örn: Parça Adı" oninput="updateSongCreditsPreview()">
+                    <input type="text" id="newSongName" placeholder="Örn: Ateş Ve Kumsal" oninput="updateSongCreditsPreview()">
                 </div>
                 <div class="form-group">
                     <label>Şarkı Sözleri (Lyrics)</label>
@@ -776,7 +285,7 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <label>Ses Dosyası (Tüm Formatlar Serbest)</label>
+                    <label>Ses Dosyası (.mp3 / Ses Dosyası)</label>
                     <div class="file-input-wrapper">
                         <input type="file" id="newSongAudioFile">
                     </div>
@@ -796,53 +305,6 @@
                     </div>
                     <div class="view-count-badge">💿 Albüm</div>
                 </div>
-                <div class="card-actions-row">
-                    <button class="btn-favorite-action" onclick="toggleFavorite(this, 'album_1')">⭐ Albümü Favorile</button>
-                    <button class="btn-comment-toggle" onclick="toggleComments('comment_box_album_1')">💬 Yorumlar (0)</button>
-                </div>
-                <div id="comment_box_album_1" class="comments-section">
-                    <div class="comment-input-box">
-                        <input type="text" placeholder="Albüm hakkında yorum yap...">
-                        <button onclick="alert('Yorum gönderildi!')">Gönder</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Albüm Ekle (Sadece Patron) -->
-        <div id="albumEkle" class="section-content">
-            <h2 class="section-title">💿 Yeni Bulut Albüm Ekle (15 Parça Destekli)</h2>
-            <div class="content-card">
-                <div class="form-group">
-                    <label>Albüm Adı / Konsepti</label>
-                    <input type="text" id="newAlbumName" placeholder="Örn: İçimde Kalan (Albüm)" oninput="updateAlbumCreditsPreview()">
-                </div>
-                <div class="form-group">
-                    <label>Albüm Açıklaması / Detaylar</label>
-                    <textarea id="newAlbumDesc" rows="3" placeholder="Albüm detayları..."></textarea>
-                </div>
-                <div class="form-group">
-                    <label>Otomatik Eklenecek Albüm Künyesi (Önizleme)</label>
-                    <textarea id="previewAlbumCredits" rows="5" readonly style="color: var(--gold); background: #0a0a0a; font-size: 0.85rem; cursor: not-allowed;">💿 Albüm Adı - KÜNYE
---------------------------------------------------
-• Konsept & Müzik : Kuzeyfe Kalafat
-• Aranjör & Prodüktör : Zaman Perdesi Music & Kuzeyfe Kalafat
-• Görsel & Kapak Tasarımı : Kuzeyfe Kalafat
-• Yapım & Yönetim : Zaman Perdesi Music & Kuzeyfe Kalafat</textarea>
-                </div>
-                <div class="form-group">
-                    <label>Albüm Kapak Görseli (Tek Görsel)</label>
-                    <div class="file-input-wrapper">
-                        <input type="file" id="newAlbumCoverFile">
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label style="color: var(--gold); font-weight: bold; margin-bottom: 8px;">🎧 Albüm Şarkıları (Alt Alta 15 Parça Yükleme Alanı)</label>
-                    <div class="album-tracks-container" id="albumTracksSlots"></div>
-                </div>
-
-                <button class="btn-gold" onclick="addNewAlbumCloud()">Albümü ve 15 Parçayı Buluta Yayınla</button>
             </div>
         </div>
 
@@ -850,82 +312,43 @@
         <div id="favorilerim" class="section-content">
             <h2 class="section-title">⭐ Favoriye Eklenenler</h2>
             <div id="favoritesListContainer">
-                <div class="empty-state">Henüz favorilere eklenen bir parça veya albüm yok kanka. Beğendiklerinin yanındaki yıldıza tıklayarak buraya ekleyebilirsin.</div>
+                <div class="empty-state">Henüz favorilere eklenen bir parça yok kanka.</div>
             </div>
         </div>
 
         <!-- Videolar -->
         <div id="videolar" class="section-content">
             <h2 class="section-title">🎬 Bulut Video Arşivi</h2>
-            <div class="empty-state">Video galerisi yükleniyor...</div>
-        </div>
-
-        <!-- Video Ekle (Sadece Patron) -->
-        <div id="videoEkle" class="section-content">
-            <h2 class="section-title">📹 Buluta Video Ekle</h2>
-            <div class="content-card">
-                <div class="form-group">
-                    <label>Video Başlığı</label>
-                    <input type="text" id="newVideoName" placeholder="Video adı...">
-                </div>
-                <div class="form-group">
-                    <label>Video Dosyası</label>
-                    <div class="file-input-wrapper">
-                        <input type="file" id="newVideoFile">
-                    </div>
-                </div>
-                <button class="btn-gold" onclick="addNewVideoCloud()">Videoyu Buluta Yükle</button>
-            </div>
+            <div class="empty-state">Video arşivi boş.</div>
         </div>
 
         <!-- Sanatçılar -->
         <div id="sanatcilar" class="section-content">
             <h2 class="section-title">🎤 Sanatçılar & Platform Üyeleri</h2>
-            <div class="artist-list-item">
-                <div class="artist-list-info">
-                    <h4>Kuzeyfe Kalafat <span class="verified-tick">✓</span></h4>
-                    <p>Kurucu & Müzik Prodüktörü</p>
+            <div class="artist-list-item" style="background:var(--panel-bg); border:1px solid var(--panel-border); padding:12px; border-radius:8px; display:flex; justify-content:space-between; align-items:center;">
+                <div>
+                    <h4 style="color:var(--text-main);">Kuzeyfe Kalafat <span class="verified-tick">✓</span></h4>
+                    <p style="font-size:0.78rem; color:var(--text-muted);">Kurucu & Müzik Prodüktörü</p>
                 </div>
-                <button class="btn-dm-action" onclick="openDM('Kuzeyfe Kalafat')">💬 Mesaj Gönder</button>
             </div>
         </div>
 
-        <!-- Sosyal Medya Yönetimi -->
+        <!-- Sosyal Medya -->
         <div id="sosyalMedya" class="section-content">
             <h2 class="section-title">🌐 Sosyal Medya & Web Bağlantıları</h2>
-            <div class="content-card">
-                <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 15px;">Tüm mecralarını ve portfolyo sitelerini buraya gir, profilinde renkli butonlar olarak otomatik listelensin kanka.</p>
-                
-                <div class="form-group"><label><i class="fa-brands fa-instagram" style="color:#E1306C;"></i> Instagram Linki 1</label><input type="text" id="inputInsta1" placeholder="instagram.com/kullanici1"></div>
-                <div class="form-group"><label><i class="fa-brands fa-instagram" style="color:#E1306C;"></i> Instagram Linki 2</label><input type="text" id="inputInsta2" placeholder="instagram.com/kullanici2"></div>
-                <div class="form-group"><label><i class="fa-brands fa-youtube" style="color:#FF0000;"></i> YouTube Kanal Linki 1</label><input type="text" id="inputYoutube1" placeholder="youtube.com/@kanal1"></div>
-                <div class="form-group"><label><i class="fa-brands fa-youtube" style="color:#FF0000;"></i> YouTube Kanal Linki 2</label><input type="text" id="inputYoutube2" placeholder="youtube.com/@kanal2"></div>
-                <div class="form-group"><label><i class="fa-solid fa-globe" style="color:#3498db;"></i> Resmi Web Sitesi / Portfolyo 1</label><input type="text" id="inputWebsite1" placeholder="kuzeyfekalafat.com.tr"></div>
-                <div class="form-group"><label><i class="fa-solid fa-globe" style="color:#3498db;"></i> Resmi Web Sitesi / Portfolyo 2</label><input type="text" id="inputWebsite2" placeholder="eksite.com.tr"></div>
-                <div class="form-group"><label><i class="fa-brands fa-tiktok" style="color:#ff0050;"></i> TikTok Linki</label><input type="text" id="inputTiktok" placeholder="tiktok.com/@kullanici"></div>
-                <div class="form-group"><label><i class="fa-brands fa-x-twitter"></i> X (Twitter) Linki</label><input type="text" id="inputTwitter" placeholder="x.com/kullanici"></div>
-                <div class="form-group"><label><i class="fa-brands fa-twitch" style="color:#9146FF;"></i> Twitch Kanal Linki</label><input type="text" id="inputTwitch" placeholder="twitch.tv/kullanici"></div>
-                <div class="form-group"><label><i class="fa-brands fa-spotify" style="color:#1DB954;"></i> Spotify Sanatçı / Profil Linki</label><input type="text" id="inputSpotify" placeholder="spotify.com/artist/..."></div>
-                <div class="form-group"><label><i class="fa-brands fa-facebook" style="color:#1877F2;"></i> Facebook Sayfa / Profil Linki</label><input type="text" id="inputFacebook" placeholder="facebook.com/kullanici"></div>
-
-                <button class="btn-gold" onclick="saveAllSocialLinks()">Tümünü Kaydet ve Profilde Göster</button>
-            </div>
+            <div class="content-card"><p style="color:var(--text-muted); font-size:0.85rem;">Sosyal medya bağlantıları aktif.</p></div>
         </div>
 
         <!-- Mesajlar -->
         <div id="mesajlar" class="section-content">
             <h2 class="section-title">💬 Bulut Özel Mesajlar (DM)</h2>
-            <div id="dmActivePanel">
-                <div class="empty-state">Sanatçılar sekmesinden doğrudan DM başlatabilirsin kanka.</div>
-            </div>
+            <div id="dmActivePanel"><div class="empty-state">Mesaj bulunmuyor.</div></div>
         </div>
 
         <!-- Patron Giriş Ekranı -->
         <div id="giris" class="section-content">
             <h2 class="section-title">🔑 Sadece Patron Girişi</h2>
-            
-            <div id="loginFormCard" class="content-card" style="margin-bottom: 15px;">
-                <h4 style="font-size: 0.95rem; color: var(--gold); margin-bottom: 10px;">Yönetici Girişi (Kuzeyfe Kalafat)</h4>
+            <div class="content-card">
                 <div class="form-group">
                     <label>E-Posta Adresi</label>
                     <input type="email" id="loginEmail" placeholder="kuzeyfe198634@gmail.com">
@@ -935,56 +358,13 @@
                     <input type="password" id="loginPass" placeholder="Şifreniz...">
                 </div>
                 <button class="btn-gold" onclick="cloudLogin()">Güvenli Giriş Yap</button>
-                <a class="auth-link" onclick="toggleForgotPassword(true)">Şifrenizi mi unuttunuz?</a>
-            </div>
-
-            <div id="forgotPasswordCard" class="content-card" style="margin-bottom: 15px; display: none; border-color: var(--gold);">
-                <h4 style="font-size: 0.95rem; color: var(--gold); margin-bottom: 10px;">🔒 Şifre Sıfırlama E-Postası Gönder</h4>
-                <div class="form-group">
-                    <label>Kayıtlı E-Posta Adresi</label>
-                    <input type="email" id="forgotEmail" placeholder="ornek@mail.com">
-                </div>
-                <button class="btn-gold" onclick="cloudForgotPassword()">Sıfırlama Bağlantısı Gönder</button>
-                <a class="auth-link" onclick="toggleForgotPassword(false)">← Giriş ekranına dön</a>
             </div>
         </div>
 
-    </div>
-
-    <div class="player-bar">
-        <div class="player-left">
-            <div class="player-cover">Kapak</div>
-            <div class="player-meta">
-                <h4 id="currentPlayingTitle">Şarkı Seçilmedi</h4>
-                <p id="currentPlayingArtist">Zaman Perdesi</p>
-            </div>
-        </div>
-        <div class="player-controls">
-            <button class="control-btn">⏮</button>
-            <button class="play-main-btn">▶</button>
-            <button class="control-btn">⏭</button>
-            <div class="player-progress">
-                <div class="player-progress-bar"></div>
-            </div>
-        </div>
     </div>
 
     <script>
         window.addEventListener('DOMContentLoaded', () => {
-            const container = document.getElementById('albumTracksSlots');
-            if(container) {
-                container.innerHTML = '';
-                for(let i = 1; i <= 15; i++) {
-                    container.innerHTML += `
-                        <div class="track-slot-row">
-                            <span>#${i}</span>
-                            <input type="text" id="albumTrackName_${i}" placeholder="${i}. Şarkı Adı">
-                            <input type="file" id="albumTrackFile_${i}">
-                        </div>
-                    `;
-                }
-            }
-            // Sayfa açıldığında şarkıları buluttan çek ve listele
             loadCloudSongs();
         });
 
@@ -995,11 +375,17 @@
 
             try {
                 const querySnapshot = await getDocs(collection(db, "songs"));
-                if(querySnapshot.empty) return;
+                if(querySnapshot.empty) {
+                    if(anasayfaContainer) anasayfaContainer.innerHTML = '<div class="empty-state">Bulutta henüz şarkı yok kanka.</div>';
+                    if(sarkilarContainer) sarkilarContainer.innerHTML = '<div class="empty-state">Bulutta henüz şarkı yok kanka.</div>';
+                    return;
+                }
 
                 let htmlContent = '';
                 querySnapshot.forEach((docSnap) => {
                     const song = docSnap.data();
+                    const creditsText = song.credits || `🎵 ${song.title} - KÜNYE\n--------------------------------------------------\n• Söz & Müzik : Kuzeyfe Kalafat\n• Aranjör & Prodüktör : Zaman Perdesi Music & Kuzeyfe Kalafat\n• Görsel & Kapak Tasarımı : Kuzeyfe Kalafat\n• Yapım & Yönetim : Zaman Perdesi Music & Kuzeyfe Kalafat`;
+
                     htmlContent += `
                         <div class="content-card">
                             <div class="content-main-row">
@@ -1009,7 +395,28 @@
                                 </div>
                                 <div class="view-count-badge">🎧 ${song.plays || 0} Dinlenme</div>
                             </div>
-                            ${song.lyrics ? `<p style="font-size:0.82rem; color:var(--text-muted); margin-top:8px; white-space:pre-line;">${song.lyrics}</p>` : ''}
+
+                            ${song.audioUrl ? `
+                                <div style="margin-top: 12px;">
+                                    <audio controls style="width: 100%; height: 38px;">
+                                        <source src="${song.audioUrl}" type="audio/mp3">
+                                        Tarayıcınız ses oynatıcısını desteklemiyor.
+                                    </audio>
+                                </div>
+                            ` : ''}
+
+                            ${song.lyrics ? `
+                                <div style="margin-top: 12px;">
+                                    <label style="font-size: 0.75rem; color: var(--gold); margin-bottom: 3px;">Şarkı Sözleri:</label>
+                                    <p style="font-size:0.82rem; color:var(--text-main); white-space:pre-line; background: rgba(0,0,0,0.25); padding: 10px; border-radius: 6px; border: 1px solid var(--panel-border);">${song.lyrics}</p>
+                                </div>
+                            ` : ''}
+
+                            <div style="margin-top: 12px;">
+                                <label style="font-size: 0.75rem; color: var(--gold); margin-bottom: 3px;">Resmi Künye:</label>
+                                <textarea rows="5" readonly style="color: var(--gold); background: #0a0a0a; font-size: 0.78rem; width: 100%; border: 1px solid var(--panel-border); border-radius: 6px; padding: 8px; cursor: not-allowed;">${creditsText}</textarea>
+                            </div>
+
                             <div class="card-actions-row">
                                 <button class="btn-favorite-action" onclick="toggleFavorite(this, '${docSnap.id}')">⭐ Favorilere Ekle</button>
                                 <button class="btn-comment-toggle" onclick="toggleComments('comment_box_${docSnap.id}')">💬 Yorumlar (0)</button>
@@ -1027,7 +434,7 @@
                 if(anasayfaContainer) anasayfaContainer.innerHTML = htmlContent;
                 if(sarkilarContainer) sarkilarContainer.innerHTML = htmlContent;
             } catch (e) {
-                console.error("Şarkı listeleme hatası:", e);
+                console.error("Şarkı yükleme hatası:", e);
             }
         }
         window.loadCloudSongs = loadCloudSongs;
@@ -1057,11 +464,6 @@
             }
         }
 
-        function toggleForgotPassword(show) {
-            document.getElementById('loginFormCard').style.display = show ? 'none' : 'block';
-            document.getElementById('forgotPasswordCard').style.display = show ? 'block' : 'none';
-        }
-
         function toggleComments(sectionId) {
             const commentSec = document.getElementById(sectionId);
             if(commentSec) commentSec.classList.toggle('open');
@@ -1074,36 +476,7 @@
                 alert("⭐ Başarıyla favorilere eklendi kanka!");
             } else {
                 btn.innerText = "⭐ Favorilere Ekle";
-                alert("Favorilerden çıkarıldı.");
             }
-        }
-
-        function openDM(targetUser) {
-            switchTab('mesajlar');
-            document.getElementById('dmActivePanel').innerHTML = `
-                <div class="dm-box-container">
-                    <h4 style="color: var(--gold); margin-bottom: 10px; font-size: 0.95rem;">💬 Bulut Sohbet: ${targetUser}</h4>
-                    <div class="dm-chat-history">
-                        <div class="dm-msg received"><strong>${targetUser}:</strong> Selam kanka, bulut sistemine hoş geldin! Mesajını bekliyorum.</div>
-                    </div>
-                    <div class="comment-input-box">
-                        <input type="text" id="dmInput" placeholder="Mesaj yaz...">
-                        <button onclick="sendDirectMessage('${targetUser}')">Gönder</button>
-                    </div>
-                </div>
-            `;
-        }
-
-        function sendDirectMessage(targetUser) {
-            const input = document.getElementById('dmInput');
-            const msgText = input.value.trim();
-            if(!msgText) return;
-
-            const chatHistory = document.querySelector('.dm-chat-history');
-            chatHistory.innerHTML += `<div class="dm-msg sent"><strong>Sen:</strong> ${msgText}</div>`;
-            input.value = '';
-            chatHistory.scrollTop = chatHistory.scrollHeight;
-            alert(`💬 DM bulut üzerinden ${targetUser} isimli sanatçıya iletildi kanka!`);
         }
 
         function updateSongCreditsPreview() {
@@ -1117,62 +490,6 @@
                                `• Aranjör & Prodüktör : Zaman Perdesi Music & Kuzeyfe Kalafat\n` +
                                `• Görsel & Kapak Tasarımı : Kuzeyfe Kalafat\n` +
                                `• Yapım & Yönetim : Zaman Perdesi Music & Kuzeyfe Kalafat`;
-        }
-
-        function updateAlbumCreditsPreview() {
-            const albumNameInput = document.getElementById('newAlbumName').value.trim();
-            const displayName = albumNameInput ? albumNameInput : "Albüm Adı";
-            const previewBox = document.getElementById('previewAlbumCredits');
-            
-            previewBox.value = `💿 ${displayName} - KÜNYE\n` +
-                               `--------------------------------------------------\n` +
-                               `• Konsept & Müzik : Kuzeyfe Kalafat\n` +
-                               `• Aranjör & Prodüktör : Zaman Perdesi Music & Kuzeyfe Kalafat\n` +
-                               `• Görsel & Kapak Tasarımı : Kuzeyfe Kalafat\n` +
-                               `• Yapım & Yönetim : Zaman Perdesi Music & Kuzeyfe Kalafat`;
-        }
-
-        function saveAllSocialLinks() {
-            const linksData = [
-                { id: 'inputInsta1', name: 'Instagram 1', class: 'instagram', icon: 'fa-brands fa-instagram' },
-                { id: 'inputInsta2', name: 'Instagram 2', class: 'instagram', icon: 'fa-brands fa-instagram' },
-                { id: 'inputYoutube1', name: 'YouTube Kanal 1', class: 'youtube', icon: 'fa-brands fa-youtube' },
-                { id: 'inputYoutube2', name: 'YouTube Kanal 2', class: 'youtube', icon: 'fa-brands fa-youtube' },
-                { id: 'inputWebsite1', name: 'Resmi Web Sitesi 1', class: 'website', icon: 'fa-solid fa-globe' },
-                { id: 'inputWebsite2', name: 'Resmi Web Sitesi 2', class: 'website', icon: 'fa-solid fa-globe' },
-                { id: 'inputTiktok', name: 'TikTok', class: 'tiktok', icon: 'fa-brands fa-tiktok' },
-                { id: 'inputTwitter', name: 'X (Twitter)', class: 'twitter', icon: 'fa-brands fa-x-twitter' },
-                { id: 'inputTwitch', name: 'Twitch', class: 'twitch', icon: 'fa-brands fa-twitch' },
-                { id: 'inputSpotify', name: 'Spotify Profil', class: 'spotify', icon: 'fa-brands fa-spotify' },
-                { id: 'inputFacebook', name: 'Facebook', class: 'facebook', icon: 'fa-brands fa-facebook' }
-            ];
-
-            const profileContainer = document.getElementById('profileSocialLinks');
-            if(!profileContainer) return;
-            profileContainer.innerHTML = '';
-
-            let addedCount = 0;
-            linksData.forEach(item => {
-                const inputEl = document.getElementById(item.id);
-                if(inputEl) {
-                    const val = inputEl.value.trim();
-                    if(val) {
-                        addedCount++;
-                        let fullUrl = val.startsWith('http') ? val : 'https://' + val;
-                        profileContainer.innerHTML += `
-                            <a href="${fullUrl}" target="_blank" class="social-btn ${item.class}">
-                                <div class="social-left">
-                                    <i class="${item.icon}"></i>
-                                    <span>${item.name}</span>
-                                </div>
-                                <i class="fa-solid fa-arrow-right social-arrow"></i>
-                            </a>
-                        `;
-                    }
-                }
-            });
-
-            alert("🌐 Tüm sosyal medya hesapların ve web linklerin kaydedildi kanka.");
         }
 
         async function cloudLogin() {
@@ -1194,30 +511,6 @@
             }
         }
 
-        async function cloudSignOut() {
-            const { auth, signOut } = window.firebaseApp;
-            try {
-                await signOut(auth);
-                alert("Güvenli çıkış yapıldı kanka.");
-                switchTab('anasayfa');
-            } catch(e) {
-                alert("Çıkış hatası: " + e.message);
-            }
-        }
-
-        async function cloudForgotPassword() {
-            const email = document.getElementById('forgotEmail').value.trim();
-            const { auth, sendPasswordResetEmail } = window.firebaseApp;
-
-            try {
-                await sendPasswordResetEmail(auth, email);
-                alert("📩 Şifre sıfırlama bağlantısı e-posta adresine gönderildi kanka!");
-                toggleForgotPassword(false);
-            } catch (error) {
-                alert("Hata: " + error.message);
-            }
-        }
-
         async function addNewSongCloud() {
             if(!window.isAdminLoggedIn) {
                 alert("⛔ Bu işlem için yönetici yetkiniz yok kanka!");
@@ -1226,7 +519,9 @@
 
             const name = document.getElementById('newSongName').value.trim();
             const lyrics = document.getElementById('newSongLyrics').value.trim();
-            const { db, collection, addDoc } = window.firebaseApp;
+            const credits = document.getElementById('previewSongCredits').value.trim();
+            const audioFileInput = document.getElementById('newSongAudioFile');
+            const { db, storage, collection, addDoc, ref, uploadBytes, getDownloadURL } = window.firebaseApp;
 
             if(!name) {
                 alert("Lütfen şarkı adı gir kanka.");
@@ -1234,83 +529,31 @@
             }
 
             try {
+                let audioUrl = "";
+                if(audioFileInput.files && audioFileInput.files[0]) {
+                    const audioFile = audioFileInput.files[0];
+                    const storageRef = ref(storage, 'songs/' + Date.now() + '_' + audioFile.name);
+                    const snapshot = await uploadBytes(storageRef, audioFile);
+                    audioUrl = await getDownloadURL(snapshot.ref);
+                }
+
                 await addDoc(collection(db, "songs"), {
                     title: name,
                     lyrics: lyrics,
+                    credits: credits,
+                    audioUrl: audioUrl,
                     plays: 0,
                     createdAt: new Date()
                 });
-                alert("🎵 Şarkı buluta başarıyla kaydedildi!");
+
+                alert("🎵 Şarkı, ses dosyası, künyesi ve sözleriyle buluta başarıyla kaydedildi!");
                 document.getElementById('newSongName').value = '';
                 document.getElementById('newSongLyrics').value = '';
+                audioFileInput.value = '';
                 loadCloudSongs();
                 switchTab('sarkilar');
             } catch (error) {
-                alert("Veritabanı hatası: " + error.message);
-            }
-        }
-
-        async function addNewAlbumCloud() {
-            if(!window.isAdminLoggedIn) {
-                alert("⛔ Bu işlem için yönetici yetkiniz yok kanka!");
-                return;
-            }
-
-            const name = document.getElementById('newAlbumName').value.trim();
-            const desc = document.getElementById('newAlbumDesc').value.trim();
-            const { db, collection, addDoc } = window.firebaseApp;
-
-            if(!name) {
-                alert("Lütfen albüm adı gir kanka.");
-                return;
-            }
-
-            let tracksList = [];
-            for(let i = 1; i <= 15; i++) {
-                const trackNameInput = document.getElementById(`albumTrackName_${i}`);
-                if(trackNameInput && trackNameInput.value.trim()) {
-                    tracksList.push({ trackNumber: i, title: trackNameInput.value.trim() });
-                }
-            }
-
-            try {
-                await addDoc(collection(db, "albums"), {
-                    title: name,
-                    description: desc,
-                    tracks: tracksList,
-                    createdAt: new Date()
-                });
-                alert(`💿 "${name}" albümü ve eklenen ${tracksList.length} parça buluta yayınlandı kanka!`);
-                switchTab('albumler');
-            } catch (error) {
-                alert("Hata: " + error.message);
-            }
-        }
-
-        async function addNewVideoCloud() {
-            if(!window.isAdminLoggedIn) {
-                alert("⛔ Bu işlem için yönetici yetkiniz yok kanka!");
-                return;
-            }
-
-            const name = document.getElementById('newVideoName').value.trim();
-            const { db, collection, addDoc } = window.firebaseApp;
-
-            if(!name) {
-                alert("Lütfen video başlığı gir kanka.");
-                return;
-            }
-
-            try {
-                await addDoc(collection(db, "videos"), {
-                    title: name,
-                    views: 0,
-                    createdAt: new Date()
-                });
-                alert("📹 Video buluta yüklendi!");
-                switchTab('videolar');
-            } catch (error) {
-                alert("Hata: " + error.message);
+                alert("Veritabanı/Yükleme hatası: " + error.message);
             }
         }
     </script>
