@@ -85,7 +85,7 @@
       <div class="flex items-center gap-2">
         <div id="authStatusBtn" onclick="openAuthModal()" class="flex items-center gap-1.5 bg-brand-card hover:bg-brand-hover border border-gray-800 px-3 py-1.5 rounded-full cursor-pointer transition">
           <i class="fa-solid fa-user-check text-brand-accent text-xs"></i>
-          <span id="headerUserName" class="text-xs font-semibold max-w-[80px] truncate">Kuzeyfe Kalafat</span>
+          <span id="headerUserName" class="text-xs font-semibold max-w-[80px] truncate">Giriş Yap</span>
           <i class="fa-solid fa-circle-check text-brand-accent text-[11px]" title="Onaylı Sanatçı"></i>
         </div>
       </div>
@@ -221,7 +221,7 @@
         </form>
       </section>
 
-      <!-- TAB 4: PROFİLİM (TAM 6 SOSYAL MEDYA İKONU) -->
+      <!-- TAB 4: PROFİLİM (ÇIKIŞ YAP BUTONU İLE) -->
       <section id="tab-profile" class="tab-content hidden space-y-5">
         <div class="flex items-center gap-3 bg-brand-card p-3.5 rounded-2xl border border-gray-800 relative">
           <img id="userAvatar" src="" class="w-14 h-14 rounded-full object-cover border-2 border-brand-accent" alt="Profile">
@@ -235,16 +235,21 @@
               Doğrulanmış Sanatçı
             </span>
           </div>
-          <button onclick="openEditProfileModal()" class="bg-brand-dark hover:bg-brand-hover border border-gray-700 text-brand-accent px-2.5 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-1 transition">
-            <i class="fa-solid fa-pen-to-square"></i> Düzenle
-          </button>
+          <div class="flex flex-col gap-1.5">
+            <button onclick="openEditProfileModal()" class="bg-brand-dark hover:bg-brand-hover border border-gray-700 text-brand-accent px-2.5 py-1.5 rounded-xl text-xs font-semibold flex items-center justify-center gap-1 transition">
+              <i class="fa-solid fa-pen-to-square"></i> Düzenle
+            </button>
+            <button onclick="handleLogout()" class="bg-red-950/40 hover:bg-red-900/40 border border-red-800/50 text-red-400 px-2.5 py-1.5 rounded-xl text-xs font-semibold flex items-center justify-center gap-1 transition">
+              <i class="fa-solid fa-right-from-bracket"></i> Çıkış
+            </button>
+          </div>
         </div>
 
         <div class="bg-brand-card p-3 rounded-xl border border-gray-800 space-y-2">
           <span class="text-xs font-bold text-brand-accent block">✍️ Hakkında / Biyografi</span>
           <p id="profileBioDisplay" class="text-xs text-gray-300">Zaman Perdesi Music Kurucusu & Söz Yazarı.</p>
           
-          <!-- 6 SOSYAL MEDYA LİNKİ GÖSTERİMİ (GARANTİLİ) -->
+          <!-- 6 SOSYAL MEDYA LİNKİ GÖSTERİMİ -->
           <div class="pt-2 border-t border-gray-800 flex items-center gap-3.5 text-base flex-wrap">
             <a id="linkYoutube" href="#" target="_blank" class="text-red-500 hover:scale-110 transition hidden" title="YouTube"><i class="fa-brands fa-youtube text-lg"></i></a>
             <a id="linkInstagram" href="#" target="_blank" class="text-pink-500 hover:scale-110 transition hidden" title="Instagram"><i class="fa-brands fa-instagram text-lg"></i></a>
@@ -383,7 +388,7 @@
       <button onclick="switchTab('profile')" id="nav-profile" class="flex flex-col items-center gap-1 text-gray-400 hover:text-white"><i class="fa-solid fa-user text-base"></i><span class="text-[10px] font-semibold">Profilim</span></button>
     </nav>
 
-    <!-- AUTH MODAL -->
+    <!-- AUTH MODAL (GİRİŞ - KAYIT - ŞİFREMİ UNUTTUM) -->
     <div id="authModal" class="hidden absolute inset-0 bg-black/85 backdrop-blur-md z-50 flex items-center justify-center p-4">
       <div class="w-full max-w-sm bg-brand-card p-5 rounded-2xl border border-gray-800 space-y-4 shadow-2xl relative">
         <button onclick="closeAuthModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
@@ -392,17 +397,34 @@
           <button id="authTabRegister" onclick="switchAuthMode('register')" class="text-gray-400 pb-1">Kayıt Ol</button>
           <button id="authTabAdmin" onclick="switchAuthMode('admin')" class="text-gray-400 pb-1 text-red-400">🛡️ Admin</button>
         </div>
+
+        <!-- GİRİŞ FORMU -->
         <form id="loginForm" onsubmit="handleLogin(event)" class="space-y-3">
           <div><label class="text-xs text-gray-300">E-posta</label><input type="email" id="loginEmail" required class="w-full bg-brand-dark text-xs text-white p-2.5 rounded-xl border border-gray-800 mt-1"></div>
           <div><label class="text-xs text-gray-300">Şifre</label><input type="password" required class="w-full bg-brand-dark text-xs text-white p-2.5 rounded-xl border border-gray-800 mt-1"></div>
+          <div class="flex justify-end">
+            <button type="button" onclick="switchAuthMode('forgot')" class="text-[11px] text-brand-accent hover:underline">Şifremi Unuttum?</button>
+          </div>
           <button type="submit" class="w-full bg-brand-accent text-black font-bold text-xs py-2.5 rounded-xl">Giriş Yap</button>
         </form>
+
+        <!-- KAYIT FORMU -->
         <form id="registerForm" onsubmit="handleRegister(event)" class="hidden space-y-3">
           <div><label class="text-xs text-gray-300">Ad Soyad / Sanatçı Adı</label><input type="text" id="regName" required class="w-full bg-brand-dark text-xs text-white p-2.5 rounded-xl border border-gray-800 mt-1"></div>
           <div><label class="text-xs text-gray-300">E-posta</label><input type="email" id="regEmail" required class="w-full bg-brand-dark text-xs text-white p-2.5 rounded-xl border border-gray-800 mt-1"></div>
           <div><label class="text-xs text-gray-300">Şifre</label><input type="password" required class="w-full bg-brand-dark text-xs text-white p-2.5 rounded-xl border border-gray-800 mt-1"></div>
           <button type="submit" class="w-full bg-brand-accent text-black font-bold text-xs py-2.5 rounded-xl">Kayıt Ol & Mavi Tik Al</button>
         </form>
+
+        <!-- ŞİFREMİ UNUTTUM FORMU -->
+        <form id="forgotForm" onsubmit="handleForgot(event)" class="hidden space-y-3">
+          <div class="p-2 bg-brand-dark rounded-xl border border-gray-800 text-[11px] text-gray-300">🔑 Kayıtlı e-postanızı girerek yeni şifre belirleyebilirsiniz.</div>
+          <div><label class="text-xs text-gray-300">Kayıtlı E-posta</label><input type="email" id="forgotEmail" required class="w-full bg-brand-dark text-xs text-white p-2.5 rounded-xl border border-gray-800 mt-1"></div>
+          <div><label class="text-xs text-gray-300">Yeni Şifre</label><input type="password" id="forgotNewPass" required class="w-full bg-brand-dark text-xs text-white p-2.5 rounded-xl border border-gray-800 mt-1"></div>
+          <button type="submit" class="w-full bg-brand-accent text-black font-bold text-xs py-2.5 rounded-xl">Şifreyi Güncelle</button>
+        </form>
+
+        <!-- ADMIN FORMU -->
         <form id="adminForm" onsubmit="handleAdminLogin(event)" class="hidden space-y-3">
           <div class="p-2 bg-red-950/40 border border-red-800/50 rounded-xl text-[11px] text-red-300">🛡️ Admin Girişi</div>
           <div><label class="text-xs text-gray-300">Admin E-posta</label><input type="email" id="adminEmail" required class="w-full bg-brand-dark text-xs text-white p-2.5 rounded-xl border border-gray-800 mt-1"></div>
@@ -475,10 +497,17 @@
         tiktok: 'https://www.tiktok.com/@kuzeyfe.kalafat', 
         facebook: 'https://www.facebook.com/kuzeyfekalafat.1', 
         twitter: 'https://www.twitter.com/kuzeyfe_kalafat'
+      },
+      'hamza@zamanperdesi.com': {
+        name: 'Hamza kalafat',
+        email: 'hamza@zamanperdesi.com',
+        bio: 'Zaman Perdesi Sanatçısı',
+        avatar: DEFAULT_AVATAR,
+        youtube: '', instagram: '', spotify: '', tiktok: '', facebook: '', twitter: ''
       }
     };
 
-    let currentUserEmail = localStorage.getItem('zaman_current_user') || 'kuzeyfe@zamanperdesi.com';
+    let currentUserEmail = localStorage.getItem('zaman_current_user') || null;
 
     let initialTracks = [
       {
@@ -540,6 +569,8 @@
       localStorage.setItem('zaman_tracks', JSON.stringify(demoTracks));
       if(currentUserEmail) {
         localStorage.setItem('zaman_current_user', currentUserEmail);
+      } else {
+        localStorage.removeItem('zaman_current_user');
       }
     }
 
@@ -552,7 +583,6 @@
         document.getElementById('profileBioDisplay').innerText = u.bio || "Henüz biyografi eklenmedi.";
         document.getElementById('userAvatar').src = u.avatar || DEFAULT_AVATAR;
 
-        // 6 Sosyal Medya İkonunu Kesin Gösterme Fonksiyonu
         toggleSocialLink('linkYoutube', u.youtube);
         toggleSocialLink('linkInstagram', u.instagram);
         toggleSocialLink('linkSpotify', u.spotify);
@@ -565,6 +595,13 @@
         document.getElementById('profileEmailDisplay').innerText = "misafir@zamanperdesi.com";
         document.getElementById('profileBioDisplay').innerText = "Lütfen giriş yapın veya kayıt olun.";
         document.getElementById('userAvatar').src = DEFAULT_AVATAR;
+
+        toggleSocialLink('linkYoutube', '');
+        toggleSocialLink('linkInstagram', '');
+        toggleSocialLink('linkSpotify', '');
+        toggleSocialLink('linkTiktok', '');
+        toggleSocialLink('linkFacebook', '');
+        toggleSocialLink('linkTwitter', '');
       }
       renderMyTracks();
       setupImageErrorHandlers();
@@ -988,7 +1025,6 @@
       document.getElementById('editNameInput').value = u.name;
       document.getElementById('editBioInput').value = u.bio || '';
       
-      // 6 Sosyal Medya Inputunu Doldurma
       document.getElementById('editYoutubeInput').value = u.youtube || '';
       document.getElementById('editInstagramInput').value = u.instagram || '';
       document.getElementById('editSpotifyInput').value = u.spotify || '';
@@ -1007,7 +1043,6 @@
       usersDB[currentUserEmail].name = document.getElementById('editNameInput').value;
       usersDB[currentUserEmail].bio = document.getElementById('editBioInput').value;
       
-      // 6 Sosyal Medya Linkini Kaydetme
       usersDB[currentUserEmail].youtube = document.getElementById('editYoutubeInput').value;
       usersDB[currentUserEmail].instagram = document.getElementById('editInstagramInput').value;
       usersDB[currentUserEmail].spotify = document.getElementById('editSpotifyInput').value;
@@ -1034,9 +1069,12 @@
     function switchAuthMode(mode) {
       document.getElementById('loginForm').classList.add('hidden');
       document.getElementById('registerForm').classList.add('hidden');
+      document.getElementById('forgotForm').classList.add('hidden');
       document.getElementById('adminForm').classList.add('hidden');
+
       if(mode === 'login') document.getElementById('loginForm').classList.remove('hidden');
       if(mode === 'register') document.getElementById('registerForm').classList.remove('hidden');
+      if(mode === 'forgot') document.getElementById('forgotForm').classList.remove('hidden');
       if(mode === 'admin') document.getElementById('adminForm').classList.remove('hidden');
     }
 
@@ -1051,6 +1089,7 @@
       saveAppData();
       checkAuthSession();
       closeAuthModal(); 
+      alert('Başarıyla giriş yapıldı!');
     }
 
     function handleRegister(e) { 
@@ -1071,6 +1110,21 @@
       checkAuthSession();
       renderArtists();
       closeAuthModal(); 
+      alert('Kayıt oluşturuldu ve giriş yapıldı!');
+    }
+
+    function handleForgot(e) {
+      e.preventDefault();
+      const email = document.getElementById('forgotEmail').value.trim();
+      const newPass = document.getElementById('forgotNewPass').value.trim();
+
+      if(!usersDB[email]) {
+        alert('Bu e-posta adresine ait kayıt bulunamadı!');
+        return;
+      }
+
+      alert('Şifreniz başarıyla güncellendi! Şimdi yeni şifrenizle giriş yapabilirsiniz.');
+      switchAuthMode('login');
     }
 
     function handleAdminLogin(e) { 
@@ -1083,6 +1137,17 @@
       saveAppData();
       checkAuthSession();
       closeAuthModal(); 
+      alert('Admin olarak giriş yapıldı!');
+    }
+
+    function handleLogout() {
+      if(confirm('Hesaptan çıkış yapmak istediğinize emin misiniz?')) {
+        currentUserEmail = null;
+        localStorage.removeItem('zaman_current_user');
+        checkAuthSession();
+        alert('Çıkış yapıldı.');
+        switchTab('home');
+      }
     }
     
     function toggleLikeCurrent() {
