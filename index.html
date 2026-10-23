@@ -221,7 +221,7 @@
         </form>
       </section>
 
-      <!-- TAB 4: PROFİLİM (6 SOSYAL MEDYA İKONU İLE) -->
+      <!-- TAB 4: PROFİLİM (TAM 6 SOSYAL MEDYA İKONU) -->
       <section id="tab-profile" class="tab-content hidden space-y-5">
         <div class="flex items-center gap-3 bg-brand-card p-3.5 rounded-2xl border border-gray-800 relative">
           <img id="userAvatar" src="" class="w-14 h-14 rounded-full object-cover border-2 border-brand-accent" alt="Profile">
@@ -244,8 +244,8 @@
           <span class="text-xs font-bold text-brand-accent block">✍️ Hakkında / Biyografi</span>
           <p id="profileBioDisplay" class="text-xs text-gray-300">Zaman Perdesi Music Kurucusu & Söz Yazarı.</p>
           
-          <!-- 6 SOSYAL MEDYA LİNKİ GÖSTERİMİ -->
-          <div class="pt-2 border-t border-gray-800 flex items-center gap-3 text-base">
+          <!-- 6 SOSYAL MEDYA LİNKİ GÖSTERİMİ (GARANTİLİ) -->
+          <div class="pt-2 border-t border-gray-800 flex items-center gap-3 text-base flex-wrap">
             <a id="linkYoutube" href="#" target="_blank" class="text-red-500 hover:scale-110 transition hidden" title="YouTube"><i class="fa-brands fa-youtube"></i></a>
             <a id="linkInstagram" href="#" target="_blank" class="text-pink-500 hover:scale-110 transition hidden" title="Instagram"><i class="fa-brands fa-instagram"></i></a>
             <a id="linkSpotify" href="#" target="_blank" class="text-green-500 hover:scale-110 transition hidden" title="Spotify"><i class="fa-brands fa-spotify"></i></a>
@@ -412,7 +412,7 @@
       </div>
     </div>
 
-    <!-- PROFILE EDIT MODAL (TAM 6 SOSYAL MEDYA INPUTU) -->
+    <!-- PROFILE EDIT MODAL -->
     <div id="editProfileModal" class="hidden absolute inset-0 bg-black/85 backdrop-blur-md z-50 flex items-center justify-center p-4">
       <div class="w-full max-w-sm bg-brand-card p-5 rounded-2xl border border-gray-800 space-y-4 shadow-2xl relative max-h-[90vh] overflow-y-auto">
         <button onclick="closeEditProfileModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
@@ -547,7 +547,7 @@
         document.getElementById('profileBioDisplay').innerText = u.bio || "Henüz biyografi eklenmedi.";
         document.getElementById('userAvatar').src = u.avatar || DEFAULT_AVATAR;
 
-        // 6 Sosyal medya butonunu güncelleme
+        // 6 Sosyal Medya İkonunu Güncelleme
         toggleSocialLink('linkYoutube', u.youtube);
         toggleSocialLink('linkInstagram', u.instagram);
         toggleSocialLink('linkSpotify', u.spotify);
@@ -567,6 +567,7 @@
 
     function toggleSocialLink(id, url) {
       const el = document.getElementById(id);
+      if(!el) return;
       if(url && url.trim() !== '') {
         el.href = url;
         el.classList.remove('hidden');
