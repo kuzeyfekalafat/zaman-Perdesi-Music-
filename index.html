@@ -1,708 +1,1075 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Zaman Perdesi - Ultimate Cloud Music & Video Platform</title>
-    
-    <!-- FontAwesome Orijinal İkonlar -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Zaman Perdesi Music</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Google Font - Inter -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
-    <!-- Firebase SDK v9 (Modular CDN) -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword, sendPasswordResetEmail, signOut, onAuthStateChanged, updateProfile } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { getFirestore, collection, addDoc, getDocs, doc, setDoc, updateDoc, deleteDoc, increment, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-        import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyAnmVE-9T0T6lDhQeafto4V-p0R6ZexGSA",
-            authDomain: "zamanperdesimusic-c3150.firebaseapp.com",
-            projectId: "zamanperdesimusic-c3150",
-            storageBucket: "zamanperdesimusic-c3150.appspot.com",
-            messagingSenderId: "1041697921243",
-            appId: "1:1041697921243:web:298a0206d4f9cebd14fe"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-        const storage = getStorage(app);
-
-        window.firebaseApp = { auth, db, storage, signInWithEmailAndPassword, sendPasswordResetEmail, signOut, updateProfile, collection, addDoc, getDocs, doc, setDoc, updateDoc, deleteDoc, increment, ref, uploadBytes, getDownloadURL };
-
-        const ADMIN_EMAIL = "kuzeyfe198634@gmail.com";
-
-        onAuthStateChanged(auth, (user) => {
-            const profileTag = document.getElementById('userProfileTag');
-            const adminTabBtn = document.getElementById('adminTabBtn');
-
-            if (user && user.email === ADMIN_EMAIL) {
-                window.isAdminLoggedIn = true;
-                if(profileTag) profileTag.innerText = "Patron Kuzeyfe ✓";
-                if(adminTabBtn) adminTabBtn.style.display = 'inline-block';
-            } else {
-                window.isAdminLoggedIn = false;
-                if(user) { signOut(auth); }
-                if(profileTag) profileTag.innerText = "Patron Girişi";
-                if(adminTabBtn) adminTabBtn.style.display = 'none';
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              black: '#0a0a0c',
+              dark: '#121318',
+              card: '#1a1c23',
+              hover: '#242731',
+              accent: '#00d2ff',
+              blue: '#0072ff',
+              textMuted: '#9ca3af'
             }
-        });
-
-        window.addEventListener('DOMContentLoaded', () => {
-            const container = document.getElementById('albumTracksSlots');
-            if(container) {
-                container.innerHTML = '';
-                for(let i = 1; i <= 15; i++) {
-                    container.innerHTML += `
-                        <div class="track-slot-row">
-                            <span>#${i}</span>
-                            <input type="text" id="albumTrackName_${i}" placeholder="${i}. Şarkı Adı">
-                            <input type="file" id="albumTrackFile_${i}">
-                        </div>
-                    `;
-                }
-            }
-            loadCloudSongs();
-        });
-
-        async function loadCloudSongs() {
-            const { db, collection, getDocs } = window.firebaseApp;
-            const anasayfaContainer = document.getElementById('dynamicSongList');
-            const sarkilarContainer = document.getElementById('dynamicSongListAll');
-
-            let htmlContent = `
-                <div class="content-card enterprise-card">
-                    <div class="content-main-row">
-                        <div class="content-info">
-                            <h4>Zamanın Ötesinde (0-NOKTA MASTER KONSEPT)</h4>
-                            <p>Kuzeyfe Kalafat <span class="verified-tick">✓</span> <span class="exclusive-badge">Özel Sürüm</span></p>
-                        </div>
-                        <div class="view-count-badge">🎧 5,420 Dinlenme</div>
-                    </div>
-                    <div style="margin-top: 12px;">
-                        <label style="font-size: 0.75rem; color: var(--gold); margin-bottom: 3px;">Şarkı Sözleri & Akış Senkronu:</label>
-                        <p style="font-size:0.82rem; color:var(--text-main); white-space:pre-line; background: rgba(0,0,0,0.3); padding: 12px; border-radius: 8px; border: 1px solid var(--panel-border);">Zamanın ötesinde bir yolculuk başlar,
-Karanlık gecelere güneş yeniden aydınlık bağışlar...
-Her notada ruhun derinliklerine bir imza atılır,
-Zaman Perdesi kalplerde hep var olur.</p>
-                    </div>
-                    <div style="margin-top: 12px;">
-                        <label style="font-size: 0.75rem; color: var(--gold); margin-bottom: 3px;">Resmi Künye & Yapım Bilgileri:</label>
-                        <textarea rows="5" readonly style="color: var(--gold); background: #0a0a0a; font-size: 0.78rem; width: 100%; border: 1px solid var(--panel-border); border-radius: 6px; padding: 8px; cursor: not-allowed;">🎵 Zamanın Ötesinde - KÜNYE (0-NOKTA YAPIM)
---------------------------------------------------
-• Söz & Müzik : Kuzeyfe Kalafat
-• Aranjör & Prodüktör : Zaman Perdesi Music & Kuzeyfe Kalafat
-• Görsel & Kapak Tasarımı : Kuzeyfe Tasarım & Kuzeyfe Kalafat
-• Yapım & Yönetim : 0-Nokta Yapim Holding & Zaman Perdesi Music</textarea>
-                    </div>
-                    <div class="card-actions-row">
-                        <button class="btn-favorite-action" onclick="toggleFavorite(this, 'master_1')">⭐ Favorilere Ekle</button>
-                        <button class="btn-comment-toggle" onclick="toggleComments('comment_box_master_1')">💬 Tartışmalar & Yorumlar (12)</button>
-                    </div>
-                    <div id="comment_box_master_1" class="comments-section">
-                        <div class="comment-item" style="background:rgba(255,255,255,0.03); padding:8px; border-radius:6px; margin-bottom:6px; font-size:0.8rem;">
-                            <strong style="color:var(--gold);">Kuzeyfe Kalafat:</strong> 0-Nokta Yapım Holding güvencesiyle yayında kanka!
-                        </div>
-                        <div class="comment-input-box">
-                            <input type="text" placeholder="Yorum yaz...">
-                            <button onclick="alert('Yorum buluta eklendi!')">Gönder</button>
-                        </div>
-                    </div>
-                </div>
-            `;
-
-            try {
-                const querySnapshot = await getDocs(collection(db, "songs"));
-                querySnapshot.forEach((docSnap) => {
-                    const song = docSnap.data();
-                    const creditsText = song.credits || `🎵 ${song.title} - KÜNYE\n--------------------------------------------------\n• Söz & Müzik : Kuzeyfe Kalafat\n• Aranjör & Prodüktör : Zaman Perdesi Music & Kuzeyfe Kalafat\n• Görsel & Kapak Tasarımı : Kuzeyfe Kalafat\n• Yapım & Yönetim : 0-Nokta Yapim Holding`;
-
-                    htmlContent = `
-                        <div class="content-card enterprise-card">
-                            <div class="content-main-row">
-                                <div class="content-info">
-                                    <h4>${song.title || 'İsimsiz Parça'}</h4>
-                                    <p>Kuzeyfe Kalafat <span class="verified-tick">✓</span></p>
-                                </div>
-                                <div class="view-count-badge">🎧 ${song.plays || 0} Dinlenme</div>
-                            </div>
-
-                            ${song.audioUrl ? `
-                                <div style="margin-top: 12px;">
-                                    <audio controls style="width: 100%; height: 38px;">
-                                        <source src="${song.audioUrl}" type="audio/mp3">
-                                        Tarayıcınız ses oynatıcısını desteklemiyor.
-                                    </audio>
-                                </div>
-                            ` : '<p style="font-size:0.75rem; color:#ff4757; margin-top:8px;">⚠️ Bu parçaya ses dosyası yüklenmemiş.</p>'}
-
-                            ${song.lyrics ? `
-                                <div style="margin-top: 12px;">
-                                    <label style="font-size: 0.75rem; color: var(--gold); margin-bottom: 3px;">Şarkı Sözleri:</label>
-                                    <p style="font-size:0.82rem; color:var(--text-main); white-space:pre-line; background: rgba(0,0,0,0.25); padding: 10px; border-radius: 6px; border: 1px solid var(--panel-border);">${song.lyrics}</p>
-                                </div>
-                            ` : ''}
-
-                            <div style="margin-top: 12px;">
-                                <label style="font-size: 0.75rem; color: var(--gold); margin-bottom: 3px;">Resmi Künye:</label>
-                                <textarea rows="5" readonly style="color: var(--gold); background: #0a0a0a; font-size: 0.78rem; width: 100%; border: 1px solid var(--panel-border); border-radius: 6px; padding: 8px; cursor: not-allowed;">${creditsText}</textarea>
-                            </div>
-
-                            <div class="card-actions-row">
-                                <button class="btn-favorite-action" onclick="toggleFavorite(this, '${docSnap.id}')">⭐ Favorilere Ekle</button>
-                                <button class="btn-comment-toggle" onclick="toggleComments('comment_box_${docSnap.id}')">💬 Yorumlar (0)</button>
-                            </div>
-                            <div id="comment_box_${docSnap.id}" class="comments-section">
-                                <div class="comment-input-box">
-                                    <input type="text" placeholder="Yorum yaz...">
-                                    <button onclick="alert('Yorum buluta eklendi!')">Gönder</button>
-                                </div>
-                            </div>
-                        </div>
-                    ` + htmlContent;
-                });
-
-                if(anasayfaContainer) anasayfaContainer.innerHTML = htmlContent;
-                if(sarkilarContainer) sarkilarContainer.innerHTML = htmlContent;
-            } catch (e) {
-                console.error("Şarkı yükleme hatası:", e);
-                if(anasayfaContainer) anasayfaContainer.innerHTML = htmlContent;
-            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+          }
         }
-        window.loadCloudSongs = loadCloudSongs;
-    </script>
+      }
+    }
+  </script>
 
-    <style>
-        :root {
-            --bg-color: #050505;
-            --panel-bg: #0f0f0f;
-            --panel-border: #222222;
-            --gold: #d4af37;
-            --gold-hover: #e5c158;
-            --text-main: #f5f5f5;
-            --text-muted: #888888;
-            --verified-blue: #1d9bf0;
-            --admin-red: #ff4757;
-            --enterprise-glow: rgba(212, 175, 55, 0.2);
-        }
-
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
-        body { background-color: var(--bg-color); color: var(--text-main); padding-bottom: 120px; }
-        
-        header { padding: 14px 20px; border-bottom: 1px solid var(--panel-border); display: flex; justify-content: space-between; align-items: center; background: rgba(5,5,5,0.98); backdrop-filter: blur(15px); position: sticky; top: 0; z-index: 100; }
-        .brand-box h1 { font-size: 1.25rem; color: var(--gold); font-weight: 800; letter-spacing: 0.5px; cursor: pointer; }
-        .brand-box p { font-size: 0.68rem; color: #ff4757; text-transform: uppercase; letter-spacing: 1px; font-weight: bold; }
-        
-        .user-profile-tag { display: flex; align-items: center; gap: 6px; font-size: 0.85rem; font-weight: 600; color: var(--text-main); background: var(--panel-bg); border: 1px solid var(--panel-border); padding: 6px 12px; border-radius: 20px; cursor: pointer; transition: 0.2s; white-space: nowrap; }
-        .user-profile-tag:hover { border-color: var(--gold); }
-        .verified-tick { background: var(--verified-blue); color: #fff; border-radius: 50%; width: 14px; height: 14px; font-size: 8px; display: inline-flex; align-items: center; justify-content: center; font-weight: bold; }
-        .exclusive-badge { background: rgba(212,175,55,0.25); color: var(--gold); font-size: 0.65rem; padding: 2px 6px; border-radius: 4px; border: 1px solid rgba(212,175,55,0.5); margin-left: 6px; font-weight: bold; }
-        
-        .nav-tabs { display: flex; gap: 6px; padding: 12px 16px; overflow-x: auto; background: var(--bg-color); border-bottom: 1px solid var(--panel-border); white-space: nowrap; -webkit-overflow-scrolling: touch; scrollbar-width: thin; scrollbar-color: var(--gold) var(--panel-bg); }
-        .nav-tabs::-webkit-scrollbar { height: 4px; }
-        .nav-tabs::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 4px; }
-
-        .tab-btn { background: var(--panel-bg); border: 1px solid var(--panel-border); color: var(--text-muted); padding: 8px 14px; border-radius: 20px; font-size: 0.82rem; cursor: pointer; transition: all 0.2s ease; flex-shrink: 0; display: inline-flex; align-items: center; gap: 5px; }
-        .tab-btn:hover { color: var(--text-main); border-color: #444; }
-        .tab-btn.active { background: var(--gold); color: #000; border-color: var(--gold); font-weight: 700; box-shadow: 0 0 12px rgba(212,175,55,0.3); }
-        .tab-btn.admin-tab-btn { background: rgba(255, 71, 87, 0.15); border-color: var(--admin-red); color: var(--admin-red); font-weight: bold; display: none; }
-        .tab-btn.admin-tab-btn.active { background: var(--admin-red); color: #fff; }
-
-        .container { padding: 20px; max-width: 900px; margin: 0 auto; }
-        .section-content { display: none; animation: fadeIn 0.25s ease; }
-        .section-content.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(3px); } to { opacity: 1; transform: translateY(0); } }
-
-        h2.section-title { font-size: 1.2rem; color: var(--gold); margin-bottom: 16px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
-
-        .form-group { margin-bottom: 16px; }
-        label { display: block; font-size: 0.82rem; color: var(--text-muted); margin-bottom: 5px; font-weight: 500; }
-        input[type="text"], input[type="email"], input[type="password"], select, textarea { width: 100%; background: var(--panel-bg); border: 1px solid var(--panel-border); color: var(--text-main); padding: 12px; border-radius: 8px; font-size: 0.92rem; transition: 0.2s; }
-        input:focus, select:focus, textarea:focus { outline: none; border-color: var(--gold); box-shadow: 0 0 8px var(--enterprise-glow); }
-        
-        .btn-gold { background: var(--gold); color: #000; border: none; width: 100%; padding: 12px; border-radius: 8px; font-weight: 700; font-size: 0.95rem; cursor: pointer; transition: 0.2s; box-shadow: 0 4px 12px rgba(212,175,55,0.2); }
-        .btn-gold:hover { background: var(--gold-hover); }
-        
-        .file-input-wrapper { background: var(--panel-bg); border: 1px solid var(--panel-border); padding: 10px; border-radius: 8px; }
-        .album-tracks-container { border: 1px dashed var(--panel-border); background: rgba(0,0,0,0.2); padding: 12px; border-radius: 8px; margin-bottom: 16px; max-height: 240px; overflow-y: auto; }
-        .track-slot-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; background: var(--panel-bg); padding: 6px 10px; border-radius: 6px; border: 1px solid var(--panel-border); }
-        .track-slot-row span { font-size: 0.78rem; color: var(--gold); font-weight: bold; min-width: 22px; }
-        .track-slot-row input[type="text"] { padding: 6px 8px; font-size: 0.82rem; flex: 1; }
-        .track-slot-row input[type="file"] { font-size: 0.72rem; color: var(--text-muted); flex: 1.2; }
-
-        .empty-state { color: var(--text-muted); font-size: 0.9rem; text-align: center; padding: 45px 0; background: var(--panel-bg); border: 1px solid var(--panel-border); border-radius: 10px; }
-        .content-card { background: var(--panel-bg); border: 1px solid var(--panel-border); border-radius: 10px; padding: 16px; margin-bottom: 14px; transition: 0.2s; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
-        .enterprise-card { border-left: 3px solid var(--gold); }
-        
-        .content-main-row { display: flex; justify-content: space-between; align-items: center; }
-        .content-info h4 { font-size: 1rem; color: var(--text-main); margin-bottom: 3px; font-weight: 700; }
-        .content-info p { font-size: 0.78rem; color: var(--text-muted); display: flex; align-items: center; gap: 4px; }
-        .view-count-badge { background: rgba(212, 175, 55, 0.12); color: var(--gold); border: 1px solid rgba(212, 175, 55, 0.3); padding: 4px 10px; border-radius: 12px; font-size: 0.75rem; font-weight: bold; }
-        
-        .card-actions-row { display: flex; justify-content: space-between; align-items: center; margin-top: 12px; padding-top: 8px; border-top: 1px solid rgba(255,255,255,0.05); }
-        .btn-comment-toggle { background: none; border: none; color: var(--gold); font-size: 0.8rem; cursor: pointer; font-weight: 600; }
-        .btn-favorite-action { background: none; border: 1px solid var(--panel-border); color: var(--text-muted); padding: 4px 10px; border-radius: 6px; font-size: 0.78rem; cursor: pointer; transition: 0.2s; }
-        .btn-favorite-action.favorited { background: rgba(212, 175, 55, 0.2); border-color: var(--gold); color: var(--gold); font-weight: bold; }
-        
-        .comments-section { display: none; margin-top: 12px; padding-top: 10px; border-top: 1px dashed var(--panel-border); }
-        .comments-section.open { display: block; }
-        .comment-input-box { display: flex; gap: 6px; margin-top: 8px; }
-        .comment-input-box input { padding: 8px; font-size: 0.82rem; }
-        .comment-input-box button { background: var(--gold); color: #000; border: none; padding: 0 14px; border-radius: 6px; font-weight: bold; cursor: pointer; }
-
-        .artist-list-item { display: flex; justify-content: space-between; align-items: center; background: var(--panel-bg); border: 1px solid var(--panel-border); padding: 12px 16px; border-radius: 8px; margin-bottom: 10px; }
-        .artist-list-info h4 { font-size: 0.95rem; color: var(--text-main); display: flex; align-items: center; gap: 6px; font-weight: 700; }
-        .artist-list-info p { font-size: 0.78rem; color: var(--text-muted); }
-        .btn-dm-action { background: rgba(212, 175, 55, 0.15); border: 1px solid var(--gold); color: var(--gold); padding: 6px 12px; border-radius: 6px; font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: 0.2s; }
-        .btn-dm-action:hover { background: var(--gold); color: #000; }
-
-        .dm-box-container { background: var(--panel-bg); border: 1px solid var(--panel-border); border-radius: 10px; padding: 16px; margin-top: 16px; }
-        .dm-chat-history { height: 200px; overflow-y: auto; border: 1px solid var(--panel-border); border-radius: 6px; padding: 10px; background: rgba(0,0,0,0.3); margin-bottom: 10px; font-size: 0.82rem; }
-        .dm-msg { margin-bottom: 8px; padding: 6px 10px; border-radius: 6px; max-width: 80%; }
-        .dm-msg.sent { background: rgba(212, 175, 55, 0.25); color: var(--text-main); margin-left: auto; text-align: right; }
-        .dm-msg.received { background: rgba(255,255,255,0.05); color: var(--text-muted); }
-
-        .admin-card { background: rgba(255, 71, 87, 0.05); border: 1px solid rgba(255, 71, 87, 0.3); border-radius: 10px; padding: 16px; margin-bottom: 16px; }
-    </style>
+  <style>
+    /* Custom Scrollbar & Utility styling */
+    ::-webkit-scrollbar {
+      width: 4px;
+      height: 4px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0a0a0c;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #242731;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #00d2ff;
+    }
+    .glass-effect {
+      background: rgba(26, 28, 35, 0.75);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+    .glow-blue {
+      box-shadow: 0 0 15px rgba(0, 210, 255, 0.25);
+    }
+    .active-tab {
+      color: #00d2ff;
+      border-bottom: 2px solid #00d2ff;
+    }
+    body {
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+      background-color: #0a0a0c;
+      color: #f3f4f6;
+    }
+  </style>
 </head>
-<body>
+<body class="font-sans antialiased h-screen overflow-hidden flex justify-center bg-black">
 
-    <header>
-        <div class="brand-box" ondblclick="triggerSecretAdminAccess()" title="0-Nokta Yapim Enterprise">
-            <h1>Zaman Perdesi</h1>
-            <p>0-NOKTA YAPIM ENTERPRISE v3.5</p>
+  <!-- Mobile Simulator Container -->
+  <div class="w-full max-w-md h-full bg-brand-black flex flex-col relative overflow-hidden shadow-2xl border-x border-gray-800">
+
+    <!-- TOP HEADER -->
+    <header class="p-4 bg-brand-dark/90 backdrop-blur-md border-b border-gray-800/60 flex items-center justify-between z-20 sticky top-0">
+      <div class="flex items-center gap-2">
+        <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-brand-blue to-brand-accent flex items-center justify-center text-black font-extrabold text-lg shadow-lg shadow-cyan-500/20">
+          Z
         </div>
-        <div class="user-profile-tag" id="userProfileTag" onclick="switchTab('giris')">
-            Patron Girişi
+        <div>
+          <h1 class="text-base font-bold tracking-tight bg-gradient-to-r from-white via-gray-200 to-brand-accent bg-clip-text text-transparent">
+            Zaman Perdesi
+          </h1>
+          <p class="text-[10px] text-brand-accent font-medium -mt-1 tracking-wider uppercase">MUSIC PLATFORM</p>
         </div>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <!-- Auth Profile Badge or Login Button -->
+        <div id="authStatusBtn" onclick="openAuthModal()" class="flex items-center gap-1.5 bg-brand-card hover:bg-brand-hover border border-gray-800 px-3 py-1.5 rounded-full cursor-pointer transition">
+          <i class="fa-solid fa-user-check text-brand-accent text-xs"></i>
+          <span id="headerUserName" class="text-xs font-semibold max-w-[80px] truncate">Giriş Yap</span>
+          <i class="fa-solid fa-circle-check text-brand-accent text-[11px]" title="Onaylı Sanatçı"></i>
+        </div>
+      </div>
     </header>
 
-    <div class="nav-tabs" id="navTabs">
-        <button class="tab-btn active" onclick="switchTab('anasayfa')"><i class="fa-solid fa-house"></i> Ana Sayfa</button>
-        <button class="tab-btn" onclick="switchTab('sarkilar')"><i class="fa-solid fa-music"></i> Şarkılar</button>
-        <button class="tab-btn" onclick="switchTab('albumler')"><i class="fa-solid fa-compact-disc"></i> Albümler</button>
-        <button class="tab-btn" onclick="switchTab('favorilerim')"><i class="fa-solid fa-star"></i> Favorilerim</button>
-        <button class="tab-btn" onclick="switchTab('videolar')"><i class="fa-solid fa-video"></i> Videolar</button>
-        <button class="tab-btn" onclick="switchTab('sanatcilar')"><i class="fa-solid fa-microphone"></i> Sanatçılar</button>
-        <button class="tab-btn" onclick="switchTab('sosyalMedya')"><i class="fa-solid fa-globe"></i> Sosyal Medya</button>
-        <button class="tab-btn" onclick="switchTab('mesajlar')"><i class="fa-solid fa-comments"></i> Mesajlar</button>
-        <button class="tab-btn admin-tab-btn" id="adminTabBtn" onclick="switchTab('yoneticiPaneli')"><i class="fa-solid fa-shield-halved"></i> Patron Paneli</button>
-        <button class="tab-btn" onclick="switchTab('giris')"><i class="fa-solid fa-key"></i> Patron Girişi</button>
+    <!-- SEARCH BAR -->
+    <div class="px-4 py-2.5 bg-brand-dark/50 border-b border-gray-800/40">
+      <div class="relative">
+        <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs"></i>
+        <input type="text" id="searchInput" oninput="handleSearch(this.value)" placeholder="Sanatçı, şarkı veya albüm ara..." 
+          class="w-full bg-brand-card text-xs text-white pl-9 pr-8 py-2 rounded-xl border border-gray-800 focus:outline-none focus:border-brand-accent transition placeholder-gray-500">
+        <button id="clearSearchBtn" onclick="clearSearch()" class="hidden absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white">
+          <i class="fa-solid fa-xmark text-xs"></i>
+        </button>
+      </div>
     </div>
 
-    <div class="container">
+    <!-- MAIN SCROLLABLE CONTENT AREA -->
+    <main id="mainContent" class="flex-1 overflow-y-auto pb-32 p-4 space-y-6">
 
-        <!-- Ana Sayfa -->
-        <div id="anasayfa" class="section-content active">
-            <h2 class="section-title"><i class="fa-solid fa-fire" style="color:var(--gold);"></i> 0-Nokta Yapım & Bulut Trendler</h2>
-            <div id="dynamicSongList">
-                <div class="empty-state">Şarkılar yükleniyor kanka...</div>
-            </div>
+      <!-- SEARCH RESULTS OVERLAY (DYNAMIC) -->
+      <section id="searchResultsSection" class="hidden space-y-4">
+        <h2 class="text-xs font-bold uppercase tracking-wider text-brand-accent">Arama Sonuçları</h2>
+        <div id="searchResultsList" class="space-y-2">
+          <!-- JS dynamic search items -->
+        </div>
+      </section>
+
+      <!-- TAB 1: ANA SAYFA (FEED) -->
+      <section id="tab-home" class="tab-content space-y-6">
+        <!-- Banner Carousel / Featured -->
+        <div class="relative rounded-2xl overflow-hidden bg-gradient-to-r from-blue-900/40 via-brand-card to-purple-900/30 p-4 border border-cyan-500/20 shadow-lg">
+          <div class="relative z-10 space-y-2">
+            <span class="bg-brand-accent/20 text-brand-accent text-[10px] font-bold px-2.5 py-0.5 rounded-full border border-brand-accent/30 uppercase">
+              🔥 Öne Çıkan Albüm
+            </span>
+            <h2 class="text-lg font-bold text-white leading-tight">Kalbim & Gece Sefası</h2>
+            <p class="text-xs text-gray-300">Hamza Kalafat feat. Karslı Arap</p>
+            <button onclick="playTrack(0)" class="mt-2 bg-gradient-to-r from-brand-accent to-brand-blue text-black font-bold text-xs px-4 py-2 rounded-full flex items-center gap-2 hover:opacity-90 transition active:scale-95 shadow-md">
+              <i class="fa-solid fa-play"></i> Hemen Dinle
+            </button>
+          </div>
+          <i class="fa-solid fa-compact-disc absolute -right-4 -bottom-4 text-8xl text-white/5 rotate-12"></i>
         </div>
 
-        <!-- Şarkılar -->
-        <div id="sarkilar" class="section-content">
-            <h2 class="section-title"><i class="fa-solid fa-music" style="color:var(--gold);"></i> Tüm Bulut Şarkılar</h2>
-            <div id="dynamicSongListAll">
-                <div class="empty-state">Tüm şarkılar yükleniyor...</div>
-            </div>
+        <!-- Popüler Şarkırlar -->
+        <div>
+          <div class="flex items-center justify-between mb-3">
+            <h3 class="text-sm font-bold text-white flex items-center gap-2">
+              <i class="fa-solid fa-fire text-brand-accent"></i> Popüler Tekliler
+            </h3>
+            <span class="text-[11px] text-gray-400">Tümü</span>
+          </div>
+
+          <div id="popularTracksList" class="space-y-2">
+            <!-- Dynamic JS Track List -->
+          </div>
         </div>
 
-        <!-- Şarkı Ekle -->
-        <div id="sarkiEkle" class="section-content">
-            <h2 class="section-title"><i class="fa-solid fa-plus-circle" style="color:var(--gold);"></i> Buluta Tekli (Single) Şarkı Ekle</h2>
-            <div class="content-card">
-                <div class="form-group">
-                    <label>Şarkı Adı</label>
-                    <input type="text" id="newSongName" placeholder="Örn: Ateş Ve Kumsal" oninput="updateSongCreditsPreview()">
-                </div>
-                <div class="form-group">
-                    <label>Şarkı Sözleri (Lyrics)</label>
-                    <textarea id="newSongLyrics" rows="5" placeholder="Şarkının sözlerini buraya yaz kanka..."></textarea>
-                </div>
-                <div class="form-group">
-                    <label>Otomatik Eklenecek Resmi Künye (Önizleme)</label>
-                    <textarea id="previewSongCredits" rows="5" readonly style="color: var(--gold); background: #0a0a0a; font-size: 0.85rem; cursor: not-allowed;">🎵 Şarkı Adı - KÜNYE
---------------------------------------------------
-• Söz & Müzik : Kuzeyfe Kalafat
-• Aranjör & Prodüktör : Zaman Perdesi Music & Kuzeyfe Kalafat
-• Görsel & Kapak Tasarımı : Kuzeyfe Kalafat
-• Yapım & Yönetim : 0-Nokta Yapim Holding & Zaman Perdesi Music</textarea>
-                </div>
-                <div class="form-group">
-                    <label>Şarkı Kapak Görseli (1 Adet)</label>
-                    <div class="file-input-wrapper"><input type="file" id="newSongCoverFile"></div>
-                </div>
-                <div class="form-group">
-                    <label>Ses Dosyası (.mp3 / Ses Dosyası)</label>
-                    <div class="file-input-wrapper"><input type="file" id="newSongAudioFile"></div>
-                </div>
-                <button class="btn-gold" onclick="addNewSongCloud()">Şarkıyı Buluta Yükle (Otomatik Künye ile)</button>
+        <!-- Son Yüklenen Albümler -->
+        <div>
+          <h3 class="text-sm font-bold text-white mb-3 flex items-center gap-2">
+            <i class="fa-solid fa-compact-disc text-brand-accent"></i> Yeni Albümler
+          </h3>
+          <div class="flex gap-3 overflow-x-auto pb-2 -mx-4 px-4 snap-x">
+            <!-- Dynamic Album Cards -->
+            <div onclick="playTrack(2)" class="snap-start shrink-0 w-36 bg-brand-card p-2.5 rounded-xl border border-gray-800/80 hover:border-brand-accent/50 transition cursor-pointer">
+              <img src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=300" class="w-full h-32 object-cover rounded-lg mb-2 shadow" alt="Albüm">
+              <h4 class="text-xs font-bold text-white truncate">Sonsuz Karanlık</h4>
+              <p class="text-[10px] text-gray-400 truncate">Karslı Arap • 12 Parça</p>
             </div>
+            <div onclick="playTrack(0)" class="snap-start shrink-0 w-36 bg-brand-card p-2.5 rounded-xl border border-gray-800/80 hover:border-brand-accent/50 transition cursor-pointer">
+              <img src="https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=300" class="w-full h-32 object-cover rounded-lg mb-2 shadow" alt="Albüm">
+              <h4 class="text-xs font-bold text-white truncate">Zamanın Ötesinde</h4>
+              <p class="text-[10px] text-gray-400 truncate">Hamza Kalafat • Single</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 2: SANATÇI PROFİLLERİ (DIRECTORY) -->
+      <section id="tab-artists" class="tab-content hidden space-y-4">
+        <div>
+          <h2 class="text-base font-bold text-white flex items-center gap-2">
+            <i class="fa-solid fa-users text-brand-accent"></i> Onaylı Sanatçılar Kataloğu
+          </h2>
+          <p class="text-xs text-gray-400 mt-0.5">Platformdaki tüm mavi tikli bağımsız sanatçılar</p>
         </div>
 
-        <!-- Albüm Ekle -->
-        <div id="albumEkle" class="section-content">
-            <h2 class="section-title"><i class="fa-solid fa-compact-disc" style="color:var(--gold);"></i> Yeni Bulut Albüm Ekle (15 Parça Destekli)</h2>
-            <div class="content-card">
-                <div class="form-group">
-                    <label>Albüm Adı / Konsepti</label>
-                    <input type="text" id="newAlbumName" placeholder="Örn: İçimde Kalan" oninput="updateAlbumCreditsPreview()">
-                </div>
-                <div class="form-group">
-                    <label>Albüm Açıklaması / Detaylar</label>
-                    <textarea id="newAlbumDesc" rows="3" placeholder="Albüm detayları..."></textarea>
-                </div>
-                <div class="form-group">
-                    <label>Otomatik Eklenecek Albüm Künyesi (Önizleme)</label>
-                    <textarea id="previewAlbumCredits" rows="5" readonly style="color: var(--gold); background: #0a0a0a; font-size: 0.85rem; cursor: not-allowed;">💿 Albüm Adı - KÜNYE
---------------------------------------------------
-• Konsept & Müzik : Kuzeyfe Kalafat
-• Aranjör & Prodüktör : Zaman Perdesi Music & Kuzeyfe Kalafat
-• Görsel & Kapak Tasarımı : Kuzeyfe Kalafat
-• Yapım & Yönetim : 0-Nokta Yapim Holding & Zaman Perdesi Music</textarea>
-                </div>
-                <div class="form-group">
-                    <label>Albüm Kapak Görseli</label>
-                    <div class="file-input-wrapper"><input type="file" id="newAlbumCoverFile"></div>
-                </div>
-                <div class="form-group">
-                    <label style="color: var(--gold); font-weight: bold; margin-bottom: 8px;">🎧 Albüm Şarkıları (Alt Alta 15 Parça Yükleme Alanı)</label>
-                    <div class="album-tracks-container" id="albumTracksSlots"></div>
-                </div>
-                <button class="btn-gold" onclick="addNewAlbumCloud()">Albümü ve Parçaları Buluta Yayınla</button>
-            </div>
+        <div id="artistsGrid" class="grid grid-cols-2 gap-3">
+          <!-- Dynamic JS Artist Cards -->
+        </div>
+      </section>
+
+      <!-- TAB 3: İÇERİK YÜKLE (UPLOAD CENTER) -->
+      <section id="tab-upload" class="tab-content hidden space-y-5">
+        <div>
+          <h2 class="text-base font-bold text-white flex items-center gap-2">
+            <i class="fa-solid fa-cloud-arrow-up text-brand-accent"></i> Müzik & Medya Yükle
+          </h2>
+          <p class="text-xs text-gray-400 mt-0.5">Eserini Zaman Perdesi Music ile tüm dünyaya duyur.</p>
         </div>
 
-        <!-- Albümler -->
-        <div id="albumler" class="section-content">
-            <h2 class="section-title"><i class="fa-solid fa-compact-disc" style="color:var(--gold);"></i> Bulut Albüm Serileri</h2>
-            <div class="content-card enterprise-card">
-                <div class="content-main-row">
-                    <div class="content-info">
-                        <h4>İçimde Kalan - 14 Şarkılık Master Albüm</h4>
-                        <p>Zaman Perdesi Music <span class="verified-tick">✓</span></p>
-                    </div>
-                    <div class="view-count-badge">💿 Master Albüm</div>
+        <!-- Toggle Single / Album / Video -->
+        <div class="flex p-1 bg-brand-card rounded-xl border border-gray-800 text-[11px]">
+          <button id="singleTypeBtn" onclick="switchUploadType('single')" class="flex-1 py-1.5 font-semibold rounded-lg bg-brand-accent text-black shadow transition">
+            🎵 Tekli (Single)
+          </button>
+          <button id="albumTypeBtn" onclick="switchUploadType('album')" class="flex-1 py-1.5 font-semibold rounded-lg text-gray-400 hover:text-white transition">
+            💽 Albüm
+          </button>
+          <button id="videoTypeBtn" onclick="switchUploadType('video')" class="flex-1 py-1.5 font-semibold rounded-lg text-gray-400 hover:text-white transition">
+            🎬 Video (Klip)
+          </button>
+        </div>
+
+        <!-- UPLOAD FORM -->
+        <form id="uploadForm" onsubmit="handleUploadSubmit(event)" class="space-y-4">
+
+          <!-- Kapak Görseli (Ortak) -->
+          <div class="space-y-1">
+            <label class="text-xs font-medium text-gray-300">Albüm / Single / Klip Kapağı</label>
+            <div class="border-2 border-dashed border-gray-700 hover:border-brand-accent bg-brand-card/50 rounded-xl p-4 text-center cursor-pointer transition">
+              <i class="fa-solid fa-image text-2xl text-gray-500 mb-1"></i>
+              <p class="text-xs text-gray-400">Görsel Seç (JPG/PNG)</p>
+              <span class="text-[10px] text-gray-500">Maksimum 5MB</span>
+            </div>
+          </div>
+
+          <!-- Single Specific Inputs -->
+          <div id="singleFields" class="space-y-3">
+            <div>
+              <label class="text-xs font-medium text-gray-300">Şarkı Adı</label>
+              <input type="text" placeholder="Örn: Kalbim" class="w-full bg-brand-card text-xs text-white p-2.5 rounded-xl border border-gray-800 focus:outline-none focus:border-brand-accent mt-1">
+            </div>
+
+            <div>
+              <label class="text-xs font-medium text-gray-300">Ses Dosyası (MP3 / WAV)</label>
+              <input type="file" accept="audio/*" class="w-full text-xs text-gray-400 bg-brand-card p-2 rounded-xl border border-gray-800 mt-1 file:mr-3 file:py-1 file:px-2 file:rounded-lg file:border-0 file:text-xs file:bg-brand-accent file:text-black file:font-semibold">
+            </div>
+
+            <div>
+              <label class="text-xs font-medium text-gray-300">Şarkı Sözleri (Lyrics)</label>
+              <textarea rows="3" placeholder="Şarkının tüm sözlerini yazın..." class="w-full bg-brand-card text-xs text-white p-2.5 rounded-xl border border-gray-800 focus:outline-none focus:border-brand-accent mt-1"></textarea>
+            </div>
+
+            <div class="bg-brand-card p-3 rounded-xl border border-gray-800 space-y-2">
+              <span class="text-xs font-bold text-brand-accent block">📜 Şarkı Künyesi (Credits)</span>
+              <div class="grid grid-cols-2 gap-2">
+                <input type="text" placeholder="Söz Yazarı" class="bg-brand-dark text-xs p-2 rounded-lg border border-gray-800 text-white">
+                <input type="text" placeholder="Beste / Müzik" class="bg-brand-dark text-xs p-2 rounded-lg border border-gray-800 text-white">
+                <input type="text" placeholder="Aranjör (Arranger)" class="bg-brand-dark text-xs p-2 rounded-lg border border-gray-800 text-white">
+                <input type="text" placeholder="Mix & Mastering" class="bg-brand-dark text-xs p-2 rounded-lg border border-gray-800 text-white">
+              </div>
+            </div>
+          </div>
+
+          <!-- Album Specific Inputs -->
+          <div id="albumFields" class="hidden space-y-3">
+            <div>
+              <label class="text-xs font-medium text-gray-300">Albüm Adı</label>
+              <input type="text" placeholder="Örn: Gece Sefası Albümü" class="w-full bg-brand-card text-xs text-white p-2.5 rounded-xl border border-gray-800 focus:outline-none focus:border-brand-accent mt-1">
+            </div>
+
+            <div class="p-3 bg-brand-card/80 rounded-xl border border-gray-800 space-y-3">
+              <div class="flex justify-between items-center">
+                <span class="text-xs font-bold text-white">Albüm Parçaları (Max 15)</span>
+                <span class="text-[10px] text-brand-accent">1 Görsel + Çoklu Ses</span>
+              </div>
+
+              <!-- Track Item Sample -->
+              <div class="p-2.5 bg-brand-dark rounded-lg border border-gray-800 space-y-2">
+                <div class="flex items-center justify-between">
+                  <span class="text-xs text-brand-accent font-semibold">Parça #1</span>
+                  <input type="text" placeholder="Şarkı Adı" class="bg-brand-card text-xs p-1.5 rounded border border-gray-700 text-white w-2/3">
                 </div>
-                <p style="font-size:0.8rem; color:var(--text-muted); margin-top:8px;">Zaman Perdesi Music etiketiyle yayınlanan tüm özel albümler ve konsept seriler bu alanda listelenmektedir.</p>
+                <input type="file" accept="audio/*" class="text-[10px] text-gray-400 w-full">
+              </div>
+
+              <button type="button" class="w-full py-1.5 border border-dashed border-brand-accent/50 text-brand-accent text-xs rounded-lg hover:bg-brand-accent/10 transition">
+                + Yeni Parça Ekle
+              </button>
             </div>
+          </div>
+
+          <!-- Video Specific Inputs (Tam Müzik + Klip Künyeli) -->
+          <div id="videoFields" class="hidden space-y-3">
+            <div>
+              <label class="text-xs font-medium text-gray-300">Video / Klip Adı</label>
+              <input type="text" placeholder="Örn: Kalbim Official Music Video" class="w-full bg-brand-card text-xs text-white p-2.5 rounded-xl border border-gray-800 focus:outline-none focus:border-brand-accent mt-1">
+            </div>
+
+            <div>
+              <label class="text-xs font-medium text-gray-300">Video Dosyası (MP4 / WebM) veya Klip Bağlantısı</label>
+              <input type="file" accept="video/*" class="w-full text-xs text-gray-400 bg-brand-card p-2 rounded-xl border border-gray-800 mt-1 file:mr-3 file:py-1 file:px-2 file:rounded-lg file:border-0 file:text-xs file:bg-brand-accent file:text-black file:font-semibold">
+              <p class="text-[10px] text-gray-500 my-1 text-center">veya YouTube / Vimeo linki yapıştırın:</p>
+              <input type="url" placeholder="https://youtube.com/watch?v=..." class="w-full bg-brand-card text-xs text-white p-2.5 rounded-xl border border-gray-800 focus:outline-none focus:border-brand-accent">
+            </div>
+
+            <div class="bg-brand-card p-3 rounded-xl border border-gray-800 space-y-2">
+              <span class="text-xs font-bold text-brand-accent block">🎬 Video & Şarkı Künyesi</span>
+              <div class="grid grid-cols-2 gap-2">
+                <input type="text" placeholder="Söz Yazarı" class="bg-brand-dark text-xs p-2 rounded-lg border border-gray-800 text-white">
+                <input type="text" placeholder="Beste / Müzik" class="bg-brand-dark text-xs p-2 rounded-lg border border-gray-800 text-white">
+                <input type="text" placeholder="Aranjör (Arranger)" class="bg-brand-dark text-xs p-2 rounded-lg border border-gray-800 text-white">
+                <input type="text" placeholder="Mix & Mastering" class="bg-brand-dark text-xs p-2 rounded-lg border border-gray-800 text-white">
+                <input type="text" placeholder="Yönetmen" class="bg-brand-dark text-xs p-2 rounded-lg border border-gray-800 text-white">
+                <input type="text" placeholder="Prodüksiyon" class="bg-brand-dark text-xs p-2 rounded-lg border border-gray-800 text-white">
+              </div>
+            </div>
+          </div>
+
+          <button type="submit" class="w-full bg-gradient-to-r from-brand-accent to-brand-blue text-black font-bold text-xs py-3 rounded-xl shadow-lg hover:opacity-95 transition active:scale-98">
+            🚀 Platforma Yayınla (Mavi Tikli)
+          </button>
+        </form>
+      </section>
+
+      <!-- TAB 4: PROFİLİM & FAVORİLER -->
+      <section id="tab-profile" class="tab-content hidden space-y-5">
+        <!-- User Header Info -->
+        <div class="flex items-center gap-3 bg-brand-card p-3.5 rounded-2xl border border-gray-800">
+          <img id="userAvatar" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200" class="w-14 h-14 rounded-full object-cover border-2 border-brand-accent" alt="Profile">
+          <div>
+            <div class="flex items-center gap-1.5">
+              <h3 id="profileNameDisplay" class="text-sm font-bold text-white">Hamza Kalafat</h3>
+              <i id="profileBadgeIcon" class="fa-solid fa-circle-check text-brand-accent text-xs" title="Onaylı Sanatçı"></i>
+            </div>
+            <p id="profileEmailDisplay" class="text-[11px] text-gray-400">hamza@zamanperdesi.com</p>
+            <span id="profileRoleTag" class="inline-block mt-1 bg-brand-accent/20 text-brand-accent text-[10px] px-2 py-0.5 rounded-full border border-brand-accent/30 font-medium">
+              Doğrulanmış Sanatçı Profil
+            </span>
+          </div>
         </div>
 
-        <!-- Favorilerim -->
-        <div id="favorilerim" class="section-content">
-            <h2 class="section-title"><i class="fa-solid fa-star" style="color:var(--gold);"></i> Favoriye Eklenenler</h2>
-            <div id="favoritesListContainer">
-                <div class="empty-state">Henüz favorilere eklenen bir parça yok kanka. Kartlardaki yıldız butonuna basarak ekleyebilirsin.</div>
-            </div>
+        <!-- Biyografi -->
+        <div class="bg-brand-card p-3 rounded-xl border border-gray-800 space-y-2">
+          <span class="text-xs font-bold text-brand-accent block">✍️ Hakkında / Biyografi</span>
+          <p id="profileBioDisplay" class="text-xs text-gray-300">Zaman Perdesi Music Kurucu & Sanatçısı.</p>
         </div>
 
-        <!-- Videolar -->
-        <div id="videolar" class="section-content">
-            <h2 class="section-title"><i class="fa-solid fa-video" style="color:var(--gold);"></i> Bulut Video & Klip Arşivi</h2>
-            <div class="content-card enterprise-card">
-                <div class="content-main-row">
-                    <div class="content-info">
-                        <h4>Zaman Perdesi - Resmi Vizyon Klip Arşivi</h4>
-                        <p>Kuzeyfe Kalafat <span class="verified-tick">✓</span></p>
-                    </div>
-                    <div class="view-count-badge">🎬 HD Arşiv</div>
-                </div>
-            </div>
-        </div>
+        <!-- Tabs inside profile -->
+        <div class="space-y-3">
+          <div class="flex border-b border-gray-800 text-xs">
+            <button onclick="toggleProfileSubTab('myTracks')" id="subTabMyTracks" class="pb-2 px-3 font-semibold text-brand-accent border-b-2 border-brand-accent">
+              🎵 İçeriklerim
+            </button>
+            <button onclick="toggleProfileSubTab('favorites')" id="subTabFavs" class="pb-2 px-3 font-semibold text-gray-400">
+              ❤️ Favorilerim
+            </button>
+          </div>
 
-        <!-- Video Ekle -->
-        <div id="videoEkle" class="section-content">
-            <h2 class="section-title"><i class="fa-solid fa-video-slash" style="color:var(--gold);"></i> Buluta Video Ekle</h2>
-            <div class="content-card">
-                <div class="form-group">
-                    <label>Video Başlığı</label>
-                    <input type="text" id="newVideoName" placeholder="Video adı...">
-                </div>
-                <div class="form-group">
-                    <label>Video Dosyası</label>
-                    <div class="file-input-wrapper"><input type="file" id="newVideoFile"></div>
-                </div>
-                <button class="btn-gold" onclick="addNewVideoCloud()">Videoyu Buluta Yükle</button>
-            </div>
-        </div>
-
-        <!-- Sanatçılar -->
-        <div id="sanatcilar" class="section-content">
-            <h2 class="section-title"><i class="fa-solid fa-microphone" style="color:var(--gold);"></i> Sanatçılar & Platform Üyeleri</h2>
-            <div class="artist-list-item">
-                <div class="artist-list-info">
-                    <h4>Kuzeyfe Kalafat <span class="verified-tick">✓</span></h4>
-                    <p>Kurucu, Yönetmen & Müzik Prodüktörü (0-Nokta Yapım)</p>
-                </div>
-                <button class="btn-dm-action" onclick="openDM('Kuzeyfe Kalafat')">💬 Mesaj Gönder</button>
-            </div>
-        </div>
-
-        <!-- Sosyal Medya -->
-        <div id="sosyalMedya" class="section-content">
-            <h2 class="section-title"><i class="fa-solid fa-globe" style="color:var(--gold);"></i> Sosyal Medya & Web Bağlantıları</h2>
-            <div class="content-card">
-                <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 15px;">Resmi mecralarını ve web domain bağlantılarını yönet kanka.</p>
-                <div class="form-group"><label>Resmi Web Domain</label><input type="text" value="https://kuzeyfekalafat.com.tr" readonly style="color:var(--gold);"></div>
-                <div class="form-group"><label>YouTube Kanalı</label><input type="text" value="https://youtube.com/@ZamanPerdesiMusic" readonly style="color:var(--gold);"></div>
-                <button class="btn-gold" onclick="alert('Bağlantılar güncellendi kanka!')">Ayarları Kaydet</button>
-            </div>
-        </div>
-
-        <!-- Mesajlar -->
-        <div id="mesajlar" class="section-content">
-            <h2 class="section-title"><i class="fa-solid fa-comments" style="color:var(--gold);"></i> Bulut Özel Mesajlar (DM)</h2>
-            <div id="dmActivePanel"><div class="empty-state">Sanatçılar sekmesinden doğrudan mesajlaşma başlatabilirsin kanka.</div></div>
-        </div>
-
-        <!-- Patron Yönetici Paneli -->
-        <div id="yoneticiPaneli" class="section-content">
-            <h2 class="section-title" style="color: var(--admin-red);"><i class="fa-solid fa-shield-halved"></i> Patron Yönetici Paneli (Tam Yetki)</h2>
-            <div class="admin-card">
-                <p style="font-size: 0.95rem; color: var(--gold); margin-bottom: 6px; font-weight: bold;">Hoş geldin Patron Kuzeyfe Kalafat! 👑</p>
-                <p style="font-size: 0.8rem; color: var(--text-muted);">Bu panel 0-Nokta Yapım Holding ve Zaman Perdesi ekosistemini tam yetkiyle yönetmen için koruma altındadır.</p>
-            </div>
-            <div class="content-card">
-                <h4 style="font-size: 0.92rem; color: var(--gold); margin-bottom: 10px;">⚡ Hızlı Patron İşlemleri</h4>
-                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-                    <button class="btn-gold" style="flex: 1; min-width: 140px;" onclick="switchTab('sarkiEkle')">➕ Hızlı Şarkı Ekle</button>
-                    <button class="btn-gold" style="flex: 1; min-width: 140px;" onclick="switchTab('albumEkle')">💿 Hızlı Albüm Ekle</button>
-                    <button class="btn-gold" style="flex: 1; min-width: 140px;" onclick="switchTab('videoEkle')">📹 Hızlı Video Ekle</button>
-                </div>
-            </div>
-            <div class="content-card" style="margin-top: 15px;">
-                <button class="btn-gold" style="background: var(--admin-red); color: white;" onclick="cloudSignOut()">Güvenli Oturumu Kapat</button>
-            </div>
-        </div>
-
-        <!-- Patron Giriş Ekranı -->
-        <div id="giris" class="section-content">
-            <h2 class="section-title"><i class="fa-solid fa-key" style="color:var(--gold);"></i> Sadece Patron Girişi</h2>
-            <div class="content-card">
-                <div class="form-group"><label>E-Posta Adresi</label><input type="email" id="loginEmail" placeholder="kuzeyfe198634@gmail.com"></div>
-                <div class="form-group"><label>Şifre</label><input type="password" id="loginPass" placeholder="Şifreniz..."></div>
-                <button class="btn-gold" onclick="cloudLogin()">Güvenli Giriş Yap</button>
-            </div>
-        </div>
-
-    </div>
-
-    <script>
-        function triggerSecretAdminAccess() {
-            switchTab('giris');
-            alert("🛡 Gizli Patron Kapısı Algılandı!");
-        }
-
-        function switchTab(tabId) {
-            document.querySelectorAll('.section-content').forEach(sec => sec.classList.remove('active'));
-            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-
-            const targetSection = document.getElementById(tabId);
-            if(targetSection) targetSection.classList.add('active');
+          <!-- My Tracks List (Can delete/edit only own) -->
+          <div id="myTracksView" class="space-y-2">
+            <p class="text-[11px] text-gray-400 italic mb-2">Sadece kendi yüklediğiniz şarkıları silebilir veya düzenleyebilirsiniz.</p>
             
-            document.querySelectorAll('.tab-btn').forEach(btn => {
-                const onclickAttr = btn.getAttribute('onclick');
-                if(onclickAttr && onclickAttr.includes("'" + tabId + "'")) {
-                    btn.classList.add('active');
-                }
-            });
-            window.scrollTo(0, 0);
-
-            if(tabId === 'anasayfa' || tabId === 'sarkilar') {
-                loadCloudSongs();
-            }
-        }
-
-        function toggleComments(sectionId) {
-            const commentSec = document.getElementById(sectionId);
-            if(commentSec) commentSec.classList.toggle('open');
-        }
-
-        function toggleFavorite(btn, itemId) {
-            btn.classList.toggle('favorited');
-            if(btn.classList.contains('favorited')) {
-                btn.innerText = "⭐ Favorilerde";
-                alert("⭐ Başarıyla favoriler arşivine eklendi kanka!");
-            } else {
-                btn.innerText = "⭐ Favorilere Ekle";
-            }
-        }
-
-        function openDM(targetUser) {
-            switchTab('mesajlar');
-            document.getElementById('dmActivePanel').innerHTML = `
-                <div class="dm-box-container">
-                    <h4 style="color: var(--gold); margin-bottom: 10px; font-size: 0.95rem;">💬 Bulut Sohbet: ${targetUser}</h4>
-                    <div class="dm-chat-history">
-                        <div class="dm-msg received"><strong>${targetUser}:</strong> Selam Patron, Zaman Perdesi bulut sistemine hoş geldin!</div>
-                    </div>
-                    <div class="comment-input-box">
-                        <input type="text" id="dmInput" placeholder="Mesaj yaz...">
-                        <button onclick="alert('DM buluta iletildi!')">Gönder</button>
-                    </div>
+            <div class="flex items-center justify-between p-2.5 bg-brand-card rounded-xl border border-gray-800">
+              <div class="flex items-center gap-2.5">
+                <img src="https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=100" class="w-10 h-10 rounded-lg object-cover">
+                <div>
+                  <h4 class="text-xs font-bold text-white">Kalbim</h4>
+                  <p class="text-[10px] text-gray-400">Single • <i class="fa-solid fa-headphones text-brand-accent"></i> 2.4k Dinlenme</p>
                 </div>
-            `;
-        }
+              </div>
+              <div class="flex items-center gap-2">
+                <button onclick="alert('Düzenleme paneli açılıyor')" class="text-gray-400 hover:text-white p-1.5">
+                  <i class="fa-solid fa-pen-to-square text-xs"></i>
+                </button>
+                <button onclick="confirm('Bu içeriği silmek istediğinize emin misiniz?') && alert('İçerik silindi')" class="text-red-400 hover:text-red-300 p-1.5">
+                  <i class="fa-solid fa-trash-can text-xs"></i>
+                </button>
+              </div>
+            </div>
+          </div>
 
-        function updateSongCreditsPreview() {
-            const songNameInput = document.getElementById('newSongName').value.trim();
-            const displayName = songNameInput ? songNameInput : "Şarkı Adı";
-            const previewBox = document.getElementById('previewSongCredits');
-            previewBox.value = `🎵 ${displayName} - KÜNYE\n--------------------------------------------------\n• Söz & Müzik : Kuzeyfe Kalafat\n• Aranjör & Prodüktör : Zaman Perdesi Music & Kuzeyfe Kalafat\n• Görsel & Kapak Tasarımı : Kuzeyfe Kalafat\n• Yapım & Yönetim : 0-Nokta Yapim Holding & Zaman Perdesi Music`;
-        }
+          <!-- Favorites List -->
+          <div id="favoritesView" class="hidden space-y-2">
+            <div onclick="playTrack(1)" class="flex items-center justify-between p-2.5 bg-brand-card rounded-xl border border-gray-800 cursor-pointer hover:border-gray-700">
+              <div class="flex items-center gap-2.5">
+                <img src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=100" class="w-10 h-10 rounded-lg object-cover">
+                <div>
+                  <h4 class="text-xs font-bold text-white">Sonsuz Karanlık</h4>
+                  <p class="text-[10px] text-gray-400">Karslı Arap</p>
+                </div>
+              </div>
+              <i class="fa-solid fa-heart text-red-500 text-xs"></i>
+            </div>
+          </div>
+        </div>
+      </section>
 
-        function updateAlbumCreditsPreview() {
-            const albumNameInput = document.getElementById('newAlbumName').value.trim();
-            const displayName = albumNameInput ? albumNameInput : "Albüm Adı";
-            const previewBox = document.getElementById('previewAlbumCredits');
-            previewBox.value = `💿 ${displayName} - KÜNYE\n--------------------------------------------------\n• Konsept & Müzik : Kuzeyfe Kalafat\n• Aranjör & Prodüktör : Zaman Perdesi Music & Kuzeyfe Kalafat\n• Görsel & Kapak Tasarımı : Kuzeyfe Kalafat\n• Yapım & Yönetim : 0-Nokta Yapim Holding & Zaman Perdesi Music`;
-        }
+      <!-- ARTIST DETAIL PROFILE VIEW -->
+      <section id="artistDetailView" class="hidden space-y-4">
+        <button onclick="closeArtistDetail()" class="text-xs text-brand-accent flex items-center gap-1 font-semibold">
+          <i class="fa-solid fa-arrow-left"></i> Geri Dön
+        </button>
 
-        async function cloudLogin() {
-            const email = document.getElementById('loginEmail').value.trim();
-            const pass = document.getElementById('loginPass').value.trim();
-            const { auth, signInWithEmailAndPassword } = window.firebaseApp;
+        <div class="text-center space-y-2 bg-brand-card p-5 rounded-2xl border border-gray-800 relative">
+          <img id="artistDetailImg" src="" class="w-20 h-20 rounded-full mx-auto object-cover border-2 border-brand-accent shadow-lg">
+          <div class="flex items-center justify-center gap-1.5">
+            <h2 id="artistDetailName" class="text-base font-bold text-white"></h2>
+            <i class="fa-solid fa-circle-check text-brand-accent text-sm" title="Onaylı Sanatçı"></i>
+          </div>
+          <p id="artistDetailBio" class="text-xs text-gray-400 max-w-xs mx-auto">Zaman Perdesi Music Onaylı Sanatçısı.</p>
+          
+          <!-- Social Icons in Detail -->
+          <div class="flex justify-center gap-3 pt-2 text-gray-400">
+            <a href="#" class="hover:text-pink-500 text-sm transition"><i class="fa-brands fa-instagram"></i></a>
+            <a href="#" class="hover:text-red-500 text-sm transition"><i class="fa-brands fa-youtube"></i></a>
+            <a href="#" class="hover:text-emerald-400 text-sm transition"><i class="fa-brands fa-spotify"></i></a>
+            <a href="#" class="hover:text-cyan-400 text-sm transition"><i class="fa-brands fa-tiktok"></i></a>
+          </div>
+        </div>
 
-            if(email !== "kuzeyfe198634@gmail.com") {
-                alert("⛔ Bu sisteme sadece Patron Kuzeyfe giriş yapabilir!");
-                return;
-            }
+        <h3 class="text-xs font-bold text-gray-300 uppercase tracking-wider">Sanatçının Şarkıları</h3>
+        <div id="artistTracksList" class="space-y-2">
+          <!-- Tracks dynamic -->
+        </div>
+      </section>
 
-            try {
-                await signInWithEmailAndPassword(auth, email, pass);
-                alert("Hoş geldin Patron!");
-                switchTab('yoneticiPaneli');
-            } catch (error) {
-                alert("Giriş hatası: " + error.message);
-            }
-        }
+    </main>
 
-        async function cloudSignOut() {
-            const { auth, signOut } = window.firebaseApp;
-            try {
-                await signOut(auth);
-                alert("Güvenli çıkış yapıldı kanka.");
-                switchTab('anasayfa');
-            } catch(e) {
-                alert("Çıkış hatası: " + e.message);
-            }
-        }
+    <!-- STICKY BOTTOM PLAYER (MINI) -->
+    <div id="miniPlayer" class="absolute bottom-[58px] left-0 right-0 bg-brand-dark/95 backdrop-blur-md border-t border-cyan-500/30 p-2.5 px-3 flex items-center justify-between z-30 cursor-pointer shadow-2xl">
+      <div onclick="openFullPlayer()" class="flex items-center gap-2.5 min-w-0 flex-1">
+        <img id="playerCover" src="https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=100" class="w-10 h-10 rounded-lg object-cover shadow border border-gray-700">
+        <div class="min-w-0 flex-1">
+          <h4 id="playerTitle" class="text-xs font-bold text-white truncate">Kalbim</h4>
+          <p id="playerArtist" class="text-[10px] text-brand-accent truncate">Hamza Kalafat</p>
+        </div>
+      </div>
 
-        async function addNewSongCloud() {
-            if(!window.isAdminLoggedIn) {
-                alert("⛔ Bu işlem için yönetici yetkiniz yok kanka!");
-                return;
-            }
+      <div class="flex items-center gap-3">
+        <button onclick="toggleLikeCurrent()" id="likeBtn" class="text-gray-400 hover:text-red-500 transition">
+          <i class="fa-regular fa-heart text-sm"></i>
+        </button>
+        <button onclick="togglePlayPause(event)" id="playPauseBtn" class="w-8 h-8 rounded-full bg-brand-accent text-black flex items-center justify-center font-bold shadow-md hover:scale-105 transition">
+          <i class="fa-solid fa-pause text-xs"></i>
+        </button>
+        <button onclick="openFullPlayer()" class="text-gray-400 hover:text-white">
+          <i class="fa-solid fa-chevron-up text-xs"></i>
+        </button>
+      </div>
+    </div>
 
-            const name = document.getElementById('newSongName').value.trim();
-            const lyrics = document.getElementById('newSongLyrics').value.trim();
-            const credits = document.getElementById('previewSongCredits').value.trim();
-            const audioFileInput = document.getElementById('newSongAudioFile');
-            const { db, storage, collection, addDoc, ref, uploadBytes, getDownloadURL } = window.firebaseApp;
+    <!-- FULL PLAYER MODAL -->
+    <div id="fullPlayerModal" class="hidden absolute inset-0 bg-brand-black/98 backdrop-blur-xl z-50 flex flex-col p-5 overflow-y-auto space-y-5 animate-fade-in">
+      <!-- Top header -->
+      <div class="flex items-center justify-between border-b border-gray-800/80 pb-3">
+        <button onclick="closeFullPlayer()" class="text-gray-400 hover:text-white p-1">
+          <i class="fa-solid fa-chevron-down text-lg"></i>
+        </button>
+        <span class="text-xs font-bold uppercase tracking-widest text-brand-accent">Şimdi Çalıyor</span>
+        <button onclick="toggleLikeCurrent()" class="text-gray-400 hover:text-red-500">
+          <i class="fa-solid fa-heart text-lg"></i>
+        </button>
+      </div>
 
-            if(!name) {
-                alert("Lütfen şarkı adı gir kanka.");
-                return;
-            }
+      <!-- Large Cover -->
+      <div class="text-center pt-2">
+        <img id="fullPlayerCover" src="https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=400" class="w-56 h-56 rounded-2xl mx-auto object-cover shadow-2xl border border-gray-800">
+      </div>
 
-            try {
-                let audioUrl = "";
-                if(audioFileInput.files && audioFileInput.files[0]) {
-                    alert("⏳ Ses dosyası buluta yükleniyor, lütfen bekleyin kanka...");
-                    const audioFile = audioFileInput.files[0];
-                    const storageRef = ref(storage, 'songs/' + Date.now() + '_' + audioFile.name);
-                    const snapshot = await uploadBytes(storageRef, audioFile);
-                    audioUrl = await getDownloadURL(snapshot.ref);
-                } else {
-                    alert("⚠️ Lütfen bir ses dosyası (.mp3) seç kanka!");
-                    return;
-                }
+      <!-- Title & Artist -->
+      <div class="text-center space-y-1">
+        <h2 id="fullPlayerTitle" class="text-base font-extrabold text-white">Kalbim</h2>
+        <p id="fullPlayerArtist" class="text-xs text-brand-accent font-semibold">Hamza Kalafat</p>
+      </div>
 
-                await addDoc(collection(db, "songs"), {
-                    title: name,
-                    lyrics: lyrics,
-                    credits: credits,
-                    audioUrl: audioUrl,
-                    plays: 0,
-                    createdAt: new Date()
-                });
+      <!-- Seekbar -->
+      <div class="space-y-1">
+        <input type="range" id="trackSeekBar" value="35" class="w-full accent-brand-accent h-1 bg-gray-800 rounded-lg cursor-pointer">
+        <div class="flex justify-between text-[10px] text-gray-500 font-mono">
+          <span>1:12</span>
+          <span>3:24</span>
+        </div>
+      </div>
 
-                alert("🎵 Şarkı ve ses dosyası buluta başarıyla kaydedildi!");
-                document.getElementById('newSongName').value = '';
-                document.getElementById('newSongLyrics').value = '';
-                audioFileInput.value = '';
-                loadCloudSongs();
-                switchTab('sarkilar');
-            } catch (error) {
-                alert("Veritabanı/Yükleme hatası: " + error.message);
-            }
-        }
+      <!-- Play Controls -->
+      <div class="flex items-center justify-center gap-6 py-1">
+        <button onclick="toggleShuffle()" id="shuffleBtn" class="text-gray-400 hover:text-white text-base transition"><i class="fa-solid fa-shuffle"></i></button>
+        <button onclick="prevTrack()" class="text-white hover:text-brand-accent text-xl"><i class="fa-solid fa-backward-step"></i></button>
+        <button onclick="togglePlayPause(event)" id="fullPlayPauseBtn" class="w-12 h-12 rounded-full bg-brand-accent text-black flex items-center justify-center font-bold text-lg shadow-lg hover:scale-105 transition">
+          <i class="fa-solid fa-pause"></i>
+        </button>
+        <button onclick="nextTrack()" class="text-white hover:text-brand-accent text-xl"><i class="fa-solid fa-forward-step"></i></button>
+        <button onclick="toggleRepeat()" id="repeatBtn" class="text-gray-400 hover:text-white text-base transition"><i class="fa-solid fa-repeat"></i></button>
+      </div>
 
-        async function addNewAlbumCloud() {
-            if(!window.isAdminLoggedIn) {
-                alert("⛔ Bu işlem için yönetici yetkiniz yok kanka!");
-                return;
-            }
+      <!-- PLAYER DETAIL TABS (SÖZLER / KÜNYE / YORUMLAR) -->
+      <div class="bg-brand-card rounded-2xl p-4 border border-gray-800 space-y-3">
+        <div class="flex border-b border-gray-800 text-xs">
+          <button onclick="switchPlayerSubTab('lyrics')" id="playerTabLyrics" class="pb-2 px-3 font-semibold text-brand-accent border-b-2 border-brand-accent">
+            📝 Sözler
+          </button>
+          <button onclick="switchPlayerSubTab('credits')" id="playerTabCredits" class="pb-2 px-3 font-semibold text-gray-400">
+            📜 Künye
+          </button>
+          <button onclick="switchPlayerSubTab('comments')" id="playerTabComments" class="pb-2 px-3 font-semibold text-gray-400">
+            💬 Yorumlar (3)
+          </button>
+        </div>
 
-            const name = document.getElementById('newAlbumName').value.trim();
-            const desc = document.getElementById('newAlbumDesc').value.trim();
-            const { db, collection, addDoc } = window.firebaseApp;
+        <!-- Lyrics Tab Content -->
+        <div id="playerLyricsContent" class="text-xs text-gray-300 space-y-2 leading-relaxed max-h-40 overflow-y-auto pr-1">
+          <p id="lyricsText">Gözlerin bir gece vakti düşer kalbime...<br>Zaman perdesi aralanır usulca.<br>Sözler tükenir, geriye sadece sen kalırsın.<br>Kalbim atar senin ritminle...</p>
+        </div>
 
-            if(!name) {
-                alert("Lütfen albüm adı gir kanka.");
-                return;
-            }
+        <!-- Credits Tab Content -->
+        <div id="playerCreditsContent" class="hidden text-xs space-y-1.5 text-gray-300">
+          <div class="flex justify-between border-b border-gray-800 pb-1">
+            <span class="text-gray-500">Söz Yazarı:</span>
+            <span id="creditWriter" class="font-semibold text-white">Hamza Kalafat</span>
+          </div>
+          <div class="flex justify-between border-b border-gray-800 pb-1">
+            <span class="text-gray-500">Beste / Müzik:</span>
+            <span id="creditComposer" class="font-semibold text-white">Hamza Kalafat</span>
+          </div>
+          <div class="flex justify-between border-b border-gray-800 pb-1">
+            <span class="text-gray-500">Aranjör:</span>
+            <span id="creditArranger" class="font-semibold text-white">Ahmet Yıldız</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-gray-500">Mix & Mastering:</span>
+            <span id="creditMix" class="font-semibold text-white">Studio Zaman</span>
+          </div>
+        </div>
 
-            let tracksList = [];
-            for(let i = 1; i <= 15; i++) {
-                const trackNameInput = document.getElementById(`albumTrackName_${i}`);
-                if(trackNameInput && trackNameInput.value.trim()) {
-                    tracksList.push({ trackNumber: i, title: trackNameInput.value.trim() });
-                }
-            }
+        <!-- Comments Tab Content -->
+        <div id="playerCommentsContent" class="hidden space-y-3">
+          <div class="space-y-2 max-h-32 overflow-y-auto">
+            <div class="bg-brand-dark p-2 rounded-lg text-xs space-y-0.5">
+              <span class="font-bold text-brand-accent">Karslı Arap:</span>
+              <p class="text-gray-300">Harika bir eser olmuş kardo, emeğine sağlık! 🔥</p>
+            </div>
+            <div class="bg-brand-dark p-2 rounded-lg text-xs space-y-0.5">
+              <span class="font-bold text-white">Ahmet Y.:</span>
+              <p class="text-gray-300">Aranje tam oturmuş, başarılar.</p>
+            </div>
+          </div>
+          <div class="flex gap-2">
+            <input type="text" placeholder="Yorum yaz..." class="flex-1 bg-brand-dark text-xs p-2 rounded-lg border border-gray-800 text-white focus:outline-none">
+            <button class="bg-brand-accent text-black font-bold text-xs px-3 rounded-lg">Gönder</button>
+          </div>
+        </div>
+      </div>
+    </div>
 
-            try {
-                await addDoc(collection(db, "albums"), {
-                    title: name,
-                    description: desc,
-                    tracks: tracksList,
-                    createdAt: new Date()
-                });
-                alert(`💿 "${name}" albümü ve ${tracksList.length} parçası buluta yayınlandı!`);
-                switchTab('albumler');
-            } catch (error) {
-                alert("Hata: " + error.message);
-            }
-        }
+    <!-- BOTTOM APP NAVIGATION TABS BAR -->
+    <nav class="absolute bottom-0 left-0 right-0 bg-brand-dark/95 backdrop-blur-lg border-t border-gray-800 flex justify-around py-2.5 z-40">
+      <button onclick="switchTab('home')" id="nav-home" class="flex flex-col items-center gap-1 text-brand-accent">
+        <i class="fa-solid fa-house text-base"></i>
+        <span class="text-[10px] font-semibold">Ana Sayfa</span>
+      </button>
 
-        async function addNewVideoCloud() {
-            if(!window.isAdminLoggedIn) {
-                alert("⛔ Bu işlem için yönetici yetkiniz yok kanka!");
-                return;
-            }
+      <button onclick="switchTab('artists')" id="nav-artists" class="flex flex-col items-center gap-1 text-gray-400 hover:text-white">
+        <i class="fa-solid fa-users text-base"></i>
+        <span class="text-[10px] font-semibold">Sanatçılar</span>
+      </button>
 
-            const name = document.getElementById('newVideoName').value.trim();
-            const { db, collection, addDoc } = window.firebaseApp;
+      <button onclick="switchTab('upload')" id="nav-upload" class="flex flex-col items-center gap-1 text-gray-400 hover:text-white">
+        <i class="fa-solid fa-circle-plus text-base"></i>
+        <span class="text-[10px] font-semibold">Yükle</span>
+      </button>
 
-            if(!name) {
-                alert("Lütfen video başlığı gir kanka.");
-                return;
-            }
+      <button onclick="switchTab('profile')" id="nav-profile" class="flex flex-col items-center gap-1 text-gray-400 hover:text-white">
+        <i class="fa-solid fa-user text-base"></i>
+        <span class="text-[10px] font-semibold">Profilim</span>
+      </button>
+    </nav>
 
-            try {
-                await addDoc(collection(db, "videos"), {
-                    title: name,
-                    views: 0,
-                    createdAt: new Date()
-                });
-                alert("📹 Video buluta yüklendi!");
-                switchTab('videolar');
-            } catch (error) {
-                alert("Hata: " + error.message);
-            }
-        }
-    </script>
+    <!-- AUTHENTICATION MODAL (GİRİŞ YAP & KAYIT OL & ADMİN GİRİŞİ) -->
+    <div id="authModal" class="hidden absolute inset-0 bg-black/85 backdrop-blur-md z-50 flex items-center justify-center p-4">
+      <div class="w-full max-w-sm bg-brand-card p-5 rounded-2xl border border-gray-800 space-y-4 shadow-2xl relative">
+        <button onclick="closeAuthModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white">
+          <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
+
+        <!-- Auth Mode Toggle Buttons -->
+        <div class="flex border-b border-gray-800 pb-2 gap-3 text-xs font-bold">
+          <button id="authTabLogin" onclick="switchAuthMode('login')" class="text-brand-accent border-b-2 border-brand-accent pb-1">Giriş Yap</button>
+          <button id="authTabRegister" onclick="switchAuthMode('register')" class="text-gray-400 pb-1">Kayıt Ol</button>
+          <button id="authTabAdmin" onclick="switchAuthMode('admin')" class="text-gray-400 pb-1 text-red-400">🛡️ Admin</button>
+        </div>
+
+        <!-- LOGIN FORM -->
+        <form id="loginForm" onsubmit="handleLogin(event)" class="space-y-3">
+          <div>
+            <label class="text-xs text-gray-300 font-medium">E-posta veya Kullanıcı Adı</label>
+            <input type="text" required placeholder="hamza@zamanperdesi.com" class="w-full bg-brand-dark text-xs text-white p-2.5 rounded-xl border border-gray-800 focus:outline-none focus:border-brand-accent mt-1">
+          </div>
+          <div>
+            <label class="text-xs text-gray-300 font-medium">Şifre</label>
+            <input type="password" required placeholder="••••••••" class="w-full bg-brand-dark text-xs text-white p-2.5 rounded-xl border border-gray-800 focus:outline-none focus:border-brand-accent mt-1">
+          </div>
+          <div class="text-right">
+            <button type="button" onclick="forgotPassword()" class="text-[11px] text-brand-accent hover:underline">Şifremi Unuttum?</button>
+          </div>
+          <button type="submit" class="w-full bg-brand-accent text-black font-bold text-xs py-2.5 rounded-xl hover:opacity-90 transition">
+            Giriş Yap
+          </button>
+        </form>
+
+        <!-- REGISTER FORM -->
+        <form id="registerForm" onsubmit="handleRegister(event)" class="hidden space-y-3">
+          <div>
+            <label class="text-xs text-gray-300 font-medium">Ad Soyad / Sanatçı Adı</label>
+            <input type="text" id="regName" required placeholder="Örn: Hamza Kalafat" class="w-full bg-brand-dark text-xs text-white p-2.5 rounded-xl border border-gray-800 focus:outline-none focus:border-brand-accent mt-1">
+          </div>
+          <div>
+            <label class="text-xs text-gray-300 font-medium">E-posta Adresi</label>
+            <input type="email" id="regEmail" required placeholder="ornek@zamanperdesi.com" class="w-full bg-brand-dark text-xs text-white p-2.5 rounded-xl border border-gray-800 focus:outline-none focus:border-brand-accent mt-1">
+          </div>
+          <div>
+            <label class="text-xs text-gray-300 font-medium">Şifre</label>
+            <input type="password" required placeholder="••••••••" class="w-full bg-brand-dark text-xs text-white p-2.5 rounded-xl border border-gray-800 focus:outline-none focus:border-brand-accent mt-1">
+          </div>
+          <p class="text-[10px] text-brand-accent flex items-center gap-1">
+            <i class="fa-solid fa-circle-check"></i> Otomatik Mavi Tik (Onaylı Sanatçı) verilecektir.
+          </p>
+          <button type="submit" class="w-full bg-gradient-to-r from-brand-accent to-brand-blue text-black font-bold text-xs py-2.5 rounded-xl hover:opacity-90 transition">
+            Hesap Oluştur & Mavi Tik Al
+          </button>
+        </form>
+
+        <!-- ADMIN FORM -->
+        <form id="adminForm" onsubmit="handleAdminLogin(event)" class="hidden space-y-3">
+          <div class="p-2 bg-red-950/40 border border-red-800/50 rounded-xl text-[11px] text-red-300">
+            🛡️ Platform Admin Yönetici Girişi
+          </div>
+          <div>
+            <label class="text-xs text-gray-300 font-medium">Admin E-posta / Kodu</label>
+            <input type="email" id="adminEmail" required placeholder="admin@zamanperdesi.com" class="w-full bg-brand-dark text-xs text-white p-2.5 rounded-xl border border-gray-800 focus:outline-none focus:border-red-500 mt-1">
+          </div>
+          <div>
+            <label class="text-xs text-gray-300 font-medium">Admin Parolası</label>
+            <input type="password" required placeholder="••••••••" class="w-full bg-brand-dark text-xs text-white p-2.5 rounded-xl border border-gray-800 focus:outline-none focus:border-red-500 mt-1">
+          </div>
+          <button type="submit" class="w-full bg-gradient-to-r from-red-600 to-red-800 text-white font-bold text-xs py-2.5 rounded-xl hover:opacity-90 transition">
+            Admin Paneline Giriş Yap
+          </button>
+        </form>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- JAVASCRIPT APPLICATION LOGIC -->
+  <script>
+    // Demo Database
+    const demoArtists = [
+      { id: 1, name: "Hamza Kalafat", img: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200", bio: "Zaman Perdesi Music Kurucu & Sanatçısı" },
+      { id: 2, name: "Karslı Arap", img: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200", bio: "Özgün Müzik Temsilcisi" },
+      { id: 3, name: "Ahmet Yıldız", img: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200", bio: "Bağlama & Aranje Üstadı" },
+      { id: 4, name: "Mert Demir", img: "https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?w=200", bio: "Bağımsız Müzisyen" }
+    ];
+
+    const demoTracks = [
+      {
+        id: 0,
+        title: "Kalbim",
+        artist: "Hamza Kalafat",
+        plays: "2.4k",
+        cover: "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=300",
+        lyrics: "Gözlerin bir gece vakti düşer kalbime...\nZaman perdesi aralanır usulca.\nSözler tükenir, geriye sadece sen kalırsın.\nKalbim atar senin ritminle...",
+        writer: "Hamza Kalafat",
+        composer: "Hamza Kalafat",
+        arranger: "Ahmet Yıldız",
+        mix: "Studio Zaman"
+      },
+      {
+        id: 1,
+        title: "Sonsuz Karanlık",
+        artist: "Karslı Arap",
+        plays: "1.8k",
+        cover: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=300",
+        lyrics: "Karanlık sokaklarda adımlarım yankılanır.\nSuskun şehir dinler feryadımı.\nKarslı derler adıma, eğilmez başım...",
+        writer: "Karslı Arap",
+        composer: "Karslı Arap",
+        arranger: "Karslı Arap",
+        mix: "Arap Sound"
+      },
+      {
+        id: 2,
+        title: "Zirve Yolu",
+        artist: "Ahmet Yıldız",
+        plays: "3.1k",
+        cover: "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=300",
+        lyrics: "Yollar uzun, engeller çok ama pes etmek yok.\nZaman perdesi altında herkes kendi hikayesini yazar...",
+        writer: "Ahmet Yıldız",
+        composer: "Ahmet Yıldız",
+        arranger: "Ahmet Yıldız",
+        mix: "Yıldız Audio"
+      }
+    ];
+
+    let currentTrackIndex = 0;
+    let isPlaying = false;
+    let isShuffle = false;
+    let isRepeat = false;
+    let currentUser = { name: "Hamza Kalafat", email: "hamza@zamanperdesi.com", isAdmin: false };
+
+    // Initialize App On Load
+    window.onload = function() {
+      renderArtists();
+      renderPopularTracks();
+      loadTrack(0);
+    };
+
+    // Render Artists Directory
+    function renderArtists() {
+      const grid = document.getElementById('artistsGrid');
+      grid.innerHTML = demoArtists.map(artist => `
+        <div onclick="openArtistDetail(${artist.id})" class="bg-brand-card p-3 rounded-xl border border-gray-800 text-center cursor-pointer hover:border-brand-accent transition space-y-2">
+          <img src="${artist.img}" class="w-16 h-16 rounded-full mx-auto object-cover border border-brand-accent shadow">
+          <div>
+            <div class="flex items-center justify-center gap-1">
+              <h4 class="text-xs font-bold text-white truncate">${artist.name}</h4>
+              <i class="fa-solid fa-circle-check text-brand-accent text-[10px]" title="Onaylı"></i>
+            </div>
+            <p class="text-[10px] text-gray-400 truncate mt-0.5">${artist.bio}</p>
+          </div>
+          <!-- Orijinal Sosyal Medya İkonları -->
+          <div class="flex justify-center gap-2.5 pt-1 text-gray-400 border-t border-gray-800/60">
+            <i class="fa-brands fa-instagram text-[11px] hover:text-pink-500"></i>
+            <i class="fa-brands fa-youtube text-[11px] hover:text-red-500"></i>
+            <i class="fa-brands fa-spotify text-[11px] hover:text-emerald-400"></i>
+            <i class="fa-brands fa-tiktok text-[11px] hover:text-cyan-400"></i>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // Render Track List
+    function renderPopularTracks() {
+      const container = document.getElementById('popularTracksList');
+      container.innerHTML = demoTracks.map((track, idx) => `
+        <div onclick="playTrack(${idx})" class="flex items-center justify-between p-2 rounded-xl bg-brand-card hover:bg-brand-hover border border-gray-800 cursor-pointer transition">
+          <div class="flex items-center gap-2.5 min-w-0">
+            <img src="${track.cover}" class="w-10 h-10 rounded-lg object-cover">
+            <div class="min-w-0">
+              <h4 class="text-xs font-bold text-white truncate">${track.title}</h4>
+              <p class="text-[10px] text-gray-400 truncate">${track.artist} • <span class="text-brand-accent"><i class="fa-solid fa-headphones text-[9px]"></i> ${track.plays}</span></p>
+            </div>
+          </div>
+          <button class="w-7 h-7 rounded-full bg-brand-dark flex items-center justify-center text-brand-accent text-xs">
+            <i class="fa-solid fa-play"></i>
+          </button>
+        </div>
+      `).join('');
+    }
+
+    // Tab Switcher
+    function switchTab(tabName) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      document.getElementById(`tab-${tabName}`).classList.remove('hidden');
+
+      document.querySelectorAll('nav button').forEach(btn => {
+        btn.classList.remove('text-brand-accent');
+        btn.classList.add('text-gray-400');
+      });
+      document.getElementById(`nav-${tabName}`).classList.add('text-brand-accent');
+      document.getElementById(`nav-${tabName}`).classList.remove('text-gray-400');
+
+      document.getElementById('searchResultsSection').classList.add('hidden');
+    }
+
+    // Audio Playback logic
+    function loadTrack(index) {
+      currentTrackIndex = index;
+      const track = demoTracks[index];
+
+      document.getElementById('playerCover').src = track.cover;
+      document.getElementById('playerTitle').innerText = track.title;
+      document.getElementById('playerArtist').innerText = track.artist;
+
+      document.getElementById('fullPlayerCover').src = track.cover;
+      document.getElementById('fullPlayerTitle').innerText = track.title;
+      document.getElementById('fullPlayerArtist').innerText = track.artist;
+      document.getElementById('lyricsText').innerText = track.lyrics;
+
+      document.getElementById('creditWriter').innerText = track.writer;
+      document.getElementById('creditComposer').innerText = track.composer;
+      document.getElementById('creditArranger').innerText = track.arranger;
+      document.getElementById('creditMix').innerText = track.mix;
+    }
+
+    function playTrack(index) {
+      loadTrack(index);
+      isPlaying = true;
+      updatePlayIcons();
+    }
+
+    function togglePlayPause(e) {
+      if(e) e.stopPropagation();
+      isPlaying = !isPlaying;
+      updatePlayIcons();
+    }
+
+    function updatePlayIcons() {
+      const miniIcon = document.querySelector('#playPauseBtn i');
+      const fullIcon = document.querySelector('#fullPlayPauseBtn i');
+
+      if (isPlaying) {
+        miniIcon.className = "fa-solid fa-pause text-xs";
+        fullIcon.className = "fa-solid fa-pause";
+      } else {
+        miniIcon.className = "fa-solid fa-play text-xs ml-0.5";
+        fullIcon.className = "fa-solid fa-play ml-0.5";
+      }
+    }
+
+    function toggleShuffle() {
+      isShuffle = !isShuffle;
+      const btn = document.getElementById('shuffleBtn');
+      btn.className = isShuffle ? "text-brand-accent text-base transition" : "text-gray-400 hover:text-white text-base transition";
+    }
+
+    function toggleRepeat() {
+      isRepeat = !isRepeat;
+      const btn = document.getElementById('repeatBtn');
+      btn.className = isRepeat ? "text-brand-accent text-base transition" : "text-gray-400 hover:text-white text-base transition";
+    }
+
+    function nextTrack() {
+      if (isShuffle) {
+        currentTrackIndex = Math.floor(Math.random() * demoTracks.length);
+      } else {
+        currentTrackIndex = (currentTrackIndex + 1) % demoTracks.length;
+      }
+      playTrack(currentTrackIndex);
+    }
+
+    function prevTrack() {
+      currentTrackIndex = (currentTrackIndex - 1 + demoTracks.length) % demoTracks.length;
+      playTrack(currentTrackIndex);
+    }
+
+    // Full Player Modal Controls
+    function openFullPlayer() {
+      document.getElementById('fullPlayerModal').classList.remove('hidden');
+    }
+
+    function closeFullPlayer() {
+      document.getElementById('fullPlayerModal').classList.add('hidden');
+    }
+
+    function switchPlayerSubTab(tab) {
+      document.getElementById('playerLyricsContent').classList.add('hidden');
+      document.getElementById('playerCreditsContent').classList.add('hidden');
+      document.getElementById('playerCommentsContent').classList.add('hidden');
+
+      document.querySelectorAll('#fullPlayerModal button[id^="playerTab"]').forEach(btn => {
+        btn.classList.remove('text-brand-accent', 'border-b-2', 'border-brand-accent');
+        btn.classList.add('text-gray-400');
+      });
+
+      if(tab === 'lyrics') {
+        document.getElementById('playerLyricsContent').classList.remove('hidden');
+        document.getElementById('playerTabLyrics').classList.add('text-brand-accent', 'border-b-2', 'border-brand-accent');
+      } else if(tab === 'credits') {
+        document.getElementById('playerCreditsContent').classList.remove('hidden');
+        document.getElementById('playerTabCredits').classList.add('text-brand-accent', 'border-b-2', 'border-brand-accent');
+      } else if(tab === 'comments') {
+        document.getElementById('playerCommentsContent').classList.remove('hidden');
+        document.getElementById('playerTabComments').classList.add('text-brand-accent', 'border-b-2', 'border-brand-accent');
+      }
+    }
+
+    // Artist Detail View
+    function openArtistDetail(id) {
+      const artist = demoArtists.find(a => a.id === id);
+      if(!artist) return;
+
+      document.getElementById('artistDetailImg').src = artist.img;
+      document.getElementById('artistDetailName').innerText = artist.name;
+      document.getElementById('artistDetailBio').innerText = artist.bio;
+
+      const tracksList = document.getElementById('artistTracksList');
+      tracksList.innerHTML = demoTracks.map((t, idx) => `
+        <div onclick="playTrack(${idx})" class="flex items-center justify-between p-2.5 bg-brand-card rounded-xl border border-gray-800 cursor-pointer">
+          <div class="flex items-center gap-2">
+            <img src="${t.cover}" class="w-9 h-9 rounded object-cover">
+            <div>
+              <h4 class="text-xs font-bold text-white">${t.title}</h4>
+              <p class="text-[10px] text-gray-400">${t.artist} • <span class="text-brand-accent">${t.plays}</span></p>
+            </div>
+          </div>
+          <i class="fa-solid fa-play text-brand-accent text-xs"></i>
+        </div>
+      `).join('');
+
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      document.getElementById('artistDetailView').classList.remove('hidden');
+    }
+
+    function closeArtistDetail() {
+      document.getElementById('artistDetailView').classList.add('hidden');
+      switchTab('artists');
+    }
+
+    // Search Logic
+    function handleSearch(val) {
+      const resultsSection = document.getElementById('searchResultsSection');
+      const resultsList = document.getElementById('searchResultsList');
+      const clearBtn = document.getElementById('clearSearchBtn');
+
+      if (!val.trim()) {
+        resultsSection.classList.add('hidden');
+        clearBtn.classList.add('hidden');
+        return;
+      }
+
+      clearBtn.classList.remove('hidden');
+      resultsSection.classList.remove('hidden');
+
+      const filteredArtists = demoArtists.filter(a => a.name.toLowerCase().includes(val.toLowerCase()));
+      const filteredTracks = demoTracks.filter(t => t.title.toLowerCase().includes(val.toLowerCase()) || t.artist.toLowerCase().includes(val.toLowerCase()));
+
+      let html = '';
+      filteredArtists.forEach(a => {
+        html += `
+          <div onclick="openArtistDetail(${a.id})" class="p-2 bg-brand-card rounded-xl border border-gray-800 flex items-center gap-2 cursor-pointer">
+            <img src="${a.img}" class="w-8 h-8 rounded-full object-cover">
+            <div>
+              <p class="text-xs font-bold text-white">${a.name} <i class="fa-solid fa-circle-check text-brand-accent text-[10px]"></i></p>
+              <span class="text-[10px] text-gray-400">Sanatçı</span>
+            </div>
+          </div>
+        `;
+      });
+
+      filteredTracks.forEach(t => {
+        html += `
+          <div onclick="playTrack(${t.id})" class="p-2 bg-brand-card rounded-xl border border-gray-800 flex items-center justify-between cursor-pointer">
+            <div class="flex items-center gap-2">
+              <img src="${t.cover}" class="w-8 h-8 rounded object-cover">
+              <div>
+                <p class="text-xs font-bold text-white">${t.title}</p>
+                <span class="text-[10px] text-gray-400">${t.artist}</span>
+              </div>
+            </div>
+            <i class="fa-solid fa-play text-xs text-brand-accent"></i>
+          </div>
+        `;
+      });
+
+      resultsList.innerHTML = html || '<p class="text-xs text-gray-500">Sonuç bulunamadı.</p>';
+    }
+
+    function clearSearch() {
+      document.getElementById('searchInput').value = '';
+      handleSearch('');
+    }
+
+    // Upload Type Switcher (Single / Album / Video)
+    function switchUploadType(type) {
+      document.getElementById('singleFields').classList.add('hidden');
+      document.getElementById('albumFields').classList.add('hidden');
+      document.getElementById('videoFields').classList.add('hidden');
+
+      document.getElementById('singleTypeBtn').className = "flex-1 py-1.5 font-semibold rounded-lg text-gray-400 hover:text-white transition";
+      document.getElementById('albumTypeBtn').className = "flex-1 py-1.5 font-semibold rounded-lg text-gray-400 hover:text-white transition";
+      document.getElementById('videoTypeBtn').className = "flex-1 py-1.5 font-semibold rounded-lg text-gray-400 hover:text-white transition";
+
+      if(type === 'single') {
+        document.getElementById('singleFields').classList.remove('hidden');
+        document.getElementById('singleTypeBtn').className = "flex-1 py-1.5 font-semibold rounded-lg bg-brand-accent text-black shadow transition";
+      } else if(type === 'album') {
+        document.getElementById('albumFields').classList.remove('hidden');
+        document.getElementById('albumTypeBtn').className = "flex-1 py-1.5 font-semibold rounded-lg bg-brand-accent text-black shadow transition";
+      } else if(type === 'video') {
+        document.getElementById('videoFields').classList.remove('hidden');
+        document.getElementById('videoTypeBtn').className = "flex-1 py-1.5 font-semibold rounded-lg bg-brand-accent text-black shadow transition";
+      }
+    }
+
+    function handleUploadSubmit(e) {
+      e.preventDefault();
+      alert('Tebrikler! Eseriniz yüklendi ve platformda yayınlandı.');
+      switchTab('profile');
+    }
+
+    // Auth Modals & Admin Switcher
+    function openAuthModal() {
+      document.getElementById('authModal').classList.remove('hidden');
+    }
+
+    function closeAuthModal() {
+      document.getElementById('authModal').classList.add('hidden');
+    }
+
+    function switchAuthMode(mode) {
+      document.getElementById('loginForm').classList.add('hidden');
+      document.getElementById('registerForm').classList.add('hidden');
+      document.getElementById('adminForm').classList.add('hidden');
+
+      document.getElementById('authTabLogin').className = "text-gray-400 pb-1";
+      document.getElementById('authTabRegister').className = "text-gray-400 pb-1";
+      document.getElementById('authTabAdmin').className = "text-gray-400 pb-1 text-red-400";
+
+      if(mode === 'login') {
+        document.getElementById('loginForm').classList.remove('hidden');
+        document.getElementById('authTabLogin').className = "text-brand-accent border-b-2 border-brand-accent pb-1";
+      } else if(mode === 'register') {
+        document.getElementById('registerForm').classList.remove('hidden');
+        document.getElementById('authTabRegister').className = "text-brand-accent border-b-2 border-brand-accent pb-1";
+      } else if(mode === 'admin') {
+        document.getElementById('adminForm').classList.remove('hidden');
+        document.getElementById('authTabAdmin').className = "text-red-400 border-b-2 border-red-500 pb-1 font-bold";
+      }
+    }
+
+    function handleLogin(e) {
+      e.preventDefault();
+      closeAuthModal();
+      alert('Giriş başarılı! Hoş geldiniz.');
+    }
+
+    function handleAdminLogin(e) {
+      e.preventDefault();
+      const email = document.getElementById('adminEmail').value;
+      currentUser = { name: "Platform Admin", email: email, isAdmin: true };
+
+      document.getElementById('headerUserName').innerText = "Admin";
+      document.getElementById('profileNameDisplay').innerText = "Platform Admin (Yönetici)";
+      document.getElementById('profileEmailDisplay').innerText = email;
+      document.getElementById('profileRoleTag').innerText = "🛡️ Tüm Yetkili Sistem Yöneticisi";
+      document.getElementById('profileRoleTag').className = "inline-block mt-1 bg-red-500/20 text-red-400 text-[10px] px-2 py-0.5 rounded-full border border-red-500/30 font-medium";
+
+      closeAuthModal();
+      alert('🛡️ Admin Paneli Girişi Başarılı! Tüm silme, düzenleme ve içerik yönetim yetkileri tanımlandı.');
+      switchTab('profile');
+    }
+
+    function handleRegister(e) {
+      e.preventDefault();
+      const name = document.getElementById('regName').value;
+      const email = document.getElementById('regEmail').value;
+
+      currentUser = { name, email, isAdmin: false };
+      document.getElementById('headerUserName').innerText = name;
+      document.getElementById('profileNameDisplay').innerText = name;
+      document.getElementById('profileEmailDisplay').innerText = email;
+
+      closeAuthModal();
+      alert(`Kayıt Başarılı! Sayın ${name}, mavi tikli sanatçı hesabınız oluşturuldu.`);
+      switchTab('profile');
+    }
+
+    function forgotPassword() {
+      const email = prompt("Lütfen kayıtlı e-posta adresinizi giriniz:");
+      if(email) {
+        alert(`${email} adresine şifre sıfırlama bağlantısı gönderildi.`);
+      }
+    }
+
+    function toggleLikeCurrent() {
+      const btn = document.getElementById('likeBtn');
+      btn.classList.toggle('text-red-500');
+    }
+
+    function toggleProfileSubTab(tab) {
+      if(tab === 'myTracks') {
+        document.getElementById('myTracksView').classList.remove('hidden');
+        document.getElementById('favoritesView').classList.add('hidden');
+        document.getElementById('subTabMyTracks').className = "pb-2 px-3 font-semibold text-brand-accent border-b-2 border-brand-accent";
+        document.getElementById('subTabFavs').className = "pb-2 px-3 font-semibold text-gray-400";
+      } else {
+        document.getElementById('myTracksView').classList.add('hidden');
+        document.getElementById('favoritesView').classList.remove('hidden');
+        document.getElementById('subTabFavs').className = "pb-2 px-3 font-semibold text-brand-accent border-b-2 border-brand-accent";
+        document.getElementById('subTabMyTracks').className = "pb-2 px-3 font-semibold text-gray-400";
+      }
+    }
+  </script>
 </body>
 </html>
