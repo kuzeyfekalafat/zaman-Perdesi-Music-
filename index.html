@@ -135,7 +135,7 @@
         <div id="artistsGrid" class="grid grid-cols-2 gap-3"></div>
       </section>
 
-      <!-- TAB 3: YÜKLE -->
+      <!-- TAB 3: YÜKLE (MANUEL KÜNYE EKLENDİ) -->
       <section id="tab-upload" class="tab-content hidden space-y-5">
         <div>
           <h2 class="text-base font-bold text-white flex items-center gap-2">
@@ -156,6 +156,25 @@
             <input type="file" id="uploadCoverFile" accept="image/*" class="w-full text-xs text-gray-400 bg-brand-card p-2 rounded-xl border border-gray-800 file:mr-3 file:py-1 file:px-2 file:rounded-lg file:border-0 file:text-xs file:bg-brand-accent file:text-black file:font-semibold">
           </div>
 
+          <!-- MANUEL KÜNYE GİRDİLERİ -->
+          <div class="p-3 bg-brand-dark/70 rounded-xl border border-gray-800 space-y-2">
+            <span class="text-xs font-bold text-brand-accent flex items-center gap-1"><i class="fa-solid fa-file-signature"></i> Eser Künye Bilgileri (Manuel)</span>
+            <div class="grid grid-cols-2 gap-2">
+              <div>
+                <label class="text-[10px] text-gray-400">Söz & Müzik</label>
+                <input type="text" id="uploadCreditWriter" placeholder="Örn: Kuzeyfe Kalafat" class="w-full bg-brand-card text-xs text-white p-2 rounded-lg border border-gray-700 mt-0.5">
+              </div>
+              <div>
+                <label class="text-[10px] text-gray-400">Aranje / Düzenleme</label>
+                <input type="text" id="uploadCreditArranger" placeholder="Örn: Zaman Perdesi" class="w-full bg-brand-card text-xs text-white p-2 rounded-lg border border-gray-700 mt-0.5">
+              </div>
+            </div>
+            <div>
+              <label class="text-[10px] text-gray-400">Yapım Şirketi / Etiket</label>
+              <input type="text" id="uploadCreditLabel" placeholder="Örn: Zaman Perdesi Music" class="w-full bg-brand-card text-xs text-white p-2 rounded-lg border border-gray-700 mt-0.5">
+            </div>
+          </div>
+
           <!-- TEKLI FIELDS -->
           <div id="singleFields" class="space-y-3">
             <div>
@@ -168,7 +187,7 @@
             </div>
             <div>
               <label class="text-xs font-medium text-gray-300">Şarkı Sözleri (Lyrics)</label>
-              <textarea rows="3" id="uploadLyrics" placeholder="Şarkının sözleri..." class="w-full bg-brand-card text-xs text-white p-2.5 rounded-xl border border-gray-800 focus:outline-none focus:border-brand-accent mt-1"></textarea>
+              <textarea rows="3" id="uploadLyrics" placeholder="Şarkının sözlerini giriniz..." class="w-full bg-brand-card text-xs text-white p-2.5 rounded-xl border border-gray-800 focus:outline-none focus:border-brand-accent mt-1"></textarea>
             </div>
           </div>
 
@@ -202,7 +221,7 @@
         </form>
       </section>
 
-      <!-- TAB 4: PROFİLİM -->
+      <!-- TAB 4: PROFİLİM (SOSYAL MEDYA LİNKLERİ İLE) -->
       <section id="tab-profile" class="tab-content hidden space-y-5">
         <div class="flex items-center gap-3 bg-brand-card p-3.5 rounded-2xl border border-gray-800 relative">
           <img id="userAvatar" src="" class="w-14 h-14 rounded-full object-cover border-2 border-brand-accent" alt="Profile">
@@ -224,6 +243,14 @@
         <div class="bg-brand-card p-3 rounded-xl border border-gray-800 space-y-2">
           <span class="text-xs font-bold text-brand-accent block">✍️ Hakkında / Biyografi</span>
           <p id="profileBioDisplay" class="text-xs text-gray-300">Zaman Perdesi Music Kurucusu & Söz Yazarı.</p>
+          
+          <!-- SOSYAL MEDYA LİNKLERİ GÖSTERİMİ -->
+          <div class="pt-2 border-t border-gray-800 flex items-center gap-3 text-sm text-gray-400">
+            <a id="linkYoutube" href="#" target="_blank" class="hover:text-red-500 transition hidden"><i class="fa-brands fa-youtube"></i></a>
+            <a id="linkInstagram" href="#" target="_blank" class="hover:text-pink-500 transition hidden"><i class="fa-brands fa-instagram"></i></a>
+            <a id="linkSpotify" href="#" target="_blank" class="hover:text-green-500 transition hidden"><i class="fa-brands fa-spotify"></i></a>
+            <a id="linkTiktok" href="#" target="_blank" class="hover:text-cyan-400 transition hidden"><i class="fa-brands fa-tiktok"></i></a>
+          </div>
         </div>
 
         <div class="space-y-3">
@@ -259,7 +286,7 @@
 
     </main>
 
-    <!-- STICKY MINI PLAYER -->
+    <!-- STICKY MINI PLAYER (İNDİR BUTONU İLE) -->
     <div id="miniPlayer" class="absolute bottom-[58px] left-0 right-0 bg-brand-dark/95 backdrop-blur-md border-t border-cyan-500/30 p-2.5 px-3 flex items-center justify-between z-30 cursor-pointer shadow-2xl">
       <div onclick="openFullPlayer()" class="flex items-center gap-2.5 min-w-0 flex-1">
         <img id="playerCover" src="" class="w-10 h-10 rounded-lg object-cover shadow border border-gray-700">
@@ -268,19 +295,24 @@
           <p id="playerArtist" class="text-[10px] text-brand-accent truncate">Kuzeyfe Kalafat</p>
         </div>
       </div>
-      <div class="flex items-center gap-3">
-        <button onclick="toggleLikeCurrent()" id="likeBtn" class="text-gray-400 hover:text-red-500 transition"><i class="fa-regular fa-heart text-sm"></i></button>
+      <div class="flex items-center gap-2.5">
+        <button onclick="downloadCurrentTrack(event)" title="Şarkıyı İndir" class="text-gray-400 hover:text-brand-accent transition p-1"><i class="fa-solid fa-download text-xs"></i></button>
+        <button onclick="toggleLikeCurrent()" id="likeBtn" class="text-gray-400 hover:text-red-500 transition p-1"><i class="fa-regular fa-heart text-xs"></i></button>
         <button onclick="togglePlayPause(event)" id="playPauseBtn" class="w-8 h-8 rounded-full bg-brand-accent text-black flex items-center justify-center font-bold shadow-md"><i class="fa-solid fa-play text-xs"></i></button>
-        <button onclick="openFullPlayer()" class="text-gray-400 hover:text-white"><i class="fa-solid fa-chevron-up text-xs"></i></button>
+        <button onclick="openFullPlayer()" class="text-gray-400 hover:text-white p-1"><i class="fa-solid fa-chevron-up text-xs"></i></button>
       </div>
     </div>
 
-    <!-- FULL PLAYER MODAL -->
+    <!-- FULL PLAYER MODAL (İNDİRME VE PAYLAŞMA DÜĞMELERİ İLE) -->
     <div id="fullPlayerModal" class="hidden absolute inset-0 bg-brand-black/98 backdrop-blur-xl z-50 flex flex-col p-4 pb-20 overflow-y-auto space-y-3">
       <div class="flex items-center justify-between border-b border-gray-800/80 pb-2">
         <button onclick="closeFullPlayer()" class="text-gray-400 hover:text-white"><i class="fa-solid fa-chevron-down text-lg"></i></button>
         <span class="text-xs font-bold uppercase tracking-widest text-brand-accent">Şimdi Çalıyor</span>
-        <button onclick="toggleLikeCurrent()" class="text-gray-400 hover:text-red-500"><i class="fa-solid fa-heart text-lg"></i></button>
+        <div class="flex items-center gap-3">
+          <button onclick="downloadCurrentTrack()" title="İndir" class="text-gray-400 hover:text-brand-accent"><i class="fa-solid fa-download text-base"></i></button>
+          <button onclick="shareCurrentTrack()" title="Paylaş" class="text-gray-400 hover:text-brand-accent"><i class="fa-solid fa-share-nodes text-base"></i></button>
+          <button onclick="toggleLikeCurrent()" class="text-gray-400 hover:text-red-500"><i class="fa-solid fa-heart text-base"></i></button>
+        </div>
       </div>
 
       <div class="text-center pt-1 relative">
@@ -320,14 +352,14 @@
 
         <!-- TAB 1: SÖZLER -->
         <div id="playerLyricsContent" class="text-xs text-gray-300 space-y-2 leading-relaxed max-h-36 overflow-y-auto p-1">
-          <p id="lyricsText">Yine toplandık sahilde akşam vaktinde,<br>Gelişin tüm yükü kaldı o eski şehirde.<br>Dalgalar vururken ince kumların üstüne,<br>Bir kıvılcım çaktı kanka, gecenin kalbinde.<br><br>Ateşin sıcaklığı vuruyor yüzümüze,<br>Gitarın telleri dokunuyor kalbimize.<br>Herkes burada bak, çember olduk yine...</p>
+          <p id="lyricsText">Yine toplandık sahilde akşam vaktinde,<br>Gelişin tüm yükü kaldı o eski şehirde...</p>
         </div>
 
-        <!-- TAB 2: KÜNYE -->
+        <!-- TAB 2: KÜNYE (MANUEL YAZILAN BİLGİLER BURADA GÖRÜNÜR) -->
         <div id="playerCreditsContent" class="hidden text-xs space-y-2 text-gray-300 max-h-36 overflow-y-auto p-1">
           <div class="flex justify-between border-b border-gray-800/80 pb-1.5"><span class="text-gray-500">Söz & Müzik:</span><span id="creditWriter" class="font-semibold text-white">Kuzeyfe Kalafat</span></div>
           <div class="flex justify-between border-b border-gray-800/80 pb-1.5"><span class="text-gray-500">Aranje / Düzenleme:</span><span id="creditArranger" class="font-semibold text-white">Zaman Perdesi</span></div>
-          <div class="flex justify-between border-b border-gray-800/80 pb-1.5"><span class="text-gray-500">Yapım Şirketi:</span><span class="font-semibold text-brand-accent">Zaman Perdesi Music</span></div>
+          <div class="flex justify-between border-b border-gray-800/80 pb-1.5"><span class="text-gray-500">Yapım Şirketi:</span><span id="creditLabel" class="font-semibold text-brand-accent">Zaman Perdesi Music</span></div>
         </div>
 
         <!-- TAB 3: YORUMLAR -->
@@ -378,15 +410,25 @@
       </div>
     </div>
 
-    <!-- PROFILE EDIT MODAL -->
+    <!-- PROFILE EDIT MODAL (SOSYAL MEDYA INPUTLARI İLE) -->
     <div id="editProfileModal" class="hidden absolute inset-0 bg-black/85 backdrop-blur-md z-50 flex items-center justify-center p-4">
-      <div class="w-full max-w-sm bg-brand-card p-5 rounded-2xl border border-gray-800 space-y-4 shadow-2xl relative">
+      <div class="w-full max-w-sm bg-brand-card p-5 rounded-2xl border border-gray-800 space-y-4 shadow-2xl relative max-h-[90vh] overflow-y-auto">
         <button onclick="closeEditProfileModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
         <h3 class="text-sm font-bold text-white flex items-center gap-2"><i class="fa-solid fa-pen-to-square text-brand-accent"></i> Profili Düzenle</h3>
         <form onsubmit="handleProfileUpdate(event)" class="space-y-3">
           <div><label class="text-xs text-gray-300">Ad Soyad</label><input type="text" id="editNameInput" required class="w-full bg-brand-dark text-xs text-white p-2.5 rounded-xl border border-gray-800 mt-1"></div>
-          <div><label class="text-xs text-gray-300">Biyografi</label><textarea id="editBioInput" rows="3" class="w-full bg-brand-dark text-xs text-white p-2.5 rounded-xl border border-gray-800 mt-1"></textarea></div>
+          <div><label class="text-xs text-gray-300">Biyografi</label><textarea id="editBioInput" rows="2" class="w-full bg-brand-dark text-xs text-white p-2.5 rounded-xl border border-gray-800 mt-1"></textarea></div>
           <div><label class="text-xs text-gray-300">Fotoğraf Dosyası Seç</label><input type="file" id="editAvatarFile" accept="image/*" class="w-full text-xs text-gray-400 bg-brand-dark p-2 rounded-xl border border-gray-800 mt-1 file:mr-3 file:py-1 file:px-2 file:rounded-lg file:border-0 file:text-xs file:bg-brand-accent file:text-black file:font-semibold"></div>
+          
+          <!-- SOSYAL MEDYA LINK DÜZENLEME -->
+          <div class="space-y-2 pt-2 border-t border-gray-800">
+            <span class="text-xs font-bold text-brand-accent block">🔗 Sosyal Medya Bağlantıları</span>
+            <input type="url" id="editYoutubeInput" placeholder="YouTube Kanal Linki" class="w-full bg-brand-dark text-xs text-white p-2 rounded-lg border border-gray-800">
+            <input type="url" id="editInstagramInput" placeholder="Instagram Profil Linki" class="w-full bg-brand-dark text-xs text-white p-2 rounded-lg border border-gray-800">
+            <input type="url" id="editSpotifyInput" placeholder="Spotify Profil Linki" class="w-full bg-brand-dark text-xs text-white p-2 rounded-lg border border-gray-800">
+            <input type="url" id="editTiktokInput" placeholder="TikTok Profil Linki" class="w-full bg-brand-dark text-xs text-white p-2 rounded-lg border border-gray-800">
+          </div>
+
           <button type="submit" class="w-full bg-brand-accent text-black font-bold text-xs py-2.5 rounded-xl">Kaydet & Güncelle</button>
         </form>
       </div>
@@ -395,7 +437,6 @@
   </div>
 
   <script>
-    // GARANTİLİ ŞIK DEFAULT SVG GÖRSELLER (KIRIK RESİM GÖSTERMEZ)
     const DEFAULT_COVER = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300" viewBox="0 0 300 300"><defs><linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="%230072ff"/><stop offset="100%" stop-color="%2300d2ff"/></linearGradient></defs><rect width="300" height="300" fill="%231a1c23"/><circle cx="150" cy="150" r="90" fill="url(%23g)" opacity="0.25"/><path d="M135 110v80l60-40z" fill="%2300d2ff"/><text x="50%" y="82%" text-anchor="middle" fill="%2300d2ff" font-family="sans-serif" font-size="14" font-weight="bold">ZAMAN PERDESİ</text></svg>';
     const DEFAULT_AVATAR = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200"><rect width="200" height="200" fill="%231a1c23"/><circle cx="100" cy="80" r="40" fill="%2300d2ff"/><path d="M40 170c0-33 27-60 60-60s60 27 60 60z" fill="%2300d2ff"/></svg>';
     const DEFAULT_AUDIO = 'https://actions.google.com/sounds/v1/ambiences/outdoor_synth.ogg'; 
@@ -405,7 +446,8 @@
         name: 'Kuzeyfe Kalafat',
         email: 'kuzeyfe@zamanperdesi.com',
         bio: 'Zaman Perdesi Music Kurucusu & Sanatçısı.',
-        avatar: DEFAULT_AVATAR
+        avatar: DEFAULT_AVATAR,
+        youtube: '', instagram: '', spotify: '', tiktok: ''
       }
     };
 
@@ -421,20 +463,12 @@
         mediaUrl: DEFAULT_AUDIO,
         lyrics: 'Yine toplandık sahilde akşam vaktinde,\nGelişin tüm yükü kaldı o eski şehirde.\nDalgalar vururken ince kumların üstüne,\nBir kıvılcım çaktı kanka, gecenin kalbinde.\n\nAteşin sıcaklığı vuruyor yüzümüze,\nGitarın telleri dokunuyor kalbimize.\nHerkes burada bak, çember olduk yine...',
         type: 'Single',
+        writer: 'Kuzeyfe Kalafat',
+        arranger: 'Zaman Perdesi',
+        label: 'Zaman Perdesi Music',
         comments: [
           { user: 'Zaman Perdesi', text: 'Zirve yolu albümünün ilk ateşleyici şarkısı! 🔥' }
         ]
-      },
-      {
-        id: 1,
-        title: 'Gece Ve Sis',
-        artist: 'Zaman Perdesi',
-        plays: '850',
-        cover: DEFAULT_COVER,
-        mediaUrl: DEFAULT_AUDIO,
-        lyrics: 'Gece çöker sise bürünür sokaklar...\nAdımlarım yankılanır yalnızlıkta.',
-        type: 'Single',
-        comments: []
       }
     ];
 
@@ -445,7 +479,6 @@
     let favorites = [];
     const audioEl = document.getElementById('audioPlayer');
 
-    // Görsel Yüklenemezse Kırık Simgeleri Engelle
     function setupImageErrorHandlers() {
       document.querySelectorAll('img').forEach(img => {
         img.onerror = function() {
@@ -491,6 +524,12 @@
         document.getElementById('profileEmailDisplay').innerText = currentUserEmail;
         document.getElementById('profileBioDisplay').innerText = u.bio || "Henüz biyografi eklenmedi.";
         document.getElementById('userAvatar').src = u.avatar || DEFAULT_AVATAR;
+
+        // Sosyal medya butonlarını güncelleme
+        toggleSocialLink('linkYoutube', u.youtube);
+        toggleSocialLink('linkInstagram', u.instagram);
+        toggleSocialLink('linkSpotify', u.spotify);
+        toggleSocialLink('linkTiktok', u.tiktok);
       } else {
         document.getElementById('headerUserName').innerText = "Giriş Yap";
         document.getElementById('profileNameDisplay').innerText = "Giriş Yapın";
@@ -500,6 +539,16 @@
       }
       renderMyTracks();
       setupImageErrorHandlers();
+    }
+
+    function toggleSocialLink(id, url) {
+      const el = document.getElementById(id);
+      if(url && url.trim() !== '') {
+        el.href = url;
+        el.classList.remove('hidden');
+      } else {
+        el.classList.add('hidden');
+      }
     }
 
     function buildAlbumTrackInputs() {
@@ -624,7 +673,7 @@
       }
     }
 
-    // OYNATICI VE MEDYA MOTORU
+    // OYNATICI VE MANUEL KÜNYE BİLGİLERİ DOLDURMA
     function loadTrack(i) {
       currentTrackIndex = i;
       const t = demoTracks[i];
@@ -636,10 +685,14 @@
 
       document.getElementById('fullPlayerTitle').innerText = t.title;
       document.getElementById('fullPlayerArtist').innerText = t.artist;
-      document.getElementById('creditWriter').innerText = t.artist;
+      
+      // Manuel Girilen Künye Bilgilerini Ekran Gösterimi
+      document.getElementById('creditWriter').innerText = t.writer || t.artist || "Bilinmiyor";
+      document.getElementById('creditArranger').innerText = t.arranger || "Zaman Perdesi";
+      document.getElementById('creditLabel').innerText = t.label || "Zaman Perdesi Music";
 
       if(document.getElementById('lyricsText')) {
-        document.getElementById('lyricsText').innerText = t.lyrics || "Bu şarkı için söz eklenmedi.";
+        document.getElementById('lyricsText').innerHTML = (t.lyrics || "Bu şarkı için söz eklenmedi.").replace(/\n/g, '<br>');
       }
 
       renderTrackComments();
@@ -728,6 +781,38 @@
       return `${min < 10 ? '0' : ''}${min}:${sec < 10 ? '0' : ''}${sec}`;
     }
 
+    // ŞARKI İNDİRME FONKSİYONU
+    function downloadCurrentTrack(e) {
+      if(e) e.stopPropagation();
+      const current = demoTracks[currentTrackIndex];
+      if(!current || !current.mediaUrl) {
+        alert('İndirilecek ses dosyası bulunamadı!');
+        return;
+      }
+      const a = document.createElement('a');
+      a.href = current.mediaUrl;
+      a.download = `${current.artist} - ${current.title}.mp3`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    }
+
+    // ŞARKI PAYLAŞMA FONKSİYONU
+    function shareCurrentTrack() {
+      const current = demoTracks[currentTrackIndex];
+      if(!current) return;
+      if (navigator.share) {
+        navigator.share({
+          title: current.title,
+          text: `${current.artist} - ${current.title} eserini Zaman Perdesi Music üzerinde dinle!`,
+          url: window.location.href,
+        }).catch(()=>{});
+      } else {
+        navigator.clipboard.writeText(window.location.href);
+        alert('Şarkı bağlantısı kopyalandı!');
+      }
+    }
+
     function prevTrack() {
       if(currentTrackIndex > 0) playTrack(currentTrackIndex - 1);
     }
@@ -749,7 +834,6 @@
       if(!videoEl.paused) videoEl.pause();
     }
 
-    // SÖZLER - KÜNYE - YORUMLAR SEKMELERİ
     function switchPlayerSubTab(tab) {
       document.getElementById('playerLyricsContent').classList.add('hidden');
       document.getElementById('playerCreditsContent').classList.add('hidden');
@@ -771,7 +855,6 @@
       }
     }
 
-    // YORUM EKLEME SİSTEMİ
     function addComment(e) {
       e.preventDefault();
       const currentTrack = demoTracks[currentTrackIndex];
@@ -805,7 +888,7 @@
       `).join('');
     }
 
-    // YÜKLEME FORMU İŞLEME (GÖRSEL VE SES DOSYASINI TAM ALMA)
+    // MANUEL KÜNYELİ YÜKLEME İŞLEMİ
     function handleUploadSubmit(e) {
       e.preventDefault();
       if(!currentUserEmail) {
@@ -820,6 +903,11 @@
       if(coverFileInput.files && coverFileInput.files[0]) {
         coverUrl = URL.createObjectURL(coverFileInput.files[0]);
       }
+
+      // Manuel Künye Değerleri
+      const writer = document.getElementById('uploadCreditWriter').value.trim() || artistName;
+      const arranger = document.getElementById('uploadCreditArranger').value.trim() || "Zaman Perdesi";
+      const label = document.getElementById('uploadCreditLabel').value.trim() || "Zaman Perdesi Music";
 
       const isSingle = !document.getElementById('singleFields').classList.contains('hidden');
       const isAlbum = !document.getElementById('albumFields').classList.contains('hidden');
@@ -836,13 +924,13 @@
 
         demoTracks.push({
           id: demoTracks.length,
-          title, artist: artistName, plays: "0", cover: coverUrl, lyrics, mediaUrl: audioUrl, type: "Tekli", comments: []
+          title, artist: artistName, plays: "0", cover: coverUrl, lyrics, mediaUrl: audioUrl, type: "Tekli", writer, arranger, label, comments: []
         });
       } else if(isAlbum) {
         const albumTitle = document.getElementById('uploadAlbumTitle').value || "Yeni Albüm";
         demoTracks.push({
           id: demoTracks.length,
-          title: albumTitle, artist: artistName, plays: "0", cover: coverUrl, lyrics: "Albüm Eseri", mediaUrl: DEFAULT_AUDIO, type: "Albüm", comments: []
+          title: albumTitle, artist: artistName, plays: "0", cover: coverUrl, lyrics: "Albüm Eseri", mediaUrl: DEFAULT_AUDIO, type: "Albüm", writer, arranger, label, comments: []
         });
       } else if(isVideo) {
         const videoTitle = document.getElementById('uploadVideoTitle').value || "Yeni Klip";
@@ -854,14 +942,14 @@
 
         demoTracks.push({
           id: demoTracks.length,
-          title: videoTitle, artist: artistName, plays: "0", cover: coverUrl, lyrics: "Video Klip", mediaUrl: videoUrl, type: "Video Klip", comments: []
+          title: videoTitle, artist: artistName, plays: "0", cover: coverUrl, lyrics: "Video Klip", mediaUrl: videoUrl, type: "Video Klip", writer, arranger, label, comments: []
         });
       }
 
       saveAppData();
       renderDynamicFeed();
       renderMyTracks();
-      alert('Tebrikler! Eseriniz başarıyla yüklendi.');
+      alert('Tebrikler! Eseriniz manuel künye bilgileriyle yayınlandı.');
       switchTab('home');
       playTrack(demoTracks.length - 1);
     }
@@ -875,6 +963,13 @@
       const u = usersDB[currentUserEmail];
       document.getElementById('editNameInput').value = u.name;
       document.getElementById('editBioInput').value = u.bio || '';
+      
+      // Sosyal Medya Inputlarını Doldurma
+      document.getElementById('editYoutubeInput').value = u.youtube || '';
+      document.getElementById('editInstagramInput').value = u.instagram || '';
+      document.getElementById('editSpotifyInput').value = u.spotify || '';
+      document.getElementById('editTiktokInput').value = u.tiktok || '';
+
       document.getElementById('editProfileModal').classList.remove('hidden');
     }
     function closeEditProfileModal() { document.getElementById('editProfileModal').classList.add('hidden'); }
@@ -883,11 +978,14 @@
       e.preventDefault();
       if(!currentUserEmail) return;
       
-      const newName = document.getElementById('editNameInput').value;
-      const newBio = document.getElementById('editBioInput').value;
+      usersDB[currentUserEmail].name = document.getElementById('editNameInput').value;
+      usersDB[currentUserEmail].bio = document.getElementById('editBioInput').value;
       
-      usersDB[currentUserEmail].name = newName;
-      usersDB[currentUserEmail].bio = newBio;
+      // Sosyal Medya Linklerini Kaydetme
+      usersDB[currentUserEmail].youtube = document.getElementById('editYoutubeInput').value;
+      usersDB[currentUserEmail].instagram = document.getElementById('editInstagramInput').value;
+      usersDB[currentUserEmail].spotify = document.getElementById('editSpotifyInput').value;
+      usersDB[currentUserEmail].tiktok = document.getElementById('editTiktokInput').value;
 
       const avatarFileInput = document.getElementById('editAvatarFile');
       if(avatarFileInput.files && avatarFileInput.files[0]) {
@@ -899,7 +997,7 @@
       checkAuthSession();
       closeEditProfileModal();
       renderArtists();
-      alert('Profil güncellendi!');
+      alert('Profil ve Sosyal Medya bağlantıları güncellendi!');
     }
 
     function openAuthModal() { document.getElementById('authModal').classList.remove('hidden'); }
@@ -918,7 +1016,7 @@
       e.preventDefault(); 
       const email = document.getElementById('loginEmail').value.trim();
       if(!usersDB[email]) {
-        alert('Bu e-posta ile kayıtlı hesap bulunamadı! Lütfen önce kayıt olun.');
+        alert('Bu e-posta ile kayıtlı hesap bulunamadı!');
         return;
       }
       currentUserEmail = email;
