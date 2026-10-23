@@ -40,6 +40,11 @@
     ::-webkit-scrollbar-track { background: #0a0a0c; }
     ::-webkit-scrollbar-thumb { background: #242731; border-radius: 4px; }
     ::-webkit-scrollbar-thumb:hover { background: #00d2ff; }
+    .glass-effect {
+      background: rgba(26, 28, 35, 0.75);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
     body {
       user-select: none;
       -webkit-tap-highlight-color: transparent;
@@ -100,6 +105,7 @@
     <!-- MAIN SCROLLABLE CONTENT AREA -->
     <main id="mainContent" class="flex-1 overflow-y-auto pb-36 p-4 space-y-6">
 
+      <!-- SEARCH RESULTS OVERLAY -->
       <section id="searchResultsSection" class="hidden space-y-4">
         <h2 class="text-xs font-bold uppercase tracking-wider text-brand-accent">Arama Sonuçları</h2>
         <div id="searchResultsList" class="space-y-2"></div>
