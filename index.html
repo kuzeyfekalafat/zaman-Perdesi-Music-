@@ -135,7 +135,7 @@
         <div id="artistsGrid" class="grid grid-cols-2 gap-3"></div>
       </section>
 
-      <!-- TAB 3: YÜKLE (MANUEL KÜNYE EKLENDİ) -->
+      <!-- TAB 3: YÜKLE -->
       <section id="tab-upload" class="tab-content hidden space-y-5">
         <div>
           <h2 class="text-base font-bold text-white flex items-center gap-2">
@@ -221,7 +221,7 @@
         </form>
       </section>
 
-      <!-- TAB 4: PROFİLİM (SOSYAL MEDYA LİNKLERİ İLE) -->
+      <!-- TAB 4: PROFİLİM (6 SOSYAL MEDYA İKONU İLE) -->
       <section id="tab-profile" class="tab-content hidden space-y-5">
         <div class="flex items-center gap-3 bg-brand-card p-3.5 rounded-2xl border border-gray-800 relative">
           <img id="userAvatar" src="" class="w-14 h-14 rounded-full object-cover border-2 border-brand-accent" alt="Profile">
@@ -244,12 +244,14 @@
           <span class="text-xs font-bold text-brand-accent block">✍️ Hakkında / Biyografi</span>
           <p id="profileBioDisplay" class="text-xs text-gray-300">Zaman Perdesi Music Kurucusu & Söz Yazarı.</p>
           
-          <!-- SOSYAL MEDYA LİNKLERİ GÖSTERİMİ -->
-          <div class="pt-2 border-t border-gray-800 flex items-center gap-3 text-sm text-gray-400">
-            <a id="linkYoutube" href="#" target="_blank" class="hover:text-red-500 transition hidden"><i class="fa-brands fa-youtube"></i></a>
-            <a id="linkInstagram" href="#" target="_blank" class="hover:text-pink-500 transition hidden"><i class="fa-brands fa-instagram"></i></a>
-            <a id="linkSpotify" href="#" target="_blank" class="hover:text-green-500 transition hidden"><i class="fa-brands fa-spotify"></i></a>
-            <a id="linkTiktok" href="#" target="_blank" class="hover:text-cyan-400 transition hidden"><i class="fa-brands fa-tiktok"></i></a>
+          <!-- 6 SOSYAL MEDYA LİNKİ GÖSTERİMİ -->
+          <div class="pt-2 border-t border-gray-800 flex items-center gap-3 text-base">
+            <a id="linkYoutube" href="#" target="_blank" class="text-red-500 hover:scale-110 transition hidden" title="YouTube"><i class="fa-brands fa-youtube"></i></a>
+            <a id="linkInstagram" href="#" target="_blank" class="text-pink-500 hover:scale-110 transition hidden" title="Instagram"><i class="fa-brands fa-instagram"></i></a>
+            <a id="linkSpotify" href="#" target="_blank" class="text-green-500 hover:scale-110 transition hidden" title="Spotify"><i class="fa-brands fa-spotify"></i></a>
+            <a id="linkTiktok" href="#" target="_blank" class="text-cyan-400 hover:scale-110 transition hidden" title="TikTok"><i class="fa-brands fa-tiktok"></i></a>
+            <a id="linkFacebook" href="#" target="_blank" class="text-blue-500 hover:scale-110 transition hidden" title="Facebook"><i class="fa-brands fa-facebook"></i></a>
+            <a id="linkTwitter" href="#" target="_blank" class="text-white hover:scale-110 transition hidden" title="Twitter / X"><i class="fa-brands fa-x-twitter"></i></a>
           </div>
         </div>
 
@@ -286,7 +288,7 @@
 
     </main>
 
-    <!-- STICKY MINI PLAYER (İNDİR BUTONU İLE) -->
+    <!-- STICKY MINI PLAYER -->
     <div id="miniPlayer" class="absolute bottom-[58px] left-0 right-0 bg-brand-dark/95 backdrop-blur-md border-t border-cyan-500/30 p-2.5 px-3 flex items-center justify-between z-30 cursor-pointer shadow-2xl">
       <div onclick="openFullPlayer()" class="flex items-center gap-2.5 min-w-0 flex-1">
         <img id="playerCover" src="" class="w-10 h-10 rounded-lg object-cover shadow border border-gray-700">
@@ -303,7 +305,7 @@
       </div>
     </div>
 
-    <!-- FULL PLAYER MODAL (İNDİRME VE PAYLAŞMA DÜĞMELERİ İLE) -->
+    <!-- FULL PLAYER MODAL -->
     <div id="fullPlayerModal" class="hidden absolute inset-0 bg-brand-black/98 backdrop-blur-xl z-50 flex flex-col p-4 pb-20 overflow-y-auto space-y-3">
       <div class="flex items-center justify-between border-b border-gray-800/80 pb-2">
         <button onclick="closeFullPlayer()" class="text-gray-400 hover:text-white"><i class="fa-solid fa-chevron-down text-lg"></i></button>
@@ -355,7 +357,7 @@
           <p id="lyricsText">Yine toplandık sahilde akşam vaktinde,<br>Gelişin tüm yükü kaldı o eski şehirde...</p>
         </div>
 
-        <!-- TAB 2: KÜNYE (MANUEL YAZILAN BİLGİLER BURADA GÖRÜNÜR) -->
+        <!-- TAB 2: KÜNYE -->
         <div id="playerCreditsContent" class="hidden text-xs space-y-2 text-gray-300 max-h-36 overflow-y-auto p-1">
           <div class="flex justify-between border-b border-gray-800/80 pb-1.5"><span class="text-gray-500">Söz & Müzik:</span><span id="creditWriter" class="font-semibold text-white">Kuzeyfe Kalafat</span></div>
           <div class="flex justify-between border-b border-gray-800/80 pb-1.5"><span class="text-gray-500">Aranje / Düzenleme:</span><span id="creditArranger" class="font-semibold text-white">Zaman Perdesi</span></div>
@@ -410,7 +412,7 @@
       </div>
     </div>
 
-    <!-- PROFILE EDIT MODAL (SOSYAL MEDYA INPUTLARI İLE) -->
+    <!-- PROFILE EDIT MODAL (TAM 6 SOSYAL MEDYA INPUTU) -->
     <div id="editProfileModal" class="hidden absolute inset-0 bg-black/85 backdrop-blur-md z-50 flex items-center justify-center p-4">
       <div class="w-full max-w-sm bg-brand-card p-5 rounded-2xl border border-gray-800 space-y-4 shadow-2xl relative max-h-[90vh] overflow-y-auto">
         <button onclick="closeEditProfileModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
@@ -420,16 +422,36 @@
           <div><label class="text-xs text-gray-300">Biyografi</label><textarea id="editBioInput" rows="2" class="w-full bg-brand-dark text-xs text-white p-2.5 rounded-xl border border-gray-800 mt-1"></textarea></div>
           <div><label class="text-xs text-gray-300">Fotoğraf Dosyası Seç</label><input type="file" id="editAvatarFile" accept="image/*" class="w-full text-xs text-gray-400 bg-brand-dark p-2 rounded-xl border border-gray-800 mt-1 file:mr-3 file:py-1 file:px-2 file:rounded-lg file:border-0 file:text-xs file:bg-brand-accent file:text-black file:font-semibold"></div>
           
-          <!-- SOSYAL MEDYA LINK DÜZENLEME -->
+          <!-- 6 ADET SOSYAL MEDYA LİNK DÜZENLEME KUTUSU -->
           <div class="space-y-2 pt-2 border-t border-gray-800">
-            <span class="text-xs font-bold text-brand-accent block">🔗 Sosyal Medya Bağlantıları</span>
-            <input type="url" id="editYoutubeInput" placeholder="YouTube Kanal Linki" class="w-full bg-brand-dark text-xs text-white p-2 rounded-lg border border-gray-800">
-            <input type="url" id="editInstagramInput" placeholder="Instagram Profil Linki" class="w-full bg-brand-dark text-xs text-white p-2 rounded-lg border border-gray-800">
-            <input type="url" id="editSpotifyInput" placeholder="Spotify Profil Linki" class="w-full bg-brand-dark text-xs text-white p-2 rounded-lg border border-gray-800">
-            <input type="url" id="editTiktokInput" placeholder="TikTok Profil Linki" class="w-full bg-brand-dark text-xs text-white p-2 rounded-lg border border-gray-800">
+            <span class="text-xs font-bold text-brand-accent block">🔗 Sosyal Medya Bağlantıları (6 Adet)</span>
+            <div>
+              <label class="text-[10px] text-gray-400 flex items-center gap-1 mb-0.5"><i class="fa-brands fa-youtube text-red-500"></i> YouTube Kanal Linki</label>
+              <input type="url" id="editYoutubeInput" placeholder="https://www.youtube.com/@kuzeyfe.kalafat" class="w-full bg-brand-dark text-xs text-white p-2 rounded-lg border border-gray-800 focus:outline-none focus:border-brand-accent">
+            </div>
+            <div>
+              <label class="text-[10px] text-gray-400 flex items-center gap-1 mb-0.5"><i class="fa-brands fa-instagram text-pink-500"></i> Instagram Profil Linki</label>
+              <input type="url" id="editInstagramInput" placeholder="https://www.instagram.com/kuzeyfekalafat" class="w-full bg-brand-dark text-xs text-white p-2 rounded-lg border border-gray-800 focus:outline-none focus:border-brand-accent">
+            </div>
+            <div>
+              <label class="text-[10px] text-gray-400 flex items-center gap-1 mb-0.5"><i class="fa-brands fa-spotify text-green-500"></i> Spotify Profil Linki</label>
+              <input type="url" id="editSpotifyInput" placeholder="https://open.spotify.com/artist/kuzeyfekalafat" class="w-full bg-brand-dark text-xs text-white p-2 rounded-lg border border-gray-800 focus:outline-none focus:border-brand-accent">
+            </div>
+            <div>
+              <label class="text-[10px] text-gray-400 flex items-center gap-1 mb-0.5"><i class="fa-brands fa-tiktok text-cyan-400"></i> TikTok Profil Linki</label>
+              <input type="url" id="editTiktokInput" placeholder="https://www.tiktok.com/@kuzeyfe.kalafat" class="w-full bg-brand-dark text-xs text-white p-2 rounded-lg border border-gray-800 focus:outline-none focus:border-brand-accent">
+            </div>
+            <div>
+              <label class="text-[10px] text-gray-400 flex items-center gap-1 mb-0.5"><i class="fa-brands fa-facebook text-blue-500"></i> Facebook Profil Linki</label>
+              <input type="url" id="editFacebookInput" placeholder="https://www.facebook.com/kuzeyfekalafat.1" class="w-full bg-brand-dark text-xs text-white p-2 rounded-lg border border-gray-800 focus:outline-none focus:border-brand-accent">
+            </div>
+            <div>
+              <label class="text-[10px] text-gray-400 flex items-center gap-1 mb-0.5"><i class="fa-brands fa-x-twitter text-white"></i> Twitter / X Profil Linki</label>
+              <input type="url" id="editTwitterInput" placeholder="https://www.twitter.com/kuzeyfe_kalafat" class="w-full bg-brand-dark text-xs text-white p-2 rounded-lg border border-gray-800 focus:outline-none focus:border-brand-accent">
+            </div>
           </div>
 
-          <button type="submit" class="w-full bg-brand-accent text-black font-bold text-xs py-2.5 rounded-xl">Kaydet & Güncelle</button>
+          <button type="submit" class="w-full bg-brand-accent text-black font-bold text-xs py-2.5 rounded-xl shadow-lg">Kaydet & Güncelle</button>
         </form>
       </div>
     </div>
@@ -445,9 +467,9 @@
       'kuzeyfe@zamanperdesi.com': {
         name: 'Kuzeyfe Kalafat',
         email: 'kuzeyfe@zamanperdesi.com',
-        bio: 'Zaman Perdesi Music Kurucusu & Sanatçısı.',
+        bio: 'Zaman Perdesi Music Kurucusu & Söz Yazarı.',
         avatar: DEFAULT_AVATAR,
-        youtube: '', instagram: '', spotify: '', tiktok: ''
+        youtube: '', instagram: '', spotify: '', tiktok: '', facebook: '', twitter: ''
       }
     };
 
@@ -525,11 +547,13 @@
         document.getElementById('profileBioDisplay').innerText = u.bio || "Henüz biyografi eklenmedi.";
         document.getElementById('userAvatar').src = u.avatar || DEFAULT_AVATAR;
 
-        // Sosyal medya butonlarını güncelleme
+        // 6 Sosyal medya butonunu güncelleme
         toggleSocialLink('linkYoutube', u.youtube);
         toggleSocialLink('linkInstagram', u.instagram);
         toggleSocialLink('linkSpotify', u.spotify);
         toggleSocialLink('linkTiktok', u.tiktok);
+        toggleSocialLink('linkFacebook', u.facebook);
+        toggleSocialLink('linkTwitter', u.twitter);
       } else {
         document.getElementById('headerUserName').innerText = "Giriş Yap";
         document.getElementById('profileNameDisplay').innerText = "Giriş Yapın";
@@ -673,7 +697,6 @@
       }
     }
 
-    // OYNATICI VE MANUEL KÜNYE BİLGİLERİ DOLDURMA
     function loadTrack(i) {
       currentTrackIndex = i;
       const t = demoTracks[i];
@@ -686,7 +709,6 @@
       document.getElementById('fullPlayerTitle').innerText = t.title;
       document.getElementById('fullPlayerArtist').innerText = t.artist;
       
-      // Manuel Girilen Künye Bilgilerini Ekran Gösterimi
       document.getElementById('creditWriter').innerText = t.writer || t.artist || "Bilinmiyor";
       document.getElementById('creditArranger').innerText = t.arranger || "Zaman Perdesi";
       document.getElementById('creditLabel').innerText = t.label || "Zaman Perdesi Music";
@@ -781,7 +803,6 @@
       return `${min < 10 ? '0' : ''}${min}:${sec < 10 ? '0' : ''}${sec}`;
     }
 
-    // ŞARKI İNDİRME FONKSİYONU
     function downloadCurrentTrack(e) {
       if(e) e.stopPropagation();
       const current = demoTracks[currentTrackIndex];
@@ -797,7 +818,6 @@
       document.body.removeChild(a);
     }
 
-    // ŞARKI PAYLAŞMA FONKSİYONU
     function shareCurrentTrack() {
       const current = demoTracks[currentTrackIndex];
       if(!current) return;
@@ -888,7 +908,6 @@
       `).join('');
     }
 
-    // MANUEL KÜNYELİ YÜKLEME İŞLEMİ
     function handleUploadSubmit(e) {
       e.preventDefault();
       if(!currentUserEmail) {
@@ -904,7 +923,6 @@
         coverUrl = URL.createObjectURL(coverFileInput.files[0]);
       }
 
-      // Manuel Künye Değerleri
       const writer = document.getElementById('uploadCreditWriter').value.trim() || artistName;
       const arranger = document.getElementById('uploadCreditArranger').value.trim() || "Zaman Perdesi";
       const label = document.getElementById('uploadCreditLabel').value.trim() || "Zaman Perdesi Music";
@@ -964,11 +982,13 @@
       document.getElementById('editNameInput').value = u.name;
       document.getElementById('editBioInput').value = u.bio || '';
       
-      // Sosyal Medya Inputlarını Doldurma
+      // 6 Sosyal Medya Inputunu Doldurma
       document.getElementById('editYoutubeInput').value = u.youtube || '';
       document.getElementById('editInstagramInput').value = u.instagram || '';
       document.getElementById('editSpotifyInput').value = u.spotify || '';
       document.getElementById('editTiktokInput').value = u.tiktok || '';
+      document.getElementById('editFacebookInput').value = u.facebook || '';
+      document.getElementById('editTwitterInput').value = u.twitter || '';
 
       document.getElementById('editProfileModal').classList.remove('hidden');
     }
@@ -981,11 +1001,13 @@
       usersDB[currentUserEmail].name = document.getElementById('editNameInput').value;
       usersDB[currentUserEmail].bio = document.getElementById('editBioInput').value;
       
-      // Sosyal Medya Linklerini Kaydetme
+      // 6 Sosyal Medya Linkini Kaydetme
       usersDB[currentUserEmail].youtube = document.getElementById('editYoutubeInput').value;
       usersDB[currentUserEmail].instagram = document.getElementById('editInstagramInput').value;
       usersDB[currentUserEmail].spotify = document.getElementById('editSpotifyInput').value;
       usersDB[currentUserEmail].tiktok = document.getElementById('editTiktokInput').value;
+      usersDB[currentUserEmail].facebook = document.getElementById('editFacebookInput').value;
+      usersDB[currentUserEmail].twitter = document.getElementById('editTwitterInput').value;
 
       const avatarFileInput = document.getElementById('editAvatarFile');
       if(avatarFileInput.files && avatarFileInput.files[0]) {
@@ -997,7 +1019,7 @@
       checkAuthSession();
       closeEditProfileModal();
       renderArtists();
-      alert('Profil ve Sosyal Medya bağlantıları güncellendi!');
+      alert('Profil ve 6 Sosyal Medya bağlantınız başarıyla güncellendi!');
     }
 
     function openAuthModal() { document.getElementById('authModal').classList.remove('hidden'); }
@@ -1034,7 +1056,8 @@
         name: name,
         email: email,
         bio: "Zaman Perdesi Sanatçısı",
-        avatar: DEFAULT_AVATAR
+        avatar: DEFAULT_AVATAR,
+        youtube: '', instagram: '', spotify: '', tiktok: '', facebook: '', twitter: ''
       };
 
       currentUserEmail = email;
