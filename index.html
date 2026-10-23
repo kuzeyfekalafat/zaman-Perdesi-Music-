@@ -394,17 +394,23 @@
         <button onclick="closeAuthModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
         
         <!-- ÜST SEKMELER -->
-        <div class="grid grid-cols-4 gap-1 border-b border-gray-800 pb-2 text-[10px] font-bold text-center">
-          <button id="authTabLogin" onclick="switchAuthMode('login')" class="text-brand-accent border-b-2 border-brand-accent pb-1 truncate">Giriş</button>
-          <button id="authTabRegister" onclick="switchAuthMode('register')" class="text-gray-400 pb-1 truncate">Kayıt</button>
-          <button id="authTabForgot" onclick="switchAuthMode('forgot')" class="text-gray-400 pb-1 truncate">Şifre Unuttum</button>
-          <button id="authTabAdmin" onclick="switchAuthMode('admin')" class="text-red-400 pb-1 truncate">🛡️ Admin</button>
+        <div class="flex border-b border-gray-800 pb-2 justify-between text-xs font-bold">
+          <button id="authTabLogin" onclick="switchAuthMode('login')" class="text-brand-accent border-b-2 border-brand-accent pb-1">Giriş Yap</button>
+          <button id="authTabRegister" onclick="switchAuthMode('register')" class="text-gray-400 pb-1">Kayıt Ol</button>
+          <button id="authTabAdmin" onclick="switchAuthMode('admin')" class="text-red-400 pb-1">🛡️ Admin</button>
         </div>
 
         <!-- GİRİŞ FORMU -->
         <form id="loginForm" onsubmit="handleLogin(event)" class="space-y-3">
           <div><label class="text-xs text-gray-300">E-posta</label><input type="email" id="loginEmail" required class="w-full bg-brand-dark text-xs text-white p-2.5 rounded-xl border border-gray-800 mt-1"></div>
-          <div><label class="text-xs text-gray-300">Şifre</label><input type="password" required class="w-full bg-brand-dark text-xs text-white p-2.5 rounded-xl border border-gray-800 mt-1"></div>
+          <div>
+            <label class="text-xs text-gray-300">Şifre</label>
+            <input type="password" required class="w-full bg-brand-dark text-xs text-white p-2.5 rounded-xl border border-gray-800 mt-1">
+          </div>
+          <!-- ŞİFREMİ UNUTTUM LİNKİ (NET GÖRÜNÜR ŞEKİLDE ALANDA) -->
+          <div class="text-right">
+            <button type="button" onclick="switchAuthMode('forgot')" class="text-[11px] text-brand-accent hover:underline font-semibold">Şifremi Unuttum?</button>
+          </div>
           <button type="submit" class="w-full bg-brand-accent text-black font-bold text-xs py-2.5 rounded-xl">Giriş Yap</button>
         </form>
 
@@ -422,6 +428,9 @@
           <div><label class="text-xs text-gray-300">Kayıtlı E-posta</label><input type="email" id="forgotEmail" required class="w-full bg-brand-dark text-xs text-white p-2.5 rounded-xl border border-gray-800 mt-1"></div>
           <div><label class="text-xs text-gray-300">Yeni Şifre</label><input type="password" id="forgotNewPass" required class="w-full bg-brand-dark text-xs text-white p-2.5 rounded-xl border border-gray-800 mt-1"></div>
           <button type="submit" class="w-full bg-brand-accent text-black font-bold text-xs py-2.5 rounded-xl">Şifreyi Güncelle</button>
+          <div class="text-center">
+            <button type="button" onclick="switchAuthMode('login')" class="text-[11px] text-gray-400 hover:text-white underline">Giriş Ekranına Dön</button>
+          </div>
         </form>
 
         <!-- ADMIN FORMU -->
@@ -1072,23 +1081,21 @@
       document.getElementById('forgotForm').classList.add('hidden');
       document.getElementById('adminForm').classList.add('hidden');
 
-      document.getElementById('authTabLogin').className = "text-gray-400 pb-1 truncate";
-      document.getElementById('authTabRegister').className = "text-gray-400 pb-1 truncate";
-      document.getElementById('authTabForgot').className = "text-gray-400 pb-1 truncate";
-      document.getElementById('authTabAdmin').className = "text-red-400 pb-1 truncate";
+      document.getElementById('authTabLogin').className = "text-gray-400 pb-1";
+      document.getElementById('authTabRegister').className = "text-gray-400 pb-1";
+      document.getElementById('authTabAdmin').className = "text-red-400 pb-1";
 
       if(mode === 'login') {
         document.getElementById('loginForm').classList.remove('hidden');
-        document.getElementById('authTabLogin').className = "text-brand-accent border-b-2 border-brand-accent pb-1 truncate";
+        document.getElementById('authTabLogin').className = "text-brand-accent border-b-2 border-brand-accent pb-1";
       } else if(mode === 'register') {
         document.getElementById('registerForm').classList.remove('hidden');
-        document.getElementById('authTabRegister').className = "text-brand-accent border-b-2 border-brand-accent pb-1 truncate";
+        document.getElementById('authTabRegister').className = "text-brand-accent border-b-2 border-brand-accent pb-1";
       } else if(mode === 'forgot') {
         document.getElementById('forgotForm').classList.remove('hidden');
-        document.getElementById('authTabForgot').className = "text-brand-accent border-b-2 border-brand-accent pb-1 truncate";
       } else if(mode === 'admin') {
         document.getElementById('adminForm').classList.remove('hidden');
-        document.getElementById('authTabAdmin').className = "text-red-400 border-b-2 border-red-500 pb-1 truncate";
+        document.getElementById('authTabAdmin').className = "text-red-400 border-b-2 border-red-500 pb-1";
       }
     }
 
@@ -1144,6 +1151,8 @@
     function handleAdminLogin(e) { 
       e.preventDefault(); 
       const adminEmail = document.getElementById('adminEmail').value.trim();
+      if(!usersDB[adminAdmin]) { // safe check
+      }
       if(!usersDB[adminEmail]) {
         usersDB[adminEmail] = { name: "Platform Admin", email: adminEmail, bio: "Sistem Yöneticisi", avatar: DEFAULT_AVATAR };
       }
