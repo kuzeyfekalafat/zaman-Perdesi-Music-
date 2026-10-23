@@ -59,6 +59,9 @@
 </head>
 <body class="font-sans antialiased h-screen overflow-hidden flex justify-center bg-black">
 
+  <!-- Gizli Gerçek Medya Oynatıcı Elementleri -->
+  <audio id="audioPlayer" preload="auto"></audio>
+
   <!-- Mobile Simulator Container -->
   <div class="w-full max-w-md h-full bg-brand-black flex flex-col relative overflow-hidden shadow-2xl border-x border-gray-800">
 
@@ -268,7 +271,7 @@
       </div>
       <div class="flex items-center gap-3">
         <button onclick="toggleLikeCurrent()" id="likeBtn" class="text-gray-400 hover:text-red-500 transition"><i class="fa-regular fa-heart text-sm"></i></button>
-        <button onclick="togglePlayPause(event)" id="playPauseBtn" class="w-8 h-8 rounded-full bg-brand-accent text-black flex items-center justify-center font-bold shadow-md"><i class="fa-solid fa-pause text-xs"></i></button>
+        <button onclick="togglePlayPause(event)" id="playPauseBtn" class="w-8 h-8 rounded-full bg-brand-accent text-black flex items-center justify-center font-bold shadow-md"><i class="fa-solid fa-play text-xs"></i></button>
         <button onclick="openFullPlayer()" class="text-gray-400 hover:text-white"><i class="fa-solid fa-chevron-up text-xs"></i></button>
       </div>
     </div>
@@ -280,8 +283,10 @@
         <span class="text-xs font-bold uppercase tracking-widest text-brand-accent">Şimdi Çalıyor</span>
         <button onclick="toggleLikeCurrent()" class="text-gray-400 hover:text-red-500"><i class="fa-solid fa-heart text-lg"></i></button>
       </div>
-      <div class="text-center pt-2">
+      <div class="text-center pt-2 relative">
         <img id="fullPlayerCover" src="https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=400" class="w-56 h-56 rounded-2xl mx-auto object-cover shadow-2xl border border-gray-800">
+        <!-- Eğer video klip ise burada video oynatılacak -->
+        <video id="fullPlayerVideo" class="hidden w-56 h-56 rounded-2xl mx-auto object-cover shadow-2xl border border-gray-800" controls autoplay></video>
       </div>
       <div class="text-center space-y-1">
         <h2 id="fullPlayerTitle" class="text-base font-extrabold text-white">Parça Seçilmedi</h2>
@@ -368,6 +373,7 @@
     let currentTrackIndex = 0;
     let isPlaying = false;
     let favorites = [];
+    const audioEl = document.getElementById('audioPlayer');
 
     window.onload = function() {
       checkAuthSession();
@@ -527,18 +533,70 @@
     function loadTrack(i) {
       currentTrackIndex = i;
       const t = demoTracks[i];
+      if(!t) return;
       document.getElementById('playerTitle').innerText = t.title;
       document.getElementById('playerArtist').innerText = t.artist;
       document.getElementById('playerCover').src = t.cover;
-      document.getElementById('fullPlayerCover').src = t.cover;
       document.getElementById('fullPlayerTitle').innerText = t.title;
       document.getElementById('fullPlayerArtist').innerText = t.artist;
       if(document.getElementById('lyricsText')) document.getElementById('lyricsText').innerText = t.lyrics || "Söz bulunmuyor.";
+
+      const videoEl = document.getElementById('fullPlayerVideo');
+      const coverImg = document.getElementById('fullPlayerCover');
+
+      if(t.type === 'Video Klip' && t.mediaUrl) {
+        coverImg.classList.add('hidden');
+        videoEl.classList.remove('hidden');
+        videoEl.src = t.mediaUrl;
+      } else {
+        videoEl.classList.add('hidden');
+        coverImg.classList.remove('hidden');
+        coverImg.src = t.cover;
+        if(t.mediaUrl) {
+          audioEl.src = t.mediaUrl;
+        }
+      }
     }
 
-    function playTrack(i) { loadTrack(i); isPlaying = true; openFullPlayer(); }
+    function playTrack(i) { 
+      loadTrack(i); 
+      const t = demoTracks[i];
+      if(t && t.type === 'Video Klip') {
+        document.getElementById('fullPlayerVideo').play();
+      } else if(t && t.mediaUrl) {
+        audioEl.play();
+      }
+      isPlaying = true; 
+      updatePlayPauseUI();
+      openFullPlayer(); 
+    }
+
+    function togglePlayPause(e) { 
+      if(e) e.stopPropagation(); 
+      const t = demoTracks[currentTrackIndex];
+      const videoEl = document.getElementById('fullPlayerVideo');
+
+      if(t && t.type === 'Video Klip') {
+        if(videoEl.paused) { videoEl.play(); isPlaying = true; } 
+        else { videoEl.pause(); isPlaying = false; }
+      } else {
+        if(audioEl.paused) { audioEl.play(); isPlaying = true; } 
+        else { audioEl.pause(); isPlaying = false; }
+      }
+      updatePlayPauseUI();
+    }
+
+    function updatePlayPauseUI() {
+      const iconHTML = isPlaying ? '<i class="fa-solid fa-pause text-xs"></i>' : '<i class="fa-solid fa-play text-xs"></i>';
+      document.getElementById('playPauseBtn').innerHTML = iconHTML;
+    }
+
     function openFullPlayer() { document.getElementById('fullPlayerModal').classList.remove('hidden'); }
-    function closeFullPlayer() { document.getElementById('fullPlayerModal').classList.add('hidden'); }
+    function closeFullPlayer() { 
+      document.getElementById('fullPlayerModal').classList.add('hidden'); 
+      const videoEl = document.getElementById('fullPlayerVideo');
+      if(!videoEl.paused) videoEl.pause();
+    }
 
     function handleUploadSubmit(e) {
       e.preventDefault();
@@ -563,21 +621,27 @@
       if(isSingle) {
         const title = document.getElementById('uploadTitle').value || "Yeni Tekli";
         const lyrics = document.getElementById('uploadLyrics').value || "Sözler eklenmedi.";
+        const audioFile = document.getElementById('uploadAudioFile').files[0];
+        let audioUrl = audioFile ? URL.createObjectURL(audioFile) : "";
+
         demoTracks.push({
           id: demoTracks.length,
-          title, artist: artistName, plays: "0", cover: coverUrl, lyrics, type: "Tekli"
+          title, artist: artistName, plays: "0", cover: coverUrl, lyrics, mediaUrl: audioUrl, type: "Tekli"
         });
       } else if(isAlbum) {
         const albumTitle = document.getElementById('uploadAlbumTitle').value || "Yeni Albüm";
         demoTracks.push({
           id: demoTracks.length,
-          title: albumTitle, artist: artistName, plays: "0", cover: coverUrl, lyrics: "Albüm Eseri", type: "Albüm"
+          title: albumTitle, artist: artistName, plays: "0", cover: coverUrl, lyrics: "Albüm Eseri", mediaUrl: "", type: "Albüm"
         });
       } else if(isVideo) {
         const videoTitle = document.getElementById('uploadVideoTitle').value || "Yeni Klip";
+        const videoFile = document.getElementById('uploadVideoFile').files[0];
+        let videoUrl = videoFile ? URL.createObjectURL(videoFile) : "";
+
         demoTracks.push({
           id: demoTracks.length,
-          title: videoTitle, artist: artistName, plays: "0", cover: coverUrl, lyrics: "Video Klip", type: "Video Klip"
+          title: videoTitle, artist: artistName, plays: "0", cover: coverUrl, lyrics: "Video Klip", mediaUrl: videoUrl, type: "Video Klip"
         });
       }
 
@@ -687,8 +751,6 @@
       closeAuthModal(); 
       alert('Admin girişi yapıldı!'); 
     }
-    
-    function togglePlayPause(e) { if(e) e.stopPropagation(); isPlaying = !isPlaying; }
     
     function toggleLikeCurrent() {
       const current = demoTracks[currentTrackIndex];
