@@ -120,7 +120,7 @@
         </div>
       </section>
 
-      <!-- TAB 2: SANATÇILAR (DİNAMİK) -->
+      <!-- TAB 2: SANATÇILAR -->
       <section id="tab-artists" class="tab-content hidden space-y-4">
         <div>
           <h2 class="text-base font-bold text-white flex items-center gap-2">
@@ -170,7 +170,7 @@
             </div>
           </div>
 
-          <!-- ALBUM FIELDS (15 ŞARKI ALANI) -->
+          <!-- ALBUM FIELDS -->
           <div id="albumFields" class="hidden space-y-3">
             <div>
               <label class="text-xs font-medium text-gray-300">Albüm Adı</label>
@@ -206,10 +206,10 @@
           <img id="userAvatar" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200" class="w-14 h-14 rounded-full object-cover border-2 border-brand-accent" alt="Profile">
           <div class="min-w-0 flex-1">
             <div class="flex items-center gap-1.5">
-              <h3 id="profileNameDisplay" class="text-sm font-bold text-white truncate">Hamza Kalafat</h3>
+              <h3 id="profileNameDisplay" class="text-sm font-bold text-white truncate">Giriş Yapın</h3>
               <i class="fa-solid fa-circle-check text-brand-accent text-xs"></i>
             </div>
-            <p id="profileEmailDisplay" class="text-[11px] text-gray-400 truncate">hamza@zamanperdesi.com</p>
+            <p id="profileEmailDisplay" class="text-[11px] text-gray-400 truncate">misafir@zamanperdesi.com</p>
             <span id="profileRoleTag" class="inline-block mt-1 bg-brand-accent/20 text-brand-accent text-[10px] px-2 py-0.5 rounded-full border border-brand-accent/30 font-medium">
               Doğrulanmış Sanatçı
             </span>
@@ -221,7 +221,7 @@
 
         <div class="bg-brand-card p-3 rounded-xl border border-gray-800 space-y-2">
           <span class="text-xs font-bold text-brand-accent block">✍️ Hakkında / Biyografi</span>
-          <p id="profileBioDisplay" class="text-xs text-gray-300">Zaman Perdesi Music Kurucu & Sanatçısı.</p>
+          <p id="profileBioDisplay" class="text-xs text-gray-300">Henüz biyografi eklenmedi.</p>
         </div>
 
         <div class="space-y-3">
@@ -262,8 +262,8 @@
       <div onclick="openFullPlayer()" class="flex items-center gap-2.5 min-w-0 flex-1">
         <img id="playerCover" src="https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=100" class="w-10 h-10 rounded-lg object-cover shadow border border-gray-700">
         <div class="min-w-0 flex-1">
-          <h4 id="playerTitle" class="text-xs font-bold text-white truncate">Kalbim</h4>
-          <p id="playerArtist" class="text-[10px] text-brand-accent truncate">Hamza Kalafat</p>
+          <h4 id="playerTitle" class="text-xs font-bold text-white truncate">Parça Seçilmedi</h4>
+          <p id="playerArtist" class="text-[10px] text-brand-accent truncate">Zaman Perdesi</p>
         </div>
       </div>
       <div class="flex items-center gap-3">
@@ -284,8 +284,8 @@
         <img id="fullPlayerCover" src="https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=400" class="w-56 h-56 rounded-2xl mx-auto object-cover shadow-2xl border border-gray-800">
       </div>
       <div class="text-center space-y-1">
-        <h2 id="fullPlayerTitle" class="text-base font-extrabold text-white">Kalbim</h2>
-        <p id="fullPlayerArtist" class="text-xs text-brand-accent font-semibold">Hamza Kalafat</p>
+        <h2 id="fullPlayerTitle" class="text-base font-extrabold text-white">Parça Seçilmedi</h2>
+        <p id="fullPlayerArtist" class="text-xs text-brand-accent font-semibold">Zaman Perdesi</p>
       </div>
       <div class="bg-brand-card rounded-2xl p-4 border border-gray-800 space-y-3">
         <div class="flex border-b border-gray-800 text-xs">
@@ -297,11 +297,11 @@
           <p id="lyricsText">Gözlerin bir gece vakti düşer kalbime...</p>
         </div>
         <div id="playerCreditsContent" class="hidden text-xs space-y-1.5 text-gray-300">
-          <div class="flex justify-between border-b border-gray-800 pb-1"><span class="text-gray-500">Söz Yazarı:</span><span id="creditWriter" class="font-semibold text-white">Hamza Kalafat</span></div>
+          <div class="flex justify-between border-b border-gray-800 pb-1"><span class="text-gray-500">Söz Yazarı:</span><span id="creditWriter" class="font-semibold text-white">-</span></div>
         </div>
         <div id="playerCommentsContent" class="hidden space-y-3">
           <div class="space-y-2 max-h-32 overflow-y-auto">
-            <div class="bg-brand-dark p-2 rounded-lg text-xs"><span class="font-bold text-brand-accent">Karslı Arap:</span><p class="text-gray-300">Harika eser! 🔥</p></div>
+            <div class="bg-brand-dark p-2 rounded-lg text-xs"><span class="font-bold text-brand-accent">Zaman Perdesi:</span><p class="text-gray-300">Harika eser! 🔥</p></div>
           </div>
         </div>
       </div>
@@ -361,23 +361,52 @@
   </div>
 
   <script>
-    // Sahte/hazır sanatçılar ve şarkılar tamamen kaldırıldı. Boş başlıyoruz.
-    let registeredArtists = [];
-    let demoTracks = [];
+    let usersDB = JSON.parse(localStorage.getItem('zaman_users')) || {};
+    let currentUserEmail = localStorage.getItem('zaman_current_user') || null;
+    let demoTracks = JSON.parse(localStorage.getItem('zaman_tracks')) || [];
 
     let currentTrackIndex = 0;
     let isPlaying = false;
     let favorites = [];
 
     window.onload = function() {
+      checkAuthSession();
       renderArtists();
       renderDynamicFeed();
-      renderMyTracks();
       buildAlbumTrackInputs();
     };
 
+    function saveAppData() {
+      localStorage.setItem('zaman_users', JSON.stringify(usersDB));
+      localStorage.setItem('zaman_tracks', JSON.stringify(demoTracks));
+      if(currentUserEmail) {
+        localStorage.setItem('zaman_current_user', currentUserEmail);
+      } else {
+        localStorage.removeItem('zaman_current_user');
+      }
+    }
+
+    function checkAuthSession() {
+      if(currentUserEmail && usersDB[currentUserEmail]) {
+        let u = usersDB[currentUserEmail];
+        document.getElementById('headerUserName').innerText = u.name;
+        document.getElementById('profileNameDisplay').innerText = u.name;
+        document.getElementById('profileEmailDisplay').innerText = currentUserEmail;
+        document.getElementById('profileBioDisplay').innerText = u.bio || "Henüz biyografi eklenmedi.";
+        document.getElementById('userAvatar').src = u.avatar || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200";
+      } else {
+        document.getElementById('headerUserName').innerText = "Giriş Yap";
+        document.getElementById('profileNameDisplay').innerText = "Giriş Yapın";
+        document.getElementById('profileEmailDisplay').innerText = "misafir@zamanperdesi.com";
+        document.getElementById('profileBioDisplay').innerText = "Lütfen giriş yapın veya kayıt olun.";
+        document.getElementById('userAvatar').src = "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200";
+      }
+      renderMyTracks();
+    }
+
     function buildAlbumTrackInputs() {
       const container = document.getElementById('albumTracksContainer');
+      if(!container) return;
       let html = '';
       for(let i = 1; i <= 15; i++) {
         html += `
@@ -391,15 +420,15 @@
       container.innerHTML = html;
     }
 
-    // Gerçek kayıt olan kullanıcıları sanatçı kataloğunda listeleme
     function renderArtists() {
       const grid = document.getElementById('artistsGrid');
-      if(registeredArtists.length === 0) {
+      const allUsers = Object.values(usersDB);
+      if(allUsers.length === 0) {
         grid.innerHTML = '<p class="text-xs text-gray-500 italic col-span-2">Henüz kayıtlı sanatçı bulunmuyor.</p>';
         return;
       }
-      grid.innerHTML = registeredArtists.map(a => `
-        <div onclick="openArtistDetail('${a.name}')" class="bg-brand-card p-3 rounded-xl border border-gray-800 text-center cursor-pointer space-y-1">
+      grid.innerHTML = allUsers.map(a => `
+        <div onclick="openArtistDetail('${a.email}')" class="bg-brand-card p-3 rounded-xl border border-gray-800 text-center cursor-pointer space-y-1">
           <img src="${a.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200'}" class="w-16 h-16 rounded-full mx-auto object-cover border border-brand-accent">
           <div class="flex items-center justify-center gap-1">
             <h4 class="text-xs font-bold text-white truncate">${a.name}</h4>
@@ -410,7 +439,6 @@
       `).join('');
     }
 
-    // Ana sayfada sadece yüklenen şarkı, albüm ve klipleri listeleme
     function renderDynamicFeed() {
       const container = document.getElementById('dynamicUserFeedList');
       if(demoTracks.length === 0) {
@@ -432,7 +460,11 @@
     }
 
     function renderMyTracks() {
-      const currentName = document.getElementById('profileNameDisplay').innerText;
+      if(!currentUserEmail || !usersDB[currentUserEmail]) {
+        document.getElementById('myUploadedTracksList').innerHTML = '<p class="text-xs text-gray-500 italic">İçerikleri görmek için giriş yapmalısınız.</p>';
+        return;
+      }
+      const currentName = usersDB[currentUserEmail].name;
       const userTracks = demoTracks.filter(t => t.artist === currentName);
       const container = document.getElementById('myUploadedTracksList');
       if(userTracks.length === 0) {
@@ -456,6 +488,7 @@
     function deleteTrack(id) {
       if(confirm('Bu içeriği silmek istediğinize emin misiniz?')) {
         demoTracks = demoTracks.filter(t => t.id !== id);
+        saveAppData();
         renderDynamicFeed();
         renderMyTracks();
         alert('İçerik başarıyla silindi.');
@@ -509,7 +542,12 @@
 
     function handleUploadSubmit(e) {
       e.preventDefault();
-      const artistName = document.getElementById('profileNameDisplay').innerText;
+      if(!currentUserEmail) {
+        alert('İçerik yüklemek için önce giriş yapmalısınız!');
+        openAuthModal();
+        return;
+      }
+      const artistName = usersDB[currentUserEmail].name;
       const defaultCover = "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=300";
       
       const coverFileInput = document.getElementById('uploadCoverFile');
@@ -518,7 +556,6 @@
         coverUrl = URL.createObjectURL(coverFileInput.files[0]);
       }
 
-      // Hangi sekmedeyiz kontrol edelim
       const isSingle = !document.getElementById('singleFields').classList.contains('hidden');
       const isAlbum = !document.getElementById('albumFields').classList.contains('hidden');
       const isVideo = !document.getElementById('videoFields').classList.contains('hidden');
@@ -544,6 +581,7 @@
         });
       }
 
+      saveAppData();
       renderDynamicFeed();
       renderMyTracks();
       alert('Tebrikler! Eseriniz başarıyla yüklendi.');
@@ -551,31 +589,36 @@
     }
 
     function openEditProfileModal() {
-      document.getElementById('editNameInput').value = document.getElementById('profileNameDisplay').innerText;
-      document.getElementById('editBioInput').value = document.getElementById('profileBioDisplay').innerText;
+      if(!currentUserEmail) {
+        alert('Önce giriş yapmalısınız!');
+        openAuthModal();
+        return;
+      }
+      const u = usersDB[currentUserEmail];
+      document.getElementById('editNameInput').value = u.name;
+      document.getElementById('editBioInput').value = u.bio || '';
       document.getElementById('editProfileModal').classList.remove('hidden');
     }
     function closeEditProfileModal() { document.getElementById('editProfileModal').classList.add('hidden'); }
     
     function handleProfileUpdate(e) {
       e.preventDefault();
+      if(!currentUserEmail) return;
+      
       const newName = document.getElementById('editNameInput').value;
       const newBio = document.getElementById('editBioInput').value;
       
-      document.getElementById('profileNameDisplay').innerText = newName;
-      document.getElementById('headerUserName').innerText = newName;
-      document.getElementById('profileBioDisplay').innerText = newBio;
+      usersDB[currentUserEmail].name = newName;
+      usersDB[currentUserEmail].bio = newBio;
 
       const avatarFileInput = document.getElementById('editAvatarFile');
       if(avatarFileInput.files && avatarFileInput.files[0]) {
         const avatarUrl = URL.createObjectURL(avatarFileInput.files[0]);
-        document.getElementById('userAvatar').src = avatarUrl;
-        
-        // Kayıtlı sanatçı listesini güncelle
-        let artist = registeredArtists.find(a => a.name === newName);
-        if(artist) { artist.avatar = avatarUrl; artist.bio = newBio; }
+        usersDB[currentUserEmail].avatar = avatarUrl;
       }
 
+      saveAppData();
+      checkAuthSession();
       closeEditProfileModal();
       renderArtists();
       alert('Profil güncellendi!');
@@ -595,24 +638,38 @@
 
     function handleLogin(e) { 
       e.preventDefault(); 
-      const email = document.getElementById('loginEmail').value;
-      const name = email.split('@')[0];
-      document.getElementById('profileNameDisplay').innerText = name;
-      document.getElementById('headerUserName').innerText = name;
+      const email = document.getElementById('loginEmail').value.trim();
+      if(!usersDB[email]) {
+        alert('Bu e-posta ile kayıtlı hesap bulunamadı! Lütfen önce kayıt olun.');
+        return;
+      }
+      currentUserEmail = email;
+      saveAppData();
+      checkAuthSession();
       closeAuthModal(); 
       alert('Giriş yapıldı!'); 
     }
 
     function handleRegister(e) { 
       e.preventDefault(); 
-      const name = document.getElementById('regName').value;
-      document.getElementById('profileNameDisplay').innerText = name;
-      document.getElementById('headerUserName').innerText = name;
+      const name = document.getElementById('regName').value.trim();
+      const email = document.getElementById('regEmail').value.trim();
       
-      // Kayıt olanı sanatçı kataloğuna ekle
-      if(!registeredArtists.some(a => a.name === name)) {
-        registeredArtists.push({ name, bio: "Zaman Perdesi Sanatçısı", avatar: document.getElementById('userAvatar').src });
+      if(usersDB[email]) {
+        alert('Bu e-posta zaten kayıtlı! Giriş yapabilirsiniz.');
+        return;
       }
+
+      usersDB[email] = {
+        name: name,
+        email: email,
+        bio: "Zaman Perdesi Sanatçısı",
+        avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200"
+      };
+
+      currentUserEmail = email;
+      saveAppData();
+      checkAuthSession();
       renderArtists();
       closeAuthModal(); 
       alert('Kayıt yapıldı ve onaylı sanatçı kataloğuna eklendi!'); 
@@ -620,8 +677,13 @@
 
     function handleAdminLogin(e) { 
       e.preventDefault(); 
-      document.getElementById('profileNameDisplay').innerText = "Platform Admin";
-      document.getElementById('headerUserName').innerText = "Admin";
+      const adminEmail = document.getElementById('adminEmail').value.trim();
+      if(!usersDB[adminEmail]) {
+        usersDB[adminEmail] = { name: "Platform Admin", email: adminEmail, bio: "Sistem Yöneticisi", avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200" };
+      }
+      currentUserEmail = adminEmail;
+      saveAppData();
+      checkAuthSession();
       closeAuthModal(); 
       alert('Admin girişi yapıldı!'); 
     }
@@ -644,6 +706,7 @@
 
     function renderFavorites() {
       const container = document.getElementById('favoritesListContainer');
+      if(!container) return;
       if(favorites.length === 0) {
         container.innerHTML = '<p class="text-xs text-gray-500">Henüz favori eklenmedi.</p>';
         return;
@@ -676,8 +739,8 @@
       }
     }
 
-    function openArtistDetail(artistName) {
-      const a = registeredArtists.find(item => item.name === artistName);
+    function openArtistDetail(email) {
+      const a = usersDB[email];
       if(!a) return;
       document.getElementById('artistDetailImg').src = a.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200';
       document.getElementById('artistDetailName').innerText = a.name;
