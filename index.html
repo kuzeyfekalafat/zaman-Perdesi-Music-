@@ -62,8 +62,8 @@
 </head>
 <body class="font-sans antialiased h-screen overflow-hidden flex justify-center bg-black">
 
-  <!-- Gizli Gerçek Medya Oynatıcı Elementi -->
-  <audio id="audioPlayer" preload="auto" ontimeupdate="updatePlayerProgress()" onended="onTrackEnded()"></audio>
+  <!-- Gizli Ses Oynatıcı Elementi -->
+  <audio id="audioPlayer" preload="metadata"></audio>
 
   <!-- Mobile Simulator Container -->
   <div class="w-full max-w-md h-full bg-brand-black flex flex-col relative overflow-hidden shadow-2xl border-x border-gray-800">
@@ -279,17 +279,17 @@
       </div>
     </div>
 
-    <!-- FULL PLAYER MODAL (GÖRSEL MÜZİK ÇALAR KONTROLLERİ İLE) -->
-    <div id="fullPlayerModal" class="hidden absolute inset-0 bg-brand-black/98 backdrop-blur-xl z-50 flex flex-col p-5 overflow-y-auto space-y-4">
-      <div class="flex items-center justify-between border-b border-gray-800/80 pb-3">
+    <!-- FULL PLAYER MODAL (GÖRSEL VE BİLGİ SEKMELERİ DÜZELTİLMİŞ) -->
+    <div id="fullPlayerModal" class="hidden absolute inset-0 bg-brand-black/98 backdrop-blur-xl z-50 flex flex-col p-4 pb-20 overflow-y-auto space-y-3">
+      <div class="flex items-center justify-between border-b border-gray-800/80 pb-2">
         <button onclick="closeFullPlayer()" class="text-gray-400 hover:text-white"><i class="fa-solid fa-chevron-down text-lg"></i></button>
         <span class="text-xs font-bold uppercase tracking-widest text-brand-accent">Şimdi Çalıyor</span>
         <button onclick="toggleLikeCurrent()" class="text-gray-400 hover:text-red-500"><i class="fa-solid fa-heart text-lg"></i></button>
       </div>
 
       <div class="text-center pt-1 relative">
-        <img id="fullPlayerCover" src="https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=400" class="w-48 h-48 rounded-2xl mx-auto object-cover shadow-2xl border border-gray-800">
-        <video id="fullPlayerVideo" class="hidden w-48 h-48 rounded-2xl mx-auto object-cover shadow-2xl border border-gray-800" controls></video>
+        <img id="fullPlayerCover" src="https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=400" class="w-44 h-44 rounded-2xl mx-auto object-cover shadow-2xl border border-gray-800">
+        <video id="fullPlayerVideo" class="hidden w-44 h-44 rounded-2xl mx-auto object-cover shadow-2xl border border-gray-800" controls></video>
       </div>
 
       <div class="text-center space-y-0.5">
@@ -297,46 +297,46 @@
         <p id="fullPlayerArtist" class="text-xs text-brand-accent font-semibold">Zaman Perdesi</p>
       </div>
 
-      <!-- MÜZİK ÇALAR KONTROL ÇUBUĞU VE BUTONLARI -->
+      <!-- MÜZİK ÇALAR KONTROLLERİ -->
       <div id="visualPlayerControls" class="bg-brand-card p-3 rounded-2xl border border-gray-800/80 space-y-2">
         <div class="space-y-1">
-          <input type="range" id="seekSlider" value="0" max="100" oninput="seekTrack(this.value)" class="w-full h-1 bg-gray-800 rounded-lg appearance-none cursor-pointer">
+          <input type="range" id="seekSlider" value="0" max="100" oninput="seekTrack(this.value)" class="w-full h-1.5 bg-gray-800 rounded-lg appearance-none cursor-pointer">
           <div class="flex justify-between text-[10px] text-gray-400 font-mono">
             <span id="currentTimeDisplay">00:00</span>
             <span id="durationTimeDisplay">00:00</span>
           </div>
         </div>
 
-        <div class="flex items-center justify-center gap-5">
-          <button onclick="prevTrack()" class="text-gray-400 hover:text-white text-sm"><i class="fa-solid fa-backward-step"></i></button>
-          <button onclick="togglePlayPause(event)" id="modalPlayBtn" class="w-10 h-10 rounded-full bg-brand-accent text-black flex items-center justify-center font-bold shadow-lg shadow-cyan-500/20"><i class="fa-solid fa-play text-sm"></i></button>
-          <button onclick="nextTrack()" class="text-gray-400 hover:text-white text-sm"><i class="fa-solid fa-forward-step"></i></button>
+        <div class="flex items-center justify-center gap-6">
+          <button onclick="prevTrack()" class="text-gray-400 hover:text-white text-base"><i class="fa-solid fa-backward-step"></i></button>
+          <button onclick="togglePlayPause(event)" id="modalPlayBtn" class="w-11 h-11 rounded-full bg-brand-accent text-black flex items-center justify-center font-bold shadow-lg shadow-cyan-500/20"><i class="fa-solid fa-play text-sm"></i></button>
+          <button onclick="nextTrack()" class="text-gray-400 hover:text-white text-base"><i class="fa-solid fa-forward-step"></i></button>
         </div>
       </div>
 
       <!-- SÖZLER - KÜNYE - YORUMLAR SEKMELERİ -->
-      <div class="bg-brand-card rounded-2xl p-3.5 border border-gray-800 space-y-3 flex-1 flex flex-col justify-between">
+      <div class="bg-brand-card rounded-2xl p-3 border border-gray-800 space-y-2 flex-1 flex flex-col justify-between">
         <div class="flex border-b border-gray-800 text-xs">
-          <button onclick="switchPlayerSubTab('lyrics')" id="playerTabLyrics" class="pb-2 px-3 font-semibold text-brand-accent border-b-2 border-brand-accent">📜 Sözler</button>
-          <button onclick="switchPlayerSubTab('credits')" id="playerTabCredits" class="pb-2 px-3 font-semibold text-gray-400">📜 Künye</button>
-          <button onclick="switchPlayerSubTab('comments')" id="playerTabComments" class="pb-2 px-3 font-semibold text-gray-400">💬 Yorumlar</button>
+          <button onclick="switchPlayerSubTab('lyrics')" id="playerTabLyrics" class="flex-1 pb-2 font-semibold text-brand-accent border-b-2 border-brand-accent">📜 Sözler</button>
+          <button onclick="switchPlayerSubTab('credits')" id="playerTabCredits" class="flex-1 pb-2 font-semibold text-gray-400">📜 Künye</button>
+          <button onclick="switchPlayerSubTab('comments')" id="playerTabComments" class="flex-1 pb-2 font-semibold text-gray-400">💬 Yorumlar</button>
         </div>
 
         <!-- TAB 1: SÖZLER -->
-        <div id="playerLyricsContent" class="text-xs text-gray-300 space-y-2 leading-relaxed max-h-36 overflow-y-auto">
+        <div id="playerLyricsContent" class="text-xs text-gray-300 space-y-2 leading-relaxed max-h-32 overflow-y-auto p-1">
           <p id="lyricsText">Gözlerin bir gece vakti düşer kalbime...</p>
         </div>
 
         <!-- TAB 2: KÜNYE -->
-        <div id="playerCreditsContent" class="hidden text-xs space-y-2 text-gray-300 max-h-36 overflow-y-auto">
+        <div id="playerCreditsContent" class="hidden text-xs space-y-2 text-gray-300 max-h-32 overflow-y-auto p-1">
           <div class="flex justify-between border-b border-gray-800/80 pb-1.5"><span class="text-gray-500">Söz & Müzik:</span><span id="creditWriter" class="font-semibold text-white">-</span></div>
           <div class="flex justify-between border-b border-gray-800/80 pb-1.5"><span class="text-gray-500">Aranje / Düzenleme:</span><span id="creditArranger" class="font-semibold text-white">Zaman Perdesi</span></div>
           <div class="flex justify-between border-b border-gray-800/80 pb-1.5"><span class="text-gray-500">Yapım Şirketi:</span><span class="font-semibold text-brand-accent">Zaman Perdesi Music</span></div>
         </div>
 
         <!-- TAB 3: YORUMLAR -->
-        <div id="playerCommentsContent" class="hidden space-y-3 flex-1 flex flex-col justify-between">
-          <div id="commentsList" class="space-y-2 max-h-28 overflow-y-auto pr-1">
+        <div id="playerCommentsContent" class="hidden space-y-2">
+          <div id="commentsList" class="space-y-1.5 max-h-24 overflow-y-auto pr-1">
             <p class="text-xs text-gray-500 italic">Henüz yorum yapılmadı. İlk yorumu sen yaz!</p>
           </div>
           <form onsubmit="addComment(event)" class="flex gap-2 pt-2 border-t border-gray-800">
@@ -415,7 +415,16 @@
       renderArtists();
       renderDynamicFeed();
       buildAlbumTrackInputs();
+      initAudioEvents();
     };
+
+    function initAudioEvents() {
+      audioEl.addEventListener('timeupdate', updatePlayerProgress);
+      audioEl.addEventListener('loadedmetadata', function() {
+        document.getElementById('durationTimeDisplay').innerText = formatTime(audioEl.duration);
+      });
+      audioEl.addEventListener('ended', onTrackEnded);
+    }
 
     function saveAppData() {
       localStorage.setItem('zaman_users', JSON.stringify(usersDB));
@@ -565,7 +574,7 @@
       }
     }
 
-    // OYNATICI - ŞARKIYI YÜKLEME & DİNLEME
+    // OYNATICI VE MEDYA MOTORU
     function loadTrack(i) {
       currentTrackIndex = i;
       const t = demoTracks[i];
@@ -580,7 +589,7 @@
       document.getElementById('creditWriter').innerText = t.artist;
 
       if(document.getElementById('lyricsText')) {
-        document.getElementById('lyricsText').innerText = t.lyrics || "Bu şarkı için söz eklenmemiş.";
+        document.getElementById('lyricsText').innerText = t.lyrics || "Bu şarkı için söz eklenmedi.";
       }
 
       renderTrackComments();
@@ -598,6 +607,7 @@
         coverImg.src = t.cover;
         if(t.mediaUrl) {
           audioEl.src = t.mediaUrl;
+          audioEl.load();
         }
       }
     }
@@ -606,12 +616,20 @@
       loadTrack(i); 
       const t = demoTracks[i];
       if(t && t.type === 'Video Klip') {
-        document.getElementById('fullPlayerVideo').play();
+        document.getElementById('fullPlayerVideo').play().catch(()=>{});
       } else if(t && t.mediaUrl) {
-        audioEl.play().catch(e => console.log('Oynatma başlatılamadı:', e));
+        audioEl.play().then(() => {
+          isPlaying = true;
+          updatePlayPauseUI();
+        }).catch(e => {
+          console.log('Medya oynatılamadı:', e);
+          isPlaying = false;
+          updatePlayPauseUI();
+        });
+      } else {
+        isPlaying = true;
+        updatePlayPauseUI();
       }
-      isPlaying = true; 
-      updatePlayPauseUI();
       openFullPlayer(); 
     }
 
@@ -624,8 +642,13 @@
         if(videoEl.paused) { videoEl.play(); isPlaying = true; } 
         else { videoEl.pause(); isPlaying = false; }
       } else {
-        if(audioEl.paused) { audioEl.play().catch(()=>{}); isPlaying = true; } 
-        else { audioEl.pause(); isPlaying = false; }
+        if(audioEl.paused) { 
+          audioEl.play().then(()=> { isPlaying = true; updatePlayPauseUI(); }).catch(()=>{}); 
+        } else { 
+          audioEl.pause(); 
+          isPlaying = false; 
+          updatePlayPauseUI();
+        }
       }
       updatePlayPauseUI();
     }
@@ -638,7 +661,7 @@
     }
 
     function updatePlayerProgress() {
-      if(!audioEl.duration) return;
+      if(!audioEl.duration || isNaN(audioEl.duration)) return;
       const progress = (audioEl.currentTime / audioEl.duration) * 100;
       document.getElementById('seekSlider').value = progress;
       document.getElementById('currentTimeDisplay').innerText = formatTime(audioEl.currentTime);
@@ -646,11 +669,12 @@
     }
 
     function seekTrack(val) {
-      if(!audioEl.duration) return;
+      if(!audioEl.duration || isNaN(audioEl.duration)) return;
       audioEl.currentTime = (val / 100) * audioEl.duration;
     }
 
     function formatTime(seconds) {
+      if(isNaN(seconds)) return "00:00";
       const min = Math.floor(seconds / 60);
       const sec = Math.floor(seconds % 60);
       return `${min < 10 ? '0' : ''}${min}:${sec < 10 ? '0' : ''}${sec}`;
@@ -665,6 +689,8 @@
     }
 
     function onTrackEnded() {
+      isPlaying = false;
+      updatePlayPauseUI();
       nextTrack();
     }
 
@@ -675,25 +701,25 @@
       if(!videoEl.paused) videoEl.pause();
     }
 
-    // SÖZLER / KÜNYE / YORUMLAR SEKMELERİNİ DEĞİŞTİRME
+    // SÖZLER - KÜNYE - YORUMLAR SEKMELERİNİ DEĞİŞTİRME
     function switchPlayerSubTab(tab) {
       document.getElementById('playerLyricsContent').classList.add('hidden');
       document.getElementById('playerCreditsContent').classList.add('hidden');
       document.getElementById('playerCommentsContent').classList.add('hidden');
 
-      document.getElementById('playerTabLyrics').className = "pb-2 px-3 font-semibold text-gray-400";
-      document.getElementById('playerTabCredits').className = "pb-2 px-3 font-semibold text-gray-400";
-      document.getElementById('playerTabComments').className = "pb-2 px-3 font-semibold text-gray-400";
+      document.getElementById('playerTabLyrics').className = "flex-1 pb-2 font-semibold text-gray-400";
+      document.getElementById('playerTabCredits').className = "flex-1 pb-2 font-semibold text-gray-400";
+      document.getElementById('playerTabComments').className = "flex-1 pb-2 font-semibold text-gray-400";
 
       if(tab === 'lyrics') {
         document.getElementById('playerLyricsContent').classList.remove('hidden');
-        document.getElementById('playerTabLyrics').className = "pb-2 px-3 font-semibold text-brand-accent border-b-2 border-brand-accent";
+        document.getElementById('playerTabLyrics').className = "flex-1 pb-2 font-semibold text-brand-accent border-b-2 border-brand-accent";
       } else if(tab === 'credits') {
         document.getElementById('playerCreditsContent').classList.remove('hidden');
-        document.getElementById('playerTabCredits').className = "pb-2 px-3 font-semibold text-brand-accent border-b-2 border-brand-accent";
+        document.getElementById('playerTabCredits').className = "flex-1 pb-2 font-semibold text-brand-accent border-b-2 border-brand-accent";
       } else if(tab === 'comments') {
         document.getElementById('playerCommentsContent').classList.remove('hidden');
-        document.getElementById('playerTabComments').className = "pb-2 px-3 font-semibold text-brand-accent border-b-2 border-brand-accent";
+        document.getElementById('playerTabComments').className = "flex-1 pb-2 font-semibold text-brand-accent border-b-2 border-brand-accent";
       }
     }
 
