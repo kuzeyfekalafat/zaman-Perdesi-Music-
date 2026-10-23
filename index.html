@@ -393,12 +393,12 @@
       <div class="w-full max-w-sm bg-brand-card p-5 rounded-2xl border border-gray-800 space-y-4 shadow-2xl relative">
         <button onclick="closeAuthModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
         
-        <!-- ÜST SEKMELER (DÜZENLENDİ VE SIĞTIRILDI) -->
-        <div class="flex border-b border-gray-800 pb-2 justify-between text-[11px] font-bold">
-          <button id="authTabLogin" onclick="switchAuthMode('login')" class="text-brand-accent border-b-2 border-brand-accent pb-1">Giriş Yap</button>
-          <button id="authTabRegister" onclick="switchAuthMode('register')" class="text-gray-400 pb-1">Kayıt Ol</button>
-          <button id="authTabForgot" onclick="switchAuthMode('forgot')" class="text-gray-400 pb-1">Şifre Unuttum</button>
-          <button id="authTabAdmin" onclick="switchAuthMode('admin')" class="text-red-400 pb-1">🛡️ Admin</button>
+        <!-- ÜST SEKMELER (ŞİFREMİ UNUTTUM EKLENMİŞ HALİ) -->
+        <div class="grid grid-cols-4 gap-1 border-b border-gray-800 pb-2 text-[10px] font-bold text-center">
+          <button id="authTabLogin" onclick="switchAuthMode('login')" class="text-brand-accent border-b-2 border-brand-accent pb-1 truncate">Giriş</button>
+          <button id="authTabRegister" onclick="switchAuthMode('register')" class="text-gray-400 pb-1 truncate">Kayıt</button>
+          <button id="authTabForgot" onclick="switchAuthMode('forgot')" class="text-gray-400 pb-1 truncate">Şifre Unuttum</button>
+          <button id="authTabAdmin" onclick="switchAuthMode('admin')" class="text-red-400 pb-1 truncate">🛡️ Admin</button>
         </div>
 
         <!-- GİRİŞ FORMU -->
@@ -1072,23 +1072,23 @@
       document.getElementById('forgotForm').classList.add('hidden');
       document.getElementById('adminForm').classList.add('hidden');
 
-      document.getElementById('authTabLogin').className = "text-gray-400 pb-1";
-      document.getElementById('authTabRegister').className = "text-gray-400 pb-1";
-      document.getElementById('authTabForgot').className = "text-gray-400 pb-1";
-      document.getElementById('authTabAdmin').className = "text-red-400 pb-1";
+      document.getElementById('authTabLogin').className = "text-gray-400 pb-1 truncate";
+      document.getElementById('authTabRegister').className = "text-gray-400 pb-1 truncate";
+      document.getElementById('authTabForgot').className = "text-gray-400 pb-1 truncate";
+      document.getElementById('authTabAdmin').className = "text-red-400 pb-1 truncate";
 
       if(mode === 'login') {
         document.getElementById('loginForm').classList.remove('hidden');
-        document.getElementById('authTabLogin').className = "text-brand-accent border-b-2 border-brand-accent pb-1";
+        document.getElementById('authTabLogin').className = "text-brand-accent border-b-2 border-brand-accent pb-1 truncate";
       } else if(mode === 'register') {
         document.getElementById('registerForm').classList.remove('hidden');
-        document.getElementById('authTabRegister').className = "text-brand-accent border-b-2 border-brand-accent pb-1";
+        document.getElementById('authTabRegister').className = "text-brand-accent border-b-2 border-brand-accent pb-1 truncate";
       } else if(mode === 'forgot') {
         document.getElementById('forgotForm').classList.remove('hidden');
-        document.getElementById('authTabForgot').className = "text-brand-accent border-b-2 border-brand-accent pb-1";
+        document.getElementById('authTabForgot').className = "text-brand-accent border-b-2 border-brand-accent pb-1 truncate";
       } else if(mode === 'admin') {
         document.getElementById('adminForm').classList.remove('hidden');
-        document.getElementById('authTabAdmin').className = "text-red-400 border-b-2 border-red-500 pb-1";
+        document.getElementById('authTabAdmin').className = "text-red-400 border-b-2 border-red-500 pb-1 truncate";
       }
     }
 
