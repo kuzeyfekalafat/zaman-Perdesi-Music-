@@ -179,14 +179,19 @@
 
         <form id="uploadForm" onsubmit="handleUploadSubmit(event)" class="space-y-4">
           <div class="space-y-1">
-            <label class="text-xs font-medium text-gray-300">Kapak Görseli URL veya Seçim</label>
-            <input type="url" id="uploadCoverInput" placeholder="Görsel URL (Boş bırakılırsa varsayılan atanır)" class="w-full bg-brand-card text-xs text-white p-2.5 rounded-xl border border-gray-800 focus:outline-none focus:border-brand-accent mt-1">
+            <label class="text-xs font-medium text-gray-300">Kapak Görseli Dosyası Seç</label>
+            <input type="file" id="uploadCoverFile" accept="image/*" class="w-full text-xs text-gray-400 bg-brand-card p-2 rounded-xl border border-gray-800 file:mr-3 file:py-1 file:px-2 file:rounded-lg file:border-0 file:text-xs file:bg-brand-accent file:text-black file:font-semibold">
           </div>
 
+          <!-- TEKLI FIELDS -->
           <div id="singleFields" class="space-y-3">
             <div>
               <label class="text-xs font-medium text-gray-300">Şarkı Adı</label>
               <input type="text" id="uploadTitle" placeholder="Örn: Gece Sefası" class="w-full bg-brand-card text-xs text-white p-2.5 rounded-xl border border-gray-800 focus:outline-none focus:border-brand-accent mt-1">
+            </div>
+            <div>
+              <label class="text-xs font-medium text-gray-300">Ses Dosyası Seç (MP3 / WAV)</label>
+              <input type="file" id="uploadAudioFile" accept="audio/*" class="w-full text-xs text-gray-400 bg-brand-card p-2 rounded-xl border border-gray-800 mt-1 file:mr-3 file:py-1 file:px-2 file:rounded-lg file:border-0 file:text-xs file:bg-brand-accent file:text-black file:font-semibold">
             </div>
             <div>
               <label class="text-xs font-medium text-gray-300">Şarkı Sözleri (Lyrics)</label>
@@ -194,17 +199,29 @@
             </div>
           </div>
 
+          <!-- ALBUM FIELDS (15 ŞARKI ALANI) -->
           <div id="albumFields" class="hidden space-y-3">
             <div>
               <label class="text-xs font-medium text-gray-300">Albüm Adı</label>
               <input type="text" id="uploadAlbumTitle" placeholder="Örn: Zirve Yolu Albümü" class="w-full bg-brand-card text-xs text-white p-2.5 rounded-xl border border-gray-800 focus:outline-none focus:border-brand-accent mt-1">
             </div>
+            <div class="space-y-2 max-h-60 overflow-y-auto pr-1">
+              <label class="text-xs font-bold text-brand-accent block">Albüm Parçaları (15 Şarkı)</label>
+              <div id="albumTracksContainer" class="space-y-2">
+                <!-- Javascript ile 15 tane üretilecek -->
+              </div>
+            </div>
           </div>
 
+          <!-- VIDEO FIELDS -->
           <div id="videoFields" class="hidden space-y-3">
             <div>
-              <label class="text-xs font-medium text-gray-300">Klip / Video Adı</label>
+              <label class="text-xs font-medium text-gray-300">Albüm / Klip Adı</label>
               <input type="text" id="uploadVideoTitle" placeholder="Örn: Kalbim Klip" class="w-full bg-brand-card text-xs text-white p-2.5 rounded-xl border border-gray-800 focus:outline-none focus:border-brand-accent mt-1">
+            </div>
+            <div>
+              <label class="text-xs font-medium text-gray-300">Video Dosyası Seç (MP4 / WebM)</label>
+              <input type="file" id="uploadVideoFile" accept="video/*" class="w-full text-xs text-gray-400 bg-brand-card p-2 rounded-xl border border-gray-800 mt-1 file:mr-3 file:py-1 file:px-2 file:rounded-lg file:border-0 file:text-xs file:bg-brand-accent file:text-black file:font-semibold">
             </div>
           </div>
 
@@ -339,12 +356,12 @@
           <button id="authTabAdmin" onclick="switchAuthMode('admin')" class="text-gray-400 pb-1 text-red-400">🛡️ Admin</button>
         </div>
         <form id="loginForm" onsubmit="handleLogin(event)" class="space-y-3">
-          <div><label class="text-xs text-gray-300">E-posta</label><input type="email" required class="w-full bg-brand-dark text-xs text-white p-2.5 rounded-xl border border-gray-800 mt-1"></div>
+          <div><label class="text-xs text-gray-300">E-posta</label><input type="email" id="loginEmail" required class="w-full bg-brand-dark text-xs text-white p-2.5 rounded-xl border border-gray-800 mt-1"></div>
           <div><label class="text-xs text-gray-300">Şifre</label><input type="password" required class="w-full bg-brand-dark text-xs text-white p-2.5 rounded-xl border border-gray-800 mt-1"></div>
           <button type="submit" class="w-full bg-brand-accent text-black font-bold text-xs py-2.5 rounded-xl">Giriş Yap</button>
         </form>
         <form id="registerForm" onsubmit="handleRegister(event)" class="hidden space-y-3">
-          <div><label class="text-xs text-gray-300">Ad Soyad</label><input type="text" id="regName" required class="w-full bg-brand-dark text-xs text-white p-2.5 rounded-xl border border-gray-800 mt-1"></div>
+          <div><label class="text-xs text-gray-300">Ad Soyad / Sanatçı Adı</label><input type="text" id="regName" required class="w-full bg-brand-dark text-xs text-white p-2.5 rounded-xl border border-gray-800 mt-1"></div>
           <div><label class="text-xs text-gray-300">E-posta</label><input type="email" id="regEmail" required class="w-full bg-brand-dark text-xs text-white p-2.5 rounded-xl border border-gray-800 mt-1"></div>
           <div><label class="text-xs text-gray-300">Şifre</label><input type="password" required class="w-full bg-brand-dark text-xs text-white p-2.5 rounded-xl border border-gray-800 mt-1"></div>
           <button type="submit" class="w-full bg-brand-accent text-black font-bold text-xs py-2.5 rounded-xl">Kayıt Ol & Mavi Tik Al</button>
@@ -395,8 +412,25 @@
       renderArtists();
       renderPopularTracks();
       renderMyTracks();
+      buildAlbumTrackInputs();
       loadTrack(0);
     };
+
+    // Albüm için 15 tane alt alta şarkı alanı üretme
+    function buildAlbumTrackInputs() {
+      const container = document.getElementById('albumTracksContainer');
+      let html = '';
+      for(let i = 1; i <= 15; i++) {
+        html += `
+          <div class="p-2 bg-brand-dark rounded-xl border border-gray-800 space-y-1.5">
+            <span class="text-[10px] text-brand-accent font-bold">Parça #${i}</span>
+            <input type="text" placeholder="Şarkı #${i} Adı" class="w-full bg-brand-card text-xs text-white p-2 rounded-lg border border-gray-700 album-track-name">
+            <input type="file" accept="audio/*" class="w-full text-[10px] text-gray-400 album-track-file">
+          </div>
+        `;
+      }
+      container.innerHTML = html;
+    }
 
     function renderArtists() {
       document.getElementById('artistsGrid').innerHTML = demoArtists.map(a => `
@@ -500,17 +534,18 @@
 
     function handleUploadSubmit(e) {
       e.preventDefault();
+      const artistName = document.getElementById('profileNameDisplay').innerText;
+      const defaultCover = "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=300";
+      
       const title = document.getElementById('uploadTitle').value || "Yeni Eser";
       const lyrics = document.getElementById('uploadLyrics').value || "Sözler eklenmedi.";
-      const cover = document.getElementById('uploadCoverInput').value || "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=300";
-      const artistName = document.getElementById('profileNameDisplay').innerText;
 
       const newTrack = {
         id: demoTracks.length,
         title: title,
         artist: artistName,
         plays: "0",
-        cover: cover,
+        cover: defaultCover,
         lyrics: lyrics,
         writer: artistName,
         composer: artistName,
@@ -520,7 +555,7 @@
       demoTracks.push(newTrack);
       renderPopularTracks();
       renderMyTracks();
-      alert('Tebrikler! Eseriniz başarıyla yüklendi ve listeye eklendi.');
+      alert('Tebrikler! Eseriniz başarıyla yüklendi.');
       switchTab('profile');
     }
 
@@ -556,7 +591,16 @@
       if(mode === 'admin') document.getElementById('adminForm').classList.remove('hidden');
     }
 
-    function handleLogin(e) { e.preventDefault(); closeAuthModal(); alert('Giriş yapıldı'); }
+    function handleLogin(e) { 
+      e.preventDefault(); 
+      const email = document.getElementById('loginEmail').value;
+      const name = email.split('@')[0];
+      document.getElementById('profileNameDisplay').innerText = name;
+      document.getElementById('headerUserName').innerText = name;
+      closeAuthModal(); 
+      alert('Giriş yapıldı'); 
+    }
+
     function handleRegister(e) { 
       e.preventDefault(); 
       const name = document.getElementById('regName').value;
@@ -565,7 +609,14 @@
       closeAuthModal(); 
       alert('Kayıt yapıldı ve mavi tik tanımlandı!'); 
     }
-    function handleAdminLogin(e) { e.preventDefault(); closeAuthModal(); alert('Admin giriş yapıldı'); }
+
+    function handleAdminLogin(e) { 
+      e.preventDefault(); 
+      document.getElementById('profileNameDisplay').innerText = "Platform Admin";
+      document.getElementById('headerUserName').innerText = "Admin";
+      closeAuthModal(); 
+      alert('Admin giriş yapıldı'); 
+    }
     
     function togglePlayPause(e) { if(e) e.stopPropagation(); isPlaying = !isPlaying; }
     
