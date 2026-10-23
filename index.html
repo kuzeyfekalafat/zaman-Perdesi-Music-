@@ -108,58 +108,29 @@
 
       <!-- TAB 1: ANA SAYFA -->
       <section id="tab-home" class="tab-content space-y-6">
-        <div class="relative rounded-2xl overflow-hidden bg-gradient-to-r from-blue-900/40 via-brand-card to-purple-900/30 p-4 border border-cyan-500/20 shadow-lg">
-          <div class="relative z-10 space-y-2">
-            <span class="bg-brand-accent/20 text-brand-accent text-[10px] font-bold px-2.5 py-0.5 rounded-full border border-brand-accent/30 uppercase">
-              🔥 Öne Çıkan Albüm
-            </span>
-            <h2 class="text-lg font-bold text-white leading-tight">Kalbim & Gece Sefası</h2>
-            <p class="text-xs text-gray-300">Hamza Kalafat feat. Karslı Arap</p>
-            <button onclick="playTrack(0)" class="mt-2 bg-gradient-to-r from-brand-accent to-brand-blue text-black font-bold text-xs px-4 py-2 rounded-full flex items-center gap-2 hover:opacity-90 transition active:scale-95 shadow-md">
-              <i class="fa-solid fa-play"></i> Hemen Dinle
-            </button>
-          </div>
-          <i class="fa-solid fa-compact-disc absolute -right-4 -bottom-4 text-8xl text-white/5 rotate-12"></i>
-        </div>
-
         <div>
           <div class="flex items-center justify-between mb-3">
             <h3 class="text-sm font-bold text-white flex items-center gap-2">
-              <i class="fa-solid fa-fire text-brand-accent"></i> Popüler Tekliler
+              <i class="fa-solid fa-fire text-brand-accent"></i> Kullanıcı Yüklemeleri (Şarkılar, Albümler, Klipler)
             </h3>
-            <span class="text-[11px] text-gray-400">Tümü</span>
           </div>
-          <div id="popularTracksList" class="space-y-2"></div>
-        </div>
-
-        <div>
-          <h3 class="text-sm font-bold text-white mb-3 flex items-center gap-2">
-            <i class="fa-solid fa-compact-disc text-brand-accent"></i> Yeni Albümler
-          </h3>
-          <div class="flex gap-3 overflow-x-auto pb-2 -mx-4 px-4 snap-x">
-            <div onclick="playTrack(2)" class="snap-start shrink-0 w-36 bg-brand-card p-2.5 rounded-xl border border-gray-800/80 hover:border-brand-accent/50 transition cursor-pointer">
-              <img src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=300" class="w-full h-32 object-cover rounded-lg mb-2 shadow" alt="Albüm">
-              <h4 class="text-xs font-bold text-white truncate">Sonsuz Karanlık</h4>
-              <p class="text-[10px] text-gray-400 truncate">Karslı Arap • 12 Parça</p>
-            </div>
-            <div onclick="playTrack(0)" class="snap-start shrink-0 w-36 bg-brand-card p-2.5 rounded-xl border border-gray-800/80 hover:border-brand-accent/50 transition cursor-pointer">
-              <img src="https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=300" class="w-full h-32 object-cover rounded-lg mb-2 shadow" alt="Albüm">
-              <h4 class="text-xs font-bold text-white truncate">Zamanın Ötesinde</h4>
-              <p class="text-[10px] text-gray-400 truncate">Hamza Kalafat • Single</p>
-            </div>
+          <div id="dynamicUserFeedList" class="space-y-2">
+            <p class="text-xs text-gray-500 italic">Henüz platforma yüklenen bir içerik bulunmuyor. Yükle sekmesinden ilk eseri sen ekle!</p>
           </div>
         </div>
       </section>
 
-      <!-- TAB 2: SANATÇILAR -->
+      <!-- TAB 2: SANATÇILAR (DİNAMİK) -->
       <section id="tab-artists" class="tab-content hidden space-y-4">
         <div>
           <h2 class="text-base font-bold text-white flex items-center gap-2">
             <i class="fa-solid fa-users text-brand-accent"></i> Onaylı Sanatçılar Kataloğu
           </h2>
-          <p class="text-xs text-gray-400 mt-0.5">Platformdaki tüm mavi tikli bağımsız sanatçılar</p>
+          <p class="text-xs text-gray-400 mt-0.5">Platforma kayıt olan onaylı bağımsız sanatçılar</p>
         </div>
-        <div id="artistsGrid" class="grid grid-cols-2 gap-3"></div>
+        <div id="artistsGrid" class="grid grid-cols-2 gap-3">
+          <p class="text-xs text-gray-500 italic col-span-2">Henüz kayıtlı başka sanatçı yok.</p>
+        </div>
       </section>
 
       <!-- TAB 3: YÜKLE -->
@@ -207,9 +178,7 @@
             </div>
             <div class="space-y-2 max-h-60 overflow-y-auto pr-1">
               <label class="text-xs font-bold text-brand-accent block">Albüm Parçaları (15 Şarkı)</label>
-              <div id="albumTracksContainer" class="space-y-2">
-                <!-- Javascript ile 15 tane üretilecek -->
-              </div>
+              <div id="albumTracksContainer" class="space-y-2"></div>
             </div>
           </div>
 
@@ -383,7 +352,7 @@
         <form onsubmit="handleProfileUpdate(event)" class="space-y-3">
           <div><label class="text-xs text-gray-300">Ad Soyad</label><input type="text" id="editNameInput" required class="w-full bg-brand-dark text-xs text-white p-2.5 rounded-xl border border-gray-800 mt-1"></div>
           <div><label class="text-xs text-gray-300">Biyografi</label><textarea id="editBioInput" rows="3" class="w-full bg-brand-dark text-xs text-white p-2.5 rounded-xl border border-gray-800 mt-1"></textarea></div>
-          <div><label class="text-xs text-gray-300">Fotoğraf URL</label><input type="url" id="editAvatarInput" class="w-full bg-brand-dark text-xs text-white p-2.5 rounded-xl border border-gray-800 mt-1"></div>
+          <div><label class="text-xs text-gray-300">Fotoğraf Dosyası Seç</label><input type="file" id="editAvatarFile" accept="image/*" class="w-full text-xs text-gray-400 bg-brand-dark p-2 rounded-xl border border-gray-800 mt-1 file:mr-3 file:py-1 file:px-2 file:rounded-lg file:border-0 file:text-xs file:bg-brand-accent file:text-black file:font-semibold"></div>
           <button type="submit" class="w-full bg-brand-accent text-black font-bold text-xs py-2.5 rounded-xl">Kaydet & Güncelle</button>
         </form>
       </div>
@@ -392,17 +361,9 @@
   </div>
 
   <script>
-    const demoArtists = [
-      { id: 1, name: "Hamza Kalafat", img: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200", bio: "Zaman Perdesi Music Kurucu & Sanatçısı" },
-      { id: 2, name: "Karslı Arap", img: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200", bio: "Özgün Müzik Temsilcisi" },
-      { id: 3, name: "Ahmet Yıldız", img: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200", bio: "Bağlama & Aranje Üstadı" }
-    ];
-
-    let demoTracks = [
-      { id: 0, title: "Kalbim", artist: "Hamza Kalafat", plays: "2.4k", cover: "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=300", lyrics: "Gözlerin bir gece vakti düşer kalbime...", writer: "Hamza Kalafat", composer: "Hamza Kalafat", isUserUploaded: false },
-      { id: 1, title: "Sonsuz Karanlık", artist: "Karslı Arap", plays: "1.8k", cover: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=300", lyrics: "Karanlık sokaklarda adımlarım...", writer: "Karslı Arap", composer: "Karslı Arap", isUserUploaded: false },
-      { id: 2, title: "Zirve Yolu", artist: "Ahmet Yıldız", plays: "3.1k", cover: "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=300", lyrics: "Yollar uzun, engeller çok...", writer: "Ahmet Yıldız", composer: "Ahmet Yıldız", isUserUploaded: false }
-    ];
+    // Sahte/hazır sanatçılar ve şarkılar tamamen kaldırıldı. Boş başlıyoruz.
+    let registeredArtists = [];
+    let demoTracks = [];
 
     let currentTrackIndex = 0;
     let isPlaying = false;
@@ -410,13 +371,11 @@
 
     window.onload = function() {
       renderArtists();
-      renderPopularTracks();
+      renderDynamicFeed();
       renderMyTracks();
       buildAlbumTrackInputs();
-      loadTrack(0);
     };
 
-    // Albüm için 15 tane alt alta şarkı alanı üretme
     function buildAlbumTrackInputs() {
       const container = document.getElementById('albumTracksContainer');
       let html = '';
@@ -432,24 +391,39 @@
       container.innerHTML = html;
     }
 
+    // Gerçek kayıt olan kullanıcıları sanatçı kataloğunda listeleme
     function renderArtists() {
-      document.getElementById('artistsGrid').innerHTML = demoArtists.map(a => `
-        <div onclick="openArtistDetail(${a.id})" class="bg-brand-card p-3 rounded-xl border border-gray-800 text-center cursor-pointer space-y-1">
-          <img src="${a.img}" class="w-16 h-16 rounded-full mx-auto object-cover border border-brand-accent">
-          <h4 class="text-xs font-bold text-white">${a.name}</h4>
-          <p class="text-[10px] text-gray-400">${a.bio}</p>
+      const grid = document.getElementById('artistsGrid');
+      if(registeredArtists.length === 0) {
+        grid.innerHTML = '<p class="text-xs text-gray-500 italic col-span-2">Henüz kayıtlı sanatçı bulunmuyor.</p>';
+        return;
+      }
+      grid.innerHTML = registeredArtists.map(a => `
+        <div onclick="openArtistDetail('${a.name}')" class="bg-brand-card p-3 rounded-xl border border-gray-800 text-center cursor-pointer space-y-1">
+          <img src="${a.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200'}" class="w-16 h-16 rounded-full mx-auto object-cover border border-brand-accent">
+          <div class="flex items-center justify-center gap-1">
+            <h4 class="text-xs font-bold text-white truncate">${a.name}</h4>
+            <i class="fa-solid fa-circle-check text-brand-accent text-[10px]"></i>
+          </div>
+          <p class="text-[10px] text-gray-400 truncate">${a.bio || 'Bağımsız Sanatçı'}</p>
         </div>
       `).join('');
     }
 
-    function renderPopularTracks() {
-      document.getElementById('popularTracksList').innerHTML = demoTracks.map((t, idx) => `
-        <div onclick="playTrack(${idx})" class="flex items-center justify-between p-2 rounded-xl bg-brand-card border border-gray-800 cursor-pointer">
-          <div class="flex items-center gap-2">
+    // Ana sayfada sadece yüklenen şarkı, albüm ve klipleri listeleme
+    function renderDynamicFeed() {
+      const container = document.getElementById('dynamicUserFeedList');
+      if(demoTracks.length === 0) {
+        container.innerHTML = '<p class="text-xs text-gray-500 italic">Henüz platforma yüklenen bir içerik bulunmuyor.</p>';
+        return;
+      }
+      container.innerHTML = demoTracks.map((t, idx) => `
+        <div onclick="playTrack(${idx})" class="flex items-center justify-between p-2.5 rounded-xl bg-brand-card border border-gray-800 cursor-pointer">
+          <div class="flex items-center gap-2.5">
             <img src="${t.cover}" class="w-10 h-10 rounded-lg object-cover">
             <div>
               <h4 class="text-xs font-bold text-white">${t.title}</h4>
-              <p class="text-[10px] text-gray-400">${t.artist}</p>
+              <p class="text-[10px] text-gray-400">${t.artist} • <span class="text-brand-accent">${t.type || 'Tekli'}</span></p>
             </div>
           </div>
           <i class="fa-solid fa-play text-brand-accent text-xs"></i>
@@ -458,7 +432,8 @@
     }
 
     function renderMyTracks() {
-      const userTracks = demoTracks.filter(t => t.isUserUploaded);
+      const currentName = document.getElementById('profileNameDisplay').innerText;
+      const userTracks = demoTracks.filter(t => t.artist === currentName);
       const container = document.getElementById('myUploadedTracksList');
       if(userTracks.length === 0) {
         container.innerHTML = '<p class="text-xs text-gray-500 italic">Henüz yüklediğiniz bir eser bulunmuyor.</p>';
@@ -470,7 +445,7 @@
             <img src="${t.cover}" class="w-10 h-10 rounded-lg object-cover">
             <div>
               <h4 class="text-xs font-bold text-white">${t.title}</h4>
-              <p class="text-[10px] text-gray-400">Yüklenen Eser • 0 Dinlenme</p>
+              <p class="text-[10px] text-gray-400">${t.type || 'Eser'} • 0 Dinlenme</p>
             </div>
           </div>
           <button onclick="deleteTrack(${t.id})" class="text-red-400 hover:text-red-300 p-1.5"><i class="fa-solid fa-trash-can text-xs"></i></button>
@@ -481,7 +456,7 @@
     function deleteTrack(id) {
       if(confirm('Bu içeriği silmek istediğinize emin misiniz?')) {
         demoTracks = demoTracks.filter(t => t.id !== id);
-        renderPopularTracks();
+        renderDynamicFeed();
         renderMyTracks();
         alert('İçerik başarıyla silindi.');
       }
@@ -537,32 +512,47 @@
       const artistName = document.getElementById('profileNameDisplay').innerText;
       const defaultCover = "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=300";
       
-      const title = document.getElementById('uploadTitle').value || "Yeni Eser";
-      const lyrics = document.getElementById('uploadLyrics').value || "Sözler eklenmedi.";
+      const coverFileInput = document.getElementById('uploadCoverFile');
+      let coverUrl = defaultCover;
+      if(coverFileInput.files && coverFileInput.files[0]) {
+        coverUrl = URL.createObjectURL(coverFileInput.files[0]);
+      }
 
-      const newTrack = {
-        id: demoTracks.length,
-        title: title,
-        artist: artistName,
-        plays: "0",
-        cover: defaultCover,
-        lyrics: lyrics,
-        writer: artistName,
-        composer: artistName,
-        isUserUploaded: true
-      };
+      // Hangi sekmedeyiz kontrol edelim
+      const isSingle = !document.getElementById('singleFields').classList.contains('hidden');
+      const isAlbum = !document.getElementById('albumFields').classList.contains('hidden');
+      const isVideo = !document.getElementById('videoFields').classList.contains('hidden');
 
-      demoTracks.push(newTrack);
-      renderPopularTracks();
+      if(isSingle) {
+        const title = document.getElementById('uploadTitle').value || "Yeni Tekli";
+        const lyrics = document.getElementById('uploadLyrics').value || "Sözler eklenmedi.";
+        demoTracks.push({
+          id: demoTracks.length,
+          title, artist: artistName, plays: "0", cover: coverUrl, lyrics, type: "Tekli"
+        });
+      } else if(isAlbum) {
+        const albumTitle = document.getElementById('uploadAlbumTitle').value || "Yeni Albüm";
+        demoTracks.push({
+          id: demoTracks.length,
+          title: albumTitle, artist: artistName, plays: "0", cover: coverUrl, lyrics: "Albüm Eseri", type: "Albüm"
+        });
+      } else if(isVideo) {
+        const videoTitle = document.getElementById('uploadVideoTitle').value || "Yeni Klip";
+        demoTracks.push({
+          id: demoTracks.length,
+          title: videoTitle, artist: artistName, plays: "0", cover: coverUrl, lyrics: "Video Klip", type: "Video Klip"
+        });
+      }
+
+      renderDynamicFeed();
       renderMyTracks();
       alert('Tebrikler! Eseriniz başarıyla yüklendi.');
-      switchTab('profile');
+      switchTab('home');
     }
 
     function openEditProfileModal() {
       document.getElementById('editNameInput').value = document.getElementById('profileNameDisplay').innerText;
       document.getElementById('editBioInput').value = document.getElementById('profileBioDisplay').innerText;
-      document.getElementById('editAvatarInput').value = document.getElementById('userAvatar').src;
       document.getElementById('editProfileModal').classList.remove('hidden');
     }
     function closeEditProfileModal() { document.getElementById('editProfileModal').classList.add('hidden'); }
@@ -570,12 +560,24 @@
     function handleProfileUpdate(e) {
       e.preventDefault();
       const newName = document.getElementById('editNameInput').value;
+      const newBio = document.getElementById('editBioInput').value;
+      
       document.getElementById('profileNameDisplay').innerText = newName;
       document.getElementById('headerUserName').innerText = newName;
-      document.getElementById('profileBioDisplay').innerText = document.getElementById('editBioInput').value;
-      const avatarVal = document.getElementById('editAvatarInput').value;
-      if(avatarVal) document.getElementById('userAvatar').src = avatarVal;
+      document.getElementById('profileBioDisplay').innerText = newBio;
+
+      const avatarFileInput = document.getElementById('editAvatarFile');
+      if(avatarFileInput.files && avatarFileInput.files[0]) {
+        const avatarUrl = URL.createObjectURL(avatarFileInput.files[0]);
+        document.getElementById('userAvatar').src = avatarUrl;
+        
+        // Kayıtlı sanatçı listesini güncelle
+        let artist = registeredArtists.find(a => a.name === newName);
+        if(artist) { artist.avatar = avatarUrl; artist.bio = newBio; }
+      }
+
       closeEditProfileModal();
+      renderArtists();
       alert('Profil güncellendi!');
     }
 
@@ -598,7 +600,7 @@
       document.getElementById('profileNameDisplay').innerText = name;
       document.getElementById('headerUserName').innerText = name;
       closeAuthModal(); 
-      alert('Giriş yapıldı'); 
+      alert('Giriş yapıldı!'); 
     }
 
     function handleRegister(e) { 
@@ -606,8 +608,14 @@
       const name = document.getElementById('regName').value;
       document.getElementById('profileNameDisplay').innerText = name;
       document.getElementById('headerUserName').innerText = name;
+      
+      // Kayıt olanı sanatçı kataloğuna ekle
+      if(!registeredArtists.some(a => a.name === name)) {
+        registeredArtists.push({ name, bio: "Zaman Perdesi Sanatçısı", avatar: document.getElementById('userAvatar').src });
+      }
+      renderArtists();
       closeAuthModal(); 
-      alert('Kayıt yapıldı ve mavi tik tanımlandı!'); 
+      alert('Kayıt yapıldı ve onaylı sanatçı kataloğuna eklendi!'); 
     }
 
     function handleAdminLogin(e) { 
@@ -615,13 +623,14 @@
       document.getElementById('profileNameDisplay').innerText = "Platform Admin";
       document.getElementById('headerUserName').innerText = "Admin";
       closeAuthModal(); 
-      alert('Admin giriş yapıldı'); 
+      alert('Admin girişi yapıldı!'); 
     }
     
     function togglePlayPause(e) { if(e) e.stopPropagation(); isPlaying = !isPlaying; }
     
     function toggleLikeCurrent() {
       const current = demoTracks[currentTrackIndex];
+      if(!current) return;
       const found = favorites.find(f => f.id === current.id);
       if(!found) {
         favorites.push(current);
@@ -667,23 +676,24 @@
       }
     }
 
-    function openArtistDetail(id) {
-      const a = demoArtists.find(item => item.id === id);
+    function openArtistDetail(artistName) {
+      const a = registeredArtists.find(item => item.name === artistName);
       if(!a) return;
-      document.getElementById('artistDetailImg').src = a.img;
+      document.getElementById('artistDetailImg').src = a.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200';
       document.getElementById('artistDetailName').innerText = a.name;
       document.getElementById('artistDetailBio').innerText = a.bio;
       
+      const artistTracks = demoTracks.filter(t => t.artist === a.name);
       const tracksList = document.getElementById('artistTracksList');
-      tracksList.innerHTML = demoTracks.map((t, idx) => `
-        <div onclick="playTrack(${idx})" class="flex items-center justify-between p-2.5 bg-brand-card rounded-xl border border-gray-800 cursor-pointer">
+      tracksList.innerHTML = artistTracks.length ? artistTracks.map(t => `
+        <div onclick="playTrack(${t.id})" class="flex items-center justify-between p-2.5 bg-brand-card rounded-xl border border-gray-800 cursor-pointer">
           <div class="flex items-center gap-2">
             <img src="${t.cover}" class="w-9 h-9 rounded object-cover">
             <div><h4 class="text-xs font-bold text-white">${t.title}</h4><p class="text-[10px] text-gray-400">${t.artist}</p></div>
           </div>
           <i class="fa-solid fa-play text-brand-accent text-xs"></i>
         </div>
-      `).join('');
+      `).join('') : '<p class="text-xs text-gray-500 italic">Bu sanatçının henüz yayınlanmış eseri yok.</p>';
 
       document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
       document.getElementById('artistDetailView').classList.remove('hidden');
