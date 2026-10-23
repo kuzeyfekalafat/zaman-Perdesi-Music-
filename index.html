@@ -130,6 +130,24 @@
           </div>
           <div id="popularTracksList" class="space-y-2"></div>
         </div>
+
+        <div>
+          <h3 class="text-sm font-bold text-white mb-3 flex items-center gap-2">
+            <i class="fa-solid fa-compact-disc text-brand-accent"></i> Yeni Albümler
+          </h3>
+          <div class="flex gap-3 overflow-x-auto pb-2 -mx-4 px-4 snap-x">
+            <div onclick="playTrack(2)" class="snap-start shrink-0 w-36 bg-brand-card p-2.5 rounded-xl border border-gray-800/80 hover:border-brand-accent/50 transition cursor-pointer">
+              <img src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=300" class="w-full h-32 object-cover rounded-lg mb-2 shadow" alt="Albüm">
+              <h4 class="text-xs font-bold text-white truncate">Sonsuz Karanlık</h4>
+              <p class="text-[10px] text-gray-400 truncate">Karslı Arap • 12 Parça</p>
+            </div>
+            <div onclick="playTrack(0)" class="snap-start shrink-0 w-36 bg-brand-card p-2.5 rounded-xl border border-gray-800/80 hover:border-brand-accent/50 transition cursor-pointer">
+              <img src="https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=300" class="w-full h-32 object-cover rounded-lg mb-2 shadow" alt="Albüm">
+              <h4 class="text-xs font-bold text-white truncate">Zamanın Ötesinde</h4>
+              <p class="text-[10px] text-gray-400 truncate">Hamza Kalafat • Single</p>
+            </div>
+          </div>
+        </div>
       </section>
 
       <!-- TAB 2: SANATÇILAR -->
@@ -153,17 +171,17 @@
         </div>
 
         <div class="flex p-1 bg-brand-card rounded-xl border border-gray-800 text-[11px]">
-          <button id="singleTypeBtn" onclick="switchUploadType('single')" class="flex-1 py-1.5 font-semibold rounded-lg bg-brand-accent text-black shadow transition">🎵 Tekli</button>
+          <button id="singleTypeBtn" onclick="switchUploadType('single')" class="flex-1 py-1.5 font-semibold rounded-lg bg-brand-accent text-black shadow transition">🎵 Tekli (Single)</button>
           <button id="albumTypeBtn" onclick="switchUploadType('album')" class="flex-1 py-1.5 font-semibold rounded-lg text-gray-400 hover:text-white transition">💽 Albüm</button>
-          <button id="videoTypeBtn" onclick="switchUploadType('video')" class="flex-1 py-1.5 font-semibold rounded-lg text-gray-400 hover:text-white transition">🎬 Video</button>
+          <button id="videoTypeBtn" onclick="switchUploadType('video')" class="flex-1 py-1.5 font-semibold rounded-lg text-gray-400 hover:text-white transition">🎬 Video (Klip)</button>
         </div>
 
         <form id="uploadForm" onsubmit="handleUploadSubmit(event)" class="space-y-4">
           <div class="space-y-1">
-            <label class="text-xs font-medium text-gray-300">Kapak Görseli</label>
+            <label class="text-xs font-medium text-gray-300">Albüm / Single / Klip Kapağı</label>
             <div class="border-2 border-dashed border-gray-700 hover:border-brand-accent bg-brand-card/50 rounded-xl p-4 text-center cursor-pointer transition">
               <i class="fa-solid fa-image text-2xl text-gray-500 mb-1"></i>
-              <p class="text-xs text-gray-400">Görsel Seç</p>
+              <p class="text-xs text-gray-400">Görsel Seç (JPG/PNG)</p>
             </div>
           </div>
           <div id="singleFields" class="space-y-3">
@@ -172,8 +190,12 @@
               <input type="text" placeholder="Örn: Kalbim" class="w-full bg-brand-card text-xs text-white p-2.5 rounded-xl border border-gray-800 mt-1">
             </div>
             <div>
-              <label class="text-xs font-medium text-gray-300">Ses Dosyası (MP3/WAV)</label>
+              <label class="text-xs font-medium text-gray-300">Ses Dosyası (MP3 / WAV)</label>
               <input type="file" accept="audio/*" class="w-full text-xs text-gray-400 bg-brand-card p-2 rounded-xl border border-gray-800 mt-1">
+            </div>
+            <div>
+              <label class="text-xs font-medium text-gray-300">Şarkı Sözleri (Lyrics)</label>
+              <textarea rows="3" placeholder="Şarkının sözleri..." class="w-full bg-brand-card text-xs text-white p-2.5 rounded-xl border border-gray-800 mt-1"></textarea>
             </div>
           </div>
           <button type="submit" class="w-full bg-gradient-to-r from-brand-accent to-brand-blue text-black font-bold text-xs py-3 rounded-xl shadow-lg">
@@ -182,7 +204,7 @@
         </form>
       </section>
 
-      <!-- TAB 4: PROFİLİM & PROFİL DÜZENLEME -->
+      <!-- TAB 4: PROFİLİM & DÜZENLEME -->
       <section id="tab-profile" class="tab-content hidden space-y-5">
         <div class="flex items-center gap-3 bg-brand-card p-3.5 rounded-2xl border border-gray-800 relative">
           <img id="userAvatar" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200" class="w-14 h-14 rounded-full object-cover border-2 border-brand-accent" alt="Profile">
@@ -193,10 +215,9 @@
             </div>
             <p id="profileEmailDisplay" class="text-[11px] text-gray-400 truncate">hamza@zamanperdesi.com</p>
             <span id="profileRoleTag" class="inline-block mt-1 bg-brand-accent/20 text-brand-accent text-[10px] px-2 py-0.5 rounded-full border border-brand-accent/30 font-medium">
-              Doğrulanmış Sanatçı
+              Doğrulanmış Sanatçı Profil
             </span>
           </div>
-          <!-- PROFİLİ DÜZENLE BUTONU -->
           <button onclick="openEditProfileModal()" class="bg-brand-dark hover:bg-brand-hover border border-gray-700 text-brand-accent px-2.5 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-1 transition">
             <i class="fa-solid fa-pen-to-square"></i> Düzenle
           </button>
@@ -271,12 +292,30 @@
         <button onclick="closeFullPlayer()" class="text-gray-400 hover:text-white"><i class="fa-solid fa-chevron-down text-lg"></i></button>
         <span class="text-xs font-bold uppercase tracking-widest text-brand-accent">Şimdi Çalıyor</span>
       </div>
-      <div class="text-center pt-4">
-        <img id="fullPlayerCover" src="https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=400" class="w-56 h-56 rounded-2xl mx-auto object-cover shadow-2xl">
+      <div class="text-center pt-2">
+        <img id="fullPlayerCover" src="https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=400" class="w-56 h-56 rounded-2xl mx-auto object-cover shadow-2xl border border-gray-800">
       </div>
       <div class="text-center space-y-1">
         <h2 id="fullPlayerTitle" class="text-base font-extrabold text-white">Kalbim</h2>
         <p id="fullPlayerArtist" class="text-xs text-brand-accent font-semibold">Hamza Kalafat</p>
+      </div>
+      <div class="bg-brand-card rounded-2xl p-4 border border-gray-800 space-y-3">
+        <div class="flex border-b border-gray-800 text-xs">
+          <button onclick="switchPlayerSubTab('lyrics')" id="playerTabLyrics" class="pb-2 px-3 font-semibold text-brand-accent border-b-2 border-brand-accent">📝 Sözler</button>
+          <button onclick="switchPlayerSubTab('credits')" id="playerTabCredits" class="pb-2 px-3 font-semibold text-gray-400">📜 Künye</button>
+          <button onclick="switchPlayerSubTab('comments')" id="playerTabComments" class="pb-2 px-3 font-semibold text-gray-400">💬 Yorumlar</button>
+        </div>
+        <div id="playerLyricsContent" class="text-xs text-gray-300 space-y-2 leading-relaxed max-h-40 overflow-y-auto">
+          <p id="lyricsText">Gözlerin bir gece vakti düşer kalbime...</p>
+        </div>
+        <div id="playerCreditsContent" class="hidden text-xs space-y-1.5 text-gray-300">
+          <div class="flex justify-between border-b border-gray-800 pb-1"><span class="text-gray-500">Söz Yazarı:</span><span id="creditWriter" class="font-semibold text-white">Hamza Kalafat</span></div>
+        </div>
+        <div id="playerCommentsContent" class="hidden space-y-3">
+          <div class="space-y-2 max-h-32 overflow-y-auto">
+            <div class="bg-brand-dark p-2 rounded-lg text-xs"><span class="font-bold text-brand-accent">Karslı Arap:</span><p class="text-gray-300">Harika eser! 🔥</p></div>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -301,7 +340,7 @@
       </div>
     </div>
 
-    <!-- PROFİL DÜZENLEME MODALI (YENİ EKLENDİ) -->
+    <!-- PROFILE EDIT MODAL -->
     <div id="editProfileModal" class="hidden absolute inset-0 bg-black/85 backdrop-blur-md z-50 flex items-center justify-center p-4">
       <div class="w-full max-w-sm bg-brand-card p-5 rounded-2xl border border-gray-800 space-y-4 shadow-2xl relative">
         <button onclick="closeEditProfileModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
@@ -332,10 +371,14 @@
 
   <script>
     const demoArtists = [
-      { id: 1, name: "Hamza Kalafat", img: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200", bio: "Zaman Perdesi Music Kurucu & Sanatçısı" }
+      { id: 1, name: "Hamza Kalafat", img: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200", bio: "Zaman Perdesi Music Kurucu & Sanatçısı" },
+      { id: 2, name: "Karslı Arap", img: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200", bio: "Özgün Müzik Temsilcisi" }
     ];
+
     const demoTracks = [
-      { id: 0, title: "Kalbim", artist: "Hamza Kalafat", plays: "2.4k", cover: "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=300", lyrics: "Gözlerin bir gece vakti..." }
+      { id: 0, title: "Kalbim", artist: "Hamza Kalafat", plays: "2.4k", cover: "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=300", lyrics: "Gözlerin bir gece vakti düşer kalbime...", writer: "Hamza Kalafat", composer: "Hamza Kalafat" },
+      { id: 1, title: "Sonsuz Karanlık", artist: "Karslı Arap", plays: "1.8k", cover: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=300", lyrics: "Karanlık sokaklarda adımlarım...", writer: "Karslı Arap", composer: "Karslı Arap" },
+      { id: 2, title: "Zirve Yolu", artist: "Ahmet Yıldız", plays: "3.1k", cover: "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=300", lyrics: "Yollar uzun, engeller çok...", writer: "Ahmet Yıldız", composer: "Ahmet Yıldız" }
     ];
 
     let currentTrackIndex = 0;
@@ -371,20 +414,26 @@
       document.getElementById(`tab-${tabName}`).classList.remove('hidden');
       document.querySelectorAll('nav button').forEach(b => b.classList.remove('text-brand-accent'));
       document.getElementById(`nav-${tabName}`).classList.add('text-brand-accent');
+      document.getElementById('searchResultsSection').classList.add('hidden');
     }
 
     function loadTrack(i) {
       currentTrackIndex = i;
       const t = demoTracks[i];
       document.getElementById('playerTitle').innerText = t.title;
+      document.getElementById('playerArtist').innerText = t.artist;
       document.getElementById('playerCover').src = t.cover;
+      document.getElementById('fullPlayerCover').src = t.cover;
+      document.getElementById('fullPlayerTitle').innerText = t.title;
+      document.getElementById('fullPlayerArtist').innerText = t.artist;
+      document.getElementById('lyricsText').innerText = t.lyrics;
+      document.getElementById('creditWriter').innerText = t.writer;
     }
 
     function playTrack(i) { loadTrack(i); isPlaying = true; openFullPlayer(); }
     function openFullPlayer() { document.getElementById('fullPlayerModal').classList.remove('hidden'); }
     function closeFullPlayer() { document.getElementById('fullPlayerModal').classList.add('hidden'); }
 
-    // Profil Düzenleme Fonksiyonları
     function openEditProfileModal() {
       document.getElementById('editNameInput').value = document.getElementById('profileNameDisplay').innerText;
       document.getElementById('editBioInput').value = document.getElementById('profileBioDisplay').innerText;
@@ -425,9 +474,42 @@
       }
     }
 
+    function openArtistDetail(id) {
+      const a = demoArtists.find(item => item.id === id);
+      if(!a) return;
+      document.getElementById('artistDetailImg').src = a.img;
+      document.getElementById('artistDetailName').innerText = a.name;
+      document.getElementById('artistDetailBio').innerText = a.bio;
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      document.getElementById('artistDetailView').classList.remove('hidden');
+    }
+
+    function closeArtistDetail() {
+      document.getElementById('artistDetailView').classList.add('hidden');
+      switchTab('artists');
+    }
+
+    function handleSearch(val) {
+      const resultsSection = document.getElementById('searchResultsSection');
+      const resultsList = document.getElementById('searchResultsList');
+      if (!val.trim()) { resultsSection.classList.add('hidden'); return; }
+      resultsSection.classList.remove('hidden');
+      const filtered = demoTracks.filter(t => t.title.toLowerCase().includes(val.toLowerCase()));
+      resultsList.innerHTML = filtered.map(t => `
+        <div onclick="playTrack(${t.id})" class="p-2 bg-brand-card rounded-xl border border-gray-800 flex items-center justify-between cursor-pointer">
+          <p class="text-xs font-bold text-white">${t.title}</p>
+        </div>
+      `).join('') || '<p class="text-xs text-gray-500">Bulunamadı.</p>';
+    }
+
+    function clearSearch() { document.getElementById('searchInput').value = ''; handleSearch(''); }
+    function switchUploadType(type) {}
+    function handleUploadSubmit(e) { e.preventDefault(); alert('Yüklendi!'); switchTab('profile'); }
     function openAuthModal() { document.getElementById('authModal').classList.remove('hidden'); }
     function closeAuthModal() { document.getElementById('authModal').classList.add('hidden'); }
     function handleLogin(e) { e.preventDefault(); closeAuthModal(); alert('Giriş yapıldı'); }
+    function switchPlayerSubTab(tab) {}
+    function togglePlayPause(e) { if(e) e.stopPropagation(); isPlaying = !isPlaying; }
   </script>
 </body>
 </html>
