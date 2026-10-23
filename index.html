@@ -221,7 +221,7 @@
         </form>
       </section>
 
-      <!-- TAB 4: PROFİLİM -->
+      <!-- TAB 4: PROFİLİM (YENİ: İSTATİSTİK DASHBOARD & ÇALMA LİSTELERİ) -->
       <section id="tab-profile" class="tab-content hidden space-y-5">
         <div class="flex items-center gap-3 bg-brand-card p-3.5 rounded-2xl border border-gray-800 relative">
           <img id="userAvatar" src="" class="w-14 h-14 rounded-full object-cover border-2 border-brand-accent" alt="Profile">
@@ -231,7 +231,7 @@
               <i class="fa-solid fa-circle-check text-brand-accent text-xs"></i>
             </div>
             <p id="profileEmailDisplay" class="text-[11px] text-gray-400 truncate">kuzeyfe@zamanperdesi.com</p>
-            <span id="profileRoleTag" class="inline-block mt-1 bg-brand-accent/20 text-brand-accent text-[10px] px-2 py-0.5 rounded-full border border-brand-accent/30 font-medium">
+            <span id="profileRoleTag" class="inline-block mt-1 bg-brand-accent/25 text-brand-accent text-[10px] px-2 py-0.5 rounded-full border border-brand-accent/30 font-medium">
               Doğrulanmış Sanatçı
             </span>
           </div>
@@ -245,11 +245,33 @@
           </div>
         </div>
 
+        <!-- 📊 GELİŞMİŞ İSTATİSTİK / DİNLENME SAYACI (MİNİ DASHBOARD) -->
+        <div class="bg-gradient-to-br from-brand-card to-brand-dark p-3.5 rounded-2xl border border-gray-800 space-y-3 shadow-xl">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-brand-accent flex items-center gap-1.5"><i class="fa-solid fa-chart-line"></i> Performans & İstatistikler</span>
+            <span class="text-[10px] bg-cyan-500/10 text-cyan-400 px-2 py-0.5 rounded-full border border-cyan-500/20 font-semibold">Canlı Veri</span>
+          </div>
+          <div class="grid grid-cols-3 gap-2 text-center">
+            <div class="bg-brand-black/60 p-2.5 rounded-xl border border-gray-800/80">
+              <span id="statTotalPlays" class="text-sm font-extrabold text-white block">0</span>
+              <span class="text-[9px] text-gray-400 uppercase tracking-wide">Dinlenme</span>
+            </div>
+            <div class="bg-brand-black/60 p-2.5 rounded-xl border border-gray-800/80">
+              <span id="statTotalTracks" class="text-sm font-extrabold text-brand-accent block">0</span>
+              <span class="text-[9px] text-gray-400 uppercase tracking-wide">Eser Sayısı</span>
+            </div>
+            <div class="bg-brand-black/60 p-2.5 rounded-xl border border-gray-800/80">
+              <span id="statTotalFavs" class="text-sm font-extrabold text-pink-400 block">0</span>
+              <span class="text-[9px] text-gray-400 uppercase tracking-wide">Favori</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- BİYOGRAFİ & SOSYAL MEDYA -->
         <div class="bg-brand-card p-3 rounded-xl border border-gray-800 space-y-2">
           <span class="text-xs font-bold text-brand-accent block">✍️ Hakkında / Biyografi</span>
           <p id="profileBioDisplay" class="text-xs text-gray-300">Zaman Perdesi Music Kurucusu & Söz Yazarı.</p>
           
-          <!-- 6 SOSYAL MEDYA LİNKİ GÖSTERİMİ -->
           <div class="pt-2 border-t border-gray-800 flex items-center gap-3.5 text-base flex-wrap">
             <a id="linkYoutube" href="#" target="_blank" class="text-red-500 hover:scale-110 transition hidden" title="YouTube"><i class="fa-brands fa-youtube text-lg"></i></a>
             <a id="linkInstagram" href="#" target="_blank" class="text-pink-500 hover:scale-110 transition hidden" title="Instagram"><i class="fa-brands fa-instagram text-lg"></i></a>
@@ -260,10 +282,12 @@
           </div>
         </div>
 
+        <!-- PROFİL SEKMELERİ (İÇERİKLERİM - FAVORİLERİM - ÇALMA LİSTELERİM) -->
         <div class="space-y-3">
-          <div class="flex border-b border-gray-800 text-xs">
-            <button onclick="toggleProfileSubTab('myTracks')" id="subTabMyTracks" class="pb-2 px-3 font-semibold text-brand-accent border-b-2 border-brand-accent">🎵 İçeriklerim</button>
-            <button onclick="toggleProfileSubTab('favorites')" id="subTabFavs" class="pb-2 px-3 font-semibold text-gray-400">❤️ Favorilerim</button>
+          <div class="flex border-b border-gray-800 text-xs justify-between">
+            <button onclick="toggleProfileSubTab('myTracks')" id="subTabMyTracks" class="pb-2 px-2 font-semibold text-brand-accent border-b-2 border-brand-accent">🎵 İçeriklerim</button>
+            <button onclick="toggleProfileSubTab('favorites')" id="subTabFavs" class="pb-2 px-2 font-semibold text-gray-400">❤️ Favoriler</button>
+            <button onclick="toggleProfileSubTab('playlists')" id="subTabPlaylists" class="pb-2 px-2 font-semibold text-gray-400">📂 Çalma Listeleri</button>
           </div>
 
           <div id="myTracksView" class="space-y-2">
@@ -273,6 +297,17 @@
           <div id="favoritesView" class="hidden space-y-2">
             <div id="favoritesListContainer" class="space-y-2">
               <p class="text-xs text-gray-500">Henüz favori eklenmedi.</p>
+            </div>
+          </div>
+
+          <!-- 📂 ÇALMA LİSTELERİ GÖRÜNÜMÜ -->
+          <div id="playlistsView" class="hidden space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold text-white">Özel Çalma Listelerin</span>
+              <button onclick="openCreatePlaylistModal()" class="bg-brand-accent text-black text-[10px] font-bold px-2.5 py-1 rounded-lg shadow"><i class="fa-solid fa-plus"></i> Yeni Liste</button>
+            </div>
+            <div id="playlistsContainer" class="space-y-2">
+              <p class="text-xs text-gray-500 italic">Henüz çalma listesi oluşturulmadı.</p>
             </div>
           </div>
         </div>
@@ -388,12 +423,11 @@
       <button onclick="switchTab('profile')" id="nav-profile" class="flex flex-col items-center gap-1 text-gray-400 hover:text-white"><i class="fa-solid fa-user text-base"></i><span class="text-[10px] font-semibold">Profilim</span></button>
     </nav>
 
-    <!-- AUTH MODAL (GİRİŞ - KAYIT - ŞİFREMİ UNUTTUM - ADMIN) -->
+    <!-- AUTH MODAL -->
     <div id="authModal" class="hidden absolute inset-0 bg-black/85 backdrop-blur-md z-50 flex items-center justify-center p-4">
       <div class="w-full max-w-sm bg-brand-card p-5 rounded-2xl border border-gray-800 space-y-4 shadow-2xl relative">
         <button onclick="closeAuthModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
         
-        <!-- ÜST SEKMELER (ŞİFRE UNUTTUM BUTONU EKLENDİ) -->
         <div class="grid grid-cols-4 gap-1 border-b border-gray-800 pb-2 text-[10px] font-bold text-center">
           <button id="authTabLogin" onclick="switchAuthMode('login')" class="text-brand-accent border-b-2 border-brand-accent pb-1 truncate">Giriş Yap</button>
           <button id="authTabRegister" onclick="switchAuthMode('register')" class="text-gray-400 pb-1 truncate">Kayıt Ol</button>
@@ -444,36 +478,32 @@
           <div><label class="text-xs text-gray-300">Biyografi</label><textarea id="editBioInput" rows="2" class="w-full bg-brand-dark text-xs text-white p-2.5 rounded-xl border border-gray-800 mt-1"></textarea></div>
           <div><label class="text-xs text-gray-300">Fotoğraf Dosyası Seç</label><input type="file" id="editAvatarFile" accept="image/*" class="w-full text-xs text-gray-400 bg-brand-dark p-2 rounded-xl border border-gray-800 mt-1 file:mr-3 file:py-1 file:px-2 file:rounded-lg file:border-0 file:text-xs file:bg-brand-accent file:text-black file:font-semibold"></div>
           
-          <!-- 6 SOSYAL MEDYA LİNK DÜZENLEME KUTUSU -->
           <div class="space-y-2 pt-2 border-t border-gray-800">
             <span class="text-xs font-bold text-brand-accent block">🔗 Sosyal Medya Bağlantıları (6 Adet)</span>
-            <div>
-              <label class="text-[10px] text-gray-400 flex items-center gap-1 mb-0.5"><i class="fa-brands fa-youtube text-red-500"></i> YouTube Kanal Linki</label>
-              <input type="url" id="editYoutubeInput" placeholder="https://www.youtube.com/@kuzeyfe.kalafat" class="w-full bg-brand-dark text-xs text-white p-2 rounded-lg border border-gray-800 focus:outline-none focus:border-brand-accent">
-            </div>
-            <div>
-              <label class="text-[10px] text-gray-400 flex items-center gap-1 mb-0.5"><i class="fa-brands fa-instagram text-pink-500"></i> Instagram Profil Linki</label>
-              <input type="url" id="editInstagramInput" placeholder="https://www.instagram.com/kuzeyfekalafat" class="w-full bg-brand-dark text-xs text-white p-2 rounded-lg border border-gray-800 focus:outline-none focus:border-brand-accent">
-            </div>
-            <div>
-              <label class="text-[10px] text-gray-400 flex items-center gap-1 mb-0.5"><i class="fa-brands fa-spotify text-green-500"></i> Spotify Profil Linki</label>
-              <input type="url" id="editSpotifyInput" placeholder="https://open.spotify.com/artist/kuzeyfekalafat" class="w-full bg-brand-dark text-xs text-white p-2 rounded-lg border border-gray-800 focus:outline-none focus:border-brand-accent">
-            </div>
-            <div>
-              <label class="text-[10px] text-gray-400 flex items-center gap-1 mb-0.5"><i class="fa-brands fa-tiktok text-cyan-400"></i> TikTok Profil Linki</label>
-              <input type="url" id="editTiktokInput" placeholder="https://www.tiktok.com/@kuzeyfe.kalafat" class="w-full bg-brand-dark text-xs text-white p-2 rounded-lg border border-gray-800 focus:outline-none focus:border-brand-accent">
-            </div>
-            <div>
-              <label class="text-[10px] text-gray-400 flex items-center gap-1 mb-0.5"><i class="fa-brands fa-facebook text-blue-500"></i> Facebook Profil Linki</label>
-              <input type="url" id="editFacebookInput" placeholder="https://www.facebook.com/kuzeyfekalafat.1" class="w-full bg-brand-dark text-xs text-white p-2 rounded-lg border border-gray-800 focus:outline-none focus:border-brand-accent">
-            </div>
-            <div>
-              <label class="text-[10px] text-gray-400 flex items-center gap-1 mb-0.5"><i class="fa-brands fa-twitter text-sky-400"></i> Twitter Profil Linki</label>
-              <input type="url" id="editTwitterInput" placeholder="https://www.twitter.com/kuzeyfe_kalafat" class="w-full bg-brand-dark text-xs text-white p-2 rounded-lg border border-gray-800 focus:outline-none focus:border-brand-accent">
-            </div>
+            <div><label class="text-[10px] text-gray-400 mb-0.5 block">YouTube Kanal Linki</label><input type="url" id="editYoutubeInput" class="w-full bg-brand-dark text-xs text-white p-2 rounded-lg border border-gray-800"></div>
+            <div><label class="text-[10px] text-gray-400 mb-0.5 block">Instagram Profil Linki</label><input type="url" id="editInstagramInput" class="w-full bg-brand-dark text-xs text-white p-2 rounded-lg border border-gray-800"></div>
+            <div><label class="text-[10px] text-gray-400 mb-0.5 block">Spotify Profil Linki</label><input type="url" id="editSpotifyInput" class="w-full bg-brand-dark text-xs text-white p-2 rounded-lg border border-gray-800"></div>
+            <div><label class="text-[10px] text-gray-400 mb-0.5 block">TikTok Profil Linki</label><input type="url" id="editTiktokInput" class="w-full bg-brand-dark text-xs text-white p-2.5 rounded-lg border border-gray-800"></div>
+            <div><label class="text-[10px] text-gray-400 mb-0.5 block">Facebook Profil Linki</label><input type="url" id="editFacebookInput" class="w-full bg-brand-dark text-xs text-white p-2 rounded-lg border border-gray-800"></div>
+            <div><label class="text-[10px] text-gray-400 mb-0.5 block">Twitter Profil Linki</label><input type="url" id="editTwitterInput" class="w-full bg-brand-dark text-xs text-white p-2 rounded-lg border border-gray-800"></div>
           </div>
 
           <button type="submit" class="w-full bg-brand-accent text-black font-bold text-xs py-2.5 rounded-xl shadow-lg">Kaydet & Güncelle</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- 📂 YENİ ÇALMA LİSTESİ OLUŞTURMA MODALI -->
+    <div id="createPlaylistModal" class="hidden absolute inset-0 bg-black/85 backdrop-blur-md z-50 flex items-center justify-center p-4">
+      <div class="w-full max-w-sm bg-brand-card p-5 rounded-2xl border border-gray-800 space-y-4 shadow-2xl relative">
+        <button onclick="closeCreatePlaylistModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+        <h3 class="text-sm font-bold text-white flex items-center gap-2"><i class="fa-solid fa-folder-plus text-brand-accent"></i> Yeni Çalma Listesi Kur</h3>
+        <form onsubmit="handleCreatePlaylist(event)" class="space-y-3">
+          <div>
+            <label class="text-xs text-gray-300">Liste Adı</label>
+            <input type="text" id="playlistNameInput" placeholder="Örn: Favori Pop Şarkılarım" required class="w-full bg-brand-dark text-xs text-white p-2.5 rounded-xl border border-gray-800 mt-1">
+          </div>
+          <button type="submit" class="w-full bg-brand-accent text-black font-bold text-xs py-2.5 rounded-xl shadow-lg">Listeyi Oluştur</button>
         </form>
       </div>
     </div>
@@ -497,13 +527,6 @@
         tiktok: 'https://www.tiktok.com/@kuzeyfe.kalafat', 
         facebook: 'https://www.facebook.com/kuzeyfekalafat.1', 
         twitter: 'https://www.twitter.com/kuzeyfe_kalafat'
-      },
-      'hamza@zamanperdesi.com': {
-        name: 'Hamza kalafat',
-        email: 'hamza@zamanperdesi.com',
-        bio: 'Zaman Perdesi Sanatçısı',
-        avatar: DEFAULT_AVATAR,
-        youtube: '', instagram: '', spotify: '', tiktok: '', facebook: '', twitter: ''
       }
     };
 
@@ -514,7 +537,7 @@
         id: 0,
         title: 'Ateş Ve Kumsal',
         artist: 'Kuzeyfe Kalafat',
-        plays: '1,240',
+        plays: 1240,
         cover: DEFAULT_COVER,
         mediaUrl: DEFAULT_AUDIO,
         lyrics: 'Yine toplandık sahilde akşam vaktinde,\nGelişin tüm yükü kaldı o eski şehirde.\nDalgalar vururken ince kumların üstüne,\nBir kıvılcım çaktı kanka, gecenin kalbinde.\n\nAteşin sıcaklığı vuruyor yüzümüze,\nGitarın telleri dokunuyor kalbimize.\nHerkes burada bak, çember olduk yine...',
@@ -529,6 +552,7 @@
     ];
 
     let demoTracks = JSON.parse(localStorage.getItem('zaman_tracks')) || initialTracks;
+    let userPlaylists = JSON.parse(localStorage.getItem('zaman_playlists')) || [];
 
     let currentTrackIndex = 0;
     let isPlaying = false;
@@ -552,6 +576,8 @@
       initAudioEvents();
       loadTrack(0);
       setupImageErrorHandlers();
+      updateDashboardStats();
+      renderPlaylists();
     };
 
     function initAudioEvents() {
@@ -567,6 +593,7 @@
     function saveAppData() {
       localStorage.setItem('zaman_users', JSON.stringify(usersDB));
       localStorage.setItem('zaman_tracks', JSON.stringify(demoTracks));
+      localStorage.setItem('zaman_playlists', JSON.stringify(userPlaylists));
       if(currentUserEmail) {
         localStorage.setItem('zaman_current_user', currentUserEmail);
       } else {
@@ -604,7 +631,24 @@
         toggleSocialLink('linkTwitter', '');
       }
       renderMyTracks();
+      updateDashboardStats();
       setupImageErrorHandlers();
+    }
+
+    function updateDashboardStats() {
+      if(!currentUserEmail || !usersDB[currentUserEmail]) {
+        document.getElementById('statTotalPlays').innerText = "0";
+        document.getElementById('statTotalTracks').innerText = "0";
+        document.getElementById('statTotalFavs').innerText = "0";
+        return;
+      }
+      const currentName = usersDB[currentUserEmail].name;
+      const userTracks = demoTracks.filter(t => t.artist === currentName);
+      let totalPlays = userTracks.reduce((acc, t) => acc + (Number(t.plays) || 0), 0);
+
+      document.getElementById('statTotalPlays').innerText = totalPlays.toLocaleString();
+      document.getElementById('statTotalTracks').innerText = userTracks.length;
+      document.getElementById('statTotalFavs').innerText = favorites.length;
     }
 
     function toggleSocialLink(id, url) {
@@ -708,6 +752,7 @@
         saveAppData();
         renderDynamicFeed();
         renderMyTracks();
+        updateDashboardStats();
       }
     }
 
@@ -782,6 +827,10 @@
     function playTrack(i) { 
       loadTrack(i); 
       const t = demoTracks[i];
+      t.plays = (Number(t.plays) || 0) + 1;
+      saveAppData();
+      updateDashboardStats();
+
       if(t && t.type === 'Video Klip') {
         document.getElementById('fullPlayerVideo').play().catch(()=>{});
         isPlaying = true;
@@ -789,8 +838,7 @@
         audioEl.play().then(() => {
           isPlaying = true;
           updatePlayPauseUI();
-        }).catch(e => {
-          console.log('Medya engellendi:', e);
+        }).catch(() => {
           isPlaying = false;
           updatePlayPauseUI();
         });
@@ -876,19 +924,9 @@
       }
     }
 
-    function prevTrack() {
-      if(currentTrackIndex > 0) playTrack(currentTrackIndex - 1);
-    }
-
-    function nextTrack() {
-      if(currentTrackIndex < demoTracks.length - 1) playTrack(currentTrackIndex + 1);
-    }
-
-    function onTrackEnded() {
-      isPlaying = false;
-      updatePlayPauseUI();
-      nextTrack();
-    }
+    function prevTrack() { if(currentTrackIndex > 0) playTrack(currentTrackIndex - 1); }
+    function nextTrack() { if(currentTrackIndex < demoTracks.length - 1) playTrack(currentTrackIndex + 1); }
+    function onTrackEnded() { isPlaying = false; updatePlayPauseUI(); nextTrack(); }
 
     function openFullPlayer() { document.getElementById('fullPlayerModal').classList.remove('hidden'); }
     function closeFullPlayer() { 
@@ -922,15 +960,12 @@
       e.preventDefault();
       const currentTrack = demoTracks[currentTrackIndex];
       if(!currentTrack) return;
-
       const commentInput = document.getElementById('commentInput');
       const text = commentInput.value.trim();
       if(!text) return;
-
       const userName = currentUserEmail && usersDB[currentUserEmail] ? usersDB[currentUserEmail].name : "Misafir Dinleyici";
       if(!currentTrack.comments) currentTrack.comments = [];
       currentTrack.comments.push({ user: userName, text: text });
-
       saveAppData();
       renderTrackComments();
       commentInput.value = '';
@@ -940,7 +975,7 @@
       const currentTrack = demoTracks[currentTrackIndex];
       const listContainer = document.getElementById('commentsList');
       if(!currentTrack || !currentTrack.comments || currentTrack.comments.length === 0) {
-        listContainer.innerHTML = '<p class="text-xs text-gray-500 italic">Henüz yorum yapılmadı. İlk yorumu sen yaz!</p>';
+        listContainer.innerHTML = '<p class="text-xs text-gray-500 italic">Henüz yorum yapılmadı.</p>';
         return;
       }
       listContainer.innerHTML = currentTrack.comments.map(c => `
@@ -959,13 +994,11 @@
         return;
       }
       const artistName = usersDB[currentUserEmail].name;
-      
       const coverFileInput = document.getElementById('uploadCoverFile');
       let coverUrl = DEFAULT_COVER;
       if(coverFileInput.files && coverFileInput.files[0]) {
         coverUrl = URL.createObjectURL(coverFileInput.files[0]);
       }
-
       const writer = document.getElementById('uploadCreditWriter').value.trim() || artistName;
       const arranger = document.getElementById('uploadCreditArranger').value.trim() || "Zaman Perdesi";
       const label = document.getElementById('uploadCreditLabel').value.trim() || "Zaman Perdesi Music";
@@ -982,16 +1015,13 @@
         if(audioFileInput.files && audioFileInput.files[0]) {
           audioUrl = URL.createObjectURL(audioFileInput.files[0]);
         }
-
         demoTracks.push({
-          id: demoTracks.length,
-          title, artist: artistName, plays: "0", cover: coverUrl, lyrics, mediaUrl: audioUrl, type: "Tekli", writer, arranger, label, comments: []
+          id: demoTracks.length, title, artist: artistName, plays: 0, cover: coverUrl, lyrics, mediaUrl: audioUrl, type: "Tekli", writer, arranger, label, comments: []
         });
       } else if(isAlbum) {
         const albumTitle = document.getElementById('uploadAlbumTitle').value || "Yeni Albüm";
         demoTracks.push({
-          id: demoTracks.length,
-          title: albumTitle, artist: artistName, plays: "0", cover: coverUrl, lyrics: "Albüm Eseri", mediaUrl: DEFAULT_AUDIO, type: "Albüm", writer, arranger, label, comments: []
+          id: demoTracks.length, title: albumTitle, artist: artistName, plays: 0, cover: coverUrl, lyrics: "Albüm Eseri", mediaUrl: DEFAULT_AUDIO, type: "Albüm", writer, arranger, label, comments: []
         });
       } else if(isVideo) {
         const videoTitle = document.getElementById('uploadVideoTitle').value || "Yeni Klip";
@@ -1000,38 +1030,31 @@
         if(videoFileInput.files && videoFileInput.files[0]) {
           videoUrl = URL.createObjectURL(videoFileInput.files[0]);
         }
-
         demoTracks.push({
-          id: demoTracks.length,
-          title: videoTitle, artist: artistName, plays: "0", cover: coverUrl, lyrics: "Video Klip", mediaUrl: videoUrl, type: "Video Klip", writer, arranger, label, comments: []
+          id: demoTracks.length, title: videoTitle, artist: artistName, plays: 0, cover: coverUrl, lyrics: "Video Klip", mediaUrl: videoUrl, type: "Video Klip", writer, arranger, label, comments: []
         });
       }
 
       saveAppData();
       renderDynamicFeed();
       renderMyTracks();
-      alert('Tebrikler! Eseriniz manuel künye bilgileriyle yayınlandı.');
+      updateDashboardStats();
+      alert('Tebrikler! Eseriniz başarıyla yayınlandı.');
       switchTab('home');
       playTrack(demoTracks.length - 1);
     }
 
     function openEditProfileModal() {
-      if(!currentUserEmail) {
-        alert('Önce giriş yapmalısınız!');
-        openAuthModal();
-        return;
-      }
+      if(!currentUserEmail) { alert('Önce giriş yapmalısınız!'); openAuthModal(); return; }
       const u = usersDB[currentUserEmail];
       document.getElementById('editNameInput').value = u.name;
       document.getElementById('editBioInput').value = u.bio || '';
-      
       document.getElementById('editYoutubeInput').value = u.youtube || '';
       document.getElementById('editInstagramInput').value = u.instagram || '';
       document.getElementById('editSpotifyInput').value = u.spotify || '';
       document.getElementById('editTiktokInput').value = u.tiktok || '';
       document.getElementById('editFacebookInput').value = u.facebook || '';
       document.getElementById('editTwitterInput').value = u.twitter || '';
-
       document.getElementById('editProfileModal').classList.remove('hidden');
     }
     function closeEditProfileModal() { document.getElementById('editProfileModal').classList.add('hidden'); }
@@ -1039,10 +1062,8 @@
     function handleProfileUpdate(e) {
       e.preventDefault();
       if(!currentUserEmail) return;
-      
       usersDB[currentUserEmail].name = document.getElementById('editNameInput').value;
       usersDB[currentUserEmail].bio = document.getElementById('editBioInput').value;
-      
       usersDB[currentUserEmail].youtube = document.getElementById('editYoutubeInput').value;
       usersDB[currentUserEmail].instagram = document.getElementById('editInstagramInput').value;
       usersDB[currentUserEmail].spotify = document.getElementById('editSpotifyInput').value;
@@ -1052,15 +1073,13 @@
 
       const avatarFileInput = document.getElementById('editAvatarFile');
       if(avatarFileInput.files && avatarFileInput.files[0]) {
-        const avatarUrl = URL.createObjectURL(avatarFileInput.files[0]);
-        usersDB[currentUserEmail].avatar = avatarUrl;
+        usersDB[currentUserEmail].avatar = URL.createObjectURL(avatarFileInput.files[0]);
       }
-
       saveAppData();
       checkAuthSession();
       closeEditProfileModal();
       renderArtists();
-      alert('Profil ve 6 Sosyal Medya bağlantınız başarıyla güncellendi!');
+      alert('Profil güncellendi!');
     }
 
     function openAuthModal() { document.getElementById('authModal').classList.remove('hidden'); }
@@ -1095,67 +1114,48 @@
     function handleLogin(e) { 
       e.preventDefault(); 
       const email = document.getElementById('loginEmail').value.trim();
-      if(!usersDB[email]) {
-        alert('Bu e-posta ile kayıtlı hesap bulunamadı!');
-        return;
-      }
+      if(!usersDB[email]) { alert('Hesap bulunamadı!'); return; }
       currentUserEmail = email;
       saveAppData();
       checkAuthSession();
       closeAuthModal(); 
-      alert('Başarıyla giriş yapıldı!');
+      alert('Giriş yapıldı!');
     }
 
     function handleRegister(e) { 
       e.preventDefault(); 
       const name = document.getElementById('regName').value.trim();
       const email = document.getElementById('regEmail').value.trim();
-
-      usersDB[email] = {
-        name: name,
-        email: email,
-        bio: "Zaman Perdesi Sanatçısı",
-        avatar: DEFAULT_AVATAR,
-        youtube: '', instagram: '', spotify: '', tiktok: '', facebook: '', twitter: ''
-      };
-
+      usersDB[email] = { name, email, bio: "Zaman Perdesi Sanatçısı", avatar: DEFAULT_AVATAR, youtube:'', instagram:'', spotify:'', tiktok:'', facebook:'', twitter:'' };
       currentUserEmail = email;
       saveAppData();
       checkAuthSession();
       renderArtists();
       closeAuthModal(); 
-      alert('Kayıt oluşturuldu ve giriş yapıldı!');
+      alert('Kayıt oluşturuldu!');
     }
 
     function handleForgot(e) {
       e.preventDefault();
       const email = document.getElementById('forgotEmail').value.trim();
-      const newPass = document.getElementById('forgotNewPass').value.trim();
-
-      if(!usersDB[email]) {
-        alert('Bu e-posta adresine ait kayıt bulunamadı!');
-        return;
-      }
-
-      alert('Şifreniz başarıyla güncellendi! Şimdi yeni şifrenizle giriş yapabilirsiniz.');
+      if(!usersDB[email]) { alert('Kayıtlı e-posta bulunamadı!'); return; }
+      alert('Şifre güncellendi!');
       switchAuthMode('login');
     }
 
     function handleAdminLogin(e) { 
       e.preventDefault(); 
       const adminEmail = document.getElementById('adminEmail').value.trim();
-      if(!usersDB[adminEmail]) {
-        usersDB[adminEmail] = { name: "Platform Admin", email: adminEmail, bio: "Sistem Yöneticisi", avatar: DEFAULT_AVATAR };
-      }
+      if(!usersDB[adminEmail]) { usersDB[adminEmail] = { name: "Admin", email: adminEmail, bio: "Sistem Yöneticisi", avatar: DEFAULT_AVATAR }; }
       currentUserEmail = adminEmail;
       saveAppData();
       checkAuthSession();
       closeAuthModal(); 
-      alert('Admin olarak giriş yapıldı!');
+      alert('Admin girişi yapıldı!');
     }
 
     function handleLogout() {
-      if(confirm('Hesaptan çıkış yapmak istediğinize emin misiniz?')) {
+      if(confirm('Çıkış yapılsın mı?')) {
         currentUserEmail = null;
         localStorage.removeItem('zaman_current_user');
         checkAuthSession();
@@ -1168,31 +1168,21 @@
       const current = demoTracks[currentTrackIndex];
       if(!current) return;
       const found = favorites.find(f => f.id === current.id);
-      if(!found) {
-        favorites.push(current);
-        alert('Favorilere eklendi!');
-      } else {
-        favorites = favorites.filter(f => f.id !== current.id);
-        alert('Favorilerden çıkarıldı!');
-      }
+      if(!found) { favorites.push(current); alert('Favorilere eklendi!'); } 
+      else { favorites = favorites.filter(f => f.id !== current.id); alert('Favorilerden çıkarıldı!'); }
       renderFavorites();
+      updateDashboardStats();
     }
 
     function renderFavorites() {
       const container = document.getElementById('favoritesListContainer');
       if(!container) return;
-      if(favorites.length === 0) {
-        container.innerHTML = '<p class="text-xs text-gray-500">Henüz favori eklenmedi.</p>';
-        return;
-      }
+      if(favorites.length === 0) { container.innerHTML = '<p class="text-xs text-gray-500">Henüz favori eklenmedi.</p>'; return; }
       container.innerHTML = favorites.map(t => `
         <div onclick="playTrack(${t.id})" class="flex items-center justify-between p-2.5 bg-brand-card rounded-xl border border-gray-800 cursor-pointer">
           <div class="flex items-center gap-2.5">
             <img src="${t.cover || DEFAULT_COVER}" class="w-10 h-10 rounded-lg object-cover">
-            <div>
-              <h4 class="text-xs font-bold text-white">${t.title}</h4>
-              <p class="text-[10px] text-gray-400">${t.artist}</p>
-            </div>
+            <div><h4 class="text-xs font-bold text-white">${t.title}</h4><p class="text-[10px] text-gray-400">${t.artist}</p></div>
           </div>
           <i class="fa-solid fa-heart text-red-500 text-xs"></i>
         </div>
@@ -1200,17 +1190,66 @@
       setupImageErrorHandlers();
     }
 
+    // ÇALMA LİSTESİ FONKSİYONLARI
+    function openCreatePlaylistModal() { document.getElementById('createPlaylistModal').classList.remove('hidden'); }
+    function closeCreatePlaylistModal() { document.getElementById('createPlaylistModal').classList.add('hidden'); }
+
+    function handleCreatePlaylist(e) {
+      e.preventDefault();
+      const name = document.getElementById('playlistNameInput').value.trim();
+      if(!name) return;
+      userPlaylists.push({ id: Date.now(), name: name, tracks: [] });
+      saveAppData();
+      renderPlaylists();
+      closeCreatePlaylistModal();
+      document.getElementById('playlistNameInput').value = '';
+      alert('Çalma listesi oluşturuldu!');
+    }
+
+    function renderPlaylists() {
+      const container = document.getElementById('playlistsContainer');
+      if(!container) return;
+      if(userPlaylists.length === 0) {
+        container.innerHTML = '<p class="text-xs text-gray-500 italic">Henüz çalma listesi oluşturulmadı.</p>';
+        return;
+      }
+      container.innerHTML = userPlaylists.map(p => `
+        <div class="p-3 bg-brand-card rounded-xl border border-gray-800 flex items-center justify-between">
+          <div>
+            <h4 class="text-xs font-bold text-white"><i class="fa-solid fa-list text-brand-accent"></i> ${p.name}</h4>
+            <p class="text-[10px] text-gray-400">${p.tracks.length} Parça</p>
+          </div>
+          <button onclick="deletePlaylist(${p.id})" class="text-red-400 hover:text-red-300 text-xs p-1"><i class="fa-solid fa-trash"></i></button>
+        </div>
+      `).join('');
+    }
+
+    function deletePlaylist(id) {
+      if(confirm('Bu listeyi silmek istiyor musun?')) {
+        userPlaylists = userPlaylists.filter(p => p.id !== id);
+        saveAppData();
+        renderPlaylists();
+      }
+    }
+
     function toggleProfileSubTab(tab) {
+      document.getElementById('myTracksView').classList.add('hidden');
+      document.getElementById('favoritesView').classList.add('hidden');
+      document.getElementById('playlistsView').classList.add('hidden');
+
+      document.getElementById('subTabMyTracks').className = "pb-2 px-2 font-semibold text-gray-400";
+      document.getElementById('subTabFavs').className = "pb-2 px-2 font-semibold text-gray-400";
+      document.getElementById('subTabPlaylists').className = "pb-2 px-2 font-semibold text-gray-400";
+
       if(tab === 'myTracks') {
         document.getElementById('myTracksView').classList.remove('hidden');
-        document.getElementById('favoritesView').classList.add('hidden');
-        document.getElementById('subTabMyTracks').className = "pb-2 px-3 font-semibold text-brand-accent border-b-2 border-brand-accent";
-        document.getElementById('subTabFavs').className = "pb-2 px-3 font-semibold text-gray-400";
-      } else {
-        document.getElementById('myTracksView').classList.add('hidden');
+        document.getElementById('subTabMyTracks').className = "pb-2 px-2 font-semibold text-brand-accent border-b-2 border-brand-accent";
+      } else if(tab === 'favorites') {
         document.getElementById('favoritesView').classList.remove('hidden');
-        document.getElementById('subTabFavs').className = "pb-2 px-3 font-semibold text-brand-accent border-b-2 border-brand-accent";
-        document.getElementById('subTabMyTracks').className = "pb-2 px-3 font-semibold text-gray-400";
+        document.getElementById('subTabFavs').className = "pb-2 px-2 font-semibold text-brand-accent border-b-2 border-brand-accent";
+      } else if(tab === 'playlists') {
+        document.getElementById('playlistsView').classList.remove('hidden');
+        document.getElementById('subTabPlaylists').className = "pb-2 px-2 font-semibold text-brand-accent border-b-2 border-brand-accent";
       }
     }
 
@@ -1231,7 +1270,7 @@
           </div>
           <i class="fa-solid fa-play text-brand-accent text-xs"></i>
         </div>
-      `).join('') : '<p class="text-xs text-gray-500 italic">Bu sanatçının henüz yayınlanmış eseri yok.</p>';
+      `).join('') : '<p class="text-xs text-gray-500 italic">Bu sanatçının eseri yok.</p>';
 
       document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
       document.getElementById('artistDetailView').classList.remove('hidden');
