@@ -36,32 +36,10 @@
   </script>
 
   <style>
-    ::-webkit-scrollbar {
-      width: 4px;
-      height: 4px;
-    }
-    ::-webkit-scrollbar-track {
-      background: #0a0a0c;
-    }
-    ::-webkit-scrollbar-thumb {
-      background: #242731;
-      border-radius: 4px;
-    }
-    ::-webkit-scrollbar-thumb:hover {
-      background: #00d2ff;
-    }
-    .glass-effect {
-      background: rgba(26, 28, 35, 0.75);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-    }
-    .glow-blue {
-      box-shadow: 0 0 15px rgba(0, 210, 255, 0.25);
-    }
-    .active-tab {
-      color: #00d2ff;
-      border-bottom: 2px solid #00d2ff;
-    }
+    ::-webkit-scrollbar { width: 4px; height: 4px; }
+    ::-webkit-scrollbar-track { background: #0a0a0c; }
+    ::-webkit-scrollbar-thumb { background: #242731; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #00d2ff; }
     body {
       user-select: none;
       -webkit-tap-highlight-color: transparent;
@@ -90,7 +68,6 @@
       </div>
 
       <div class="flex items-center gap-2">
-        <!-- Auth Profile Badge or Login Button -->
         <div id="authStatusBtn" onclick="openAuthModal()" class="flex items-center gap-1.5 bg-brand-card hover:bg-brand-hover border border-gray-800 px-3 py-1.5 rounded-full cursor-pointer transition">
           <i class="fa-solid fa-user-check text-brand-accent text-xs"></i>
           <span id="headerUserName" class="text-xs font-semibold max-w-[80px] truncate">Giriş Yap</span>
@@ -114,17 +91,14 @@
     <!-- MAIN SCROLLABLE CONTENT AREA -->
     <main id="mainContent" class="flex-1 overflow-y-auto pb-32 p-4 space-y-6">
 
-      <!-- SEARCH RESULTS OVERLAY (DYNAMIC) -->
+      <!-- SEARCH RESULTS OVERLAY -->
       <section id="searchResultsSection" class="hidden space-y-4">
         <h2 class="text-xs font-bold uppercase tracking-wider text-brand-accent">Arama Sonuçları</h2>
-        <div id="searchResultsList" class="space-y-2">
-          <!-- JS dynamic search items -->
-        </div>
+        <div id="searchResultsList" class="space-y-2"></div>
       </section>
 
-      <!-- TAB 1: ANA SAYFA (FEED) -->
+      <!-- TAB 1: ANA SAYFA -->
       <section id="tab-home" class="tab-content space-y-6">
-        <!-- Banner Carousel / Featured -->
         <div class="relative rounded-2xl overflow-hidden bg-gradient-to-r from-blue-900/40 via-brand-card to-purple-900/30 p-4 border border-cyan-500/20 shadow-lg">
           <div class="relative z-10 space-y-2">
             <span class="bg-brand-accent/20 text-brand-accent text-[10px] font-bold px-2.5 py-0.5 rounded-full border border-brand-accent/30 uppercase">
@@ -132,48 +106,24 @@
             </span>
             <h2 class="text-lg font-bold text-white leading-tight">Kalbim & Gece Sefası</h2>
             <p class="text-xs text-gray-300">Hamza Kalafat feat. Karslı Arap</p>
-            <button onclick="playTrack(0)" class="mt-2 bg-gradient-to-r from-brand-accent to-brand-blue text-black font-bold text-xs px-4 py-2 rounded-full flex items-center gap-2 hover:opacity-90 transition active:scale-95 shadow-md">
+            <button onclick="playTrack(0)" class="mt-2 bg-gradient-to-r from-brand-accent to-brand-blue text-black font-bold text-xs px-4 py-2 rounded-full flex items-center gap-2 hover:opacity-95 transition shadow-md">
               <i class="fa-solid fa-play"></i> Hemen Dinle
             </button>
           </div>
           <i class="fa-solid fa-compact-disc absolute -right-4 -bottom-4 text-8xl text-white/5 rotate-12"></i>
         </div>
 
-        <!-- Popüler Şarkırlar -->
         <div>
           <div class="flex items-center justify-between mb-3">
             <h3 class="text-sm font-bold text-white flex items-center gap-2">
               <i class="fa-solid fa-fire text-brand-accent"></i> Popüler Tekliler
             </h3>
-            <span class="text-[11px] text-gray-400">Tümü</span>
           </div>
-
-          <div id="popularTracksList" class="space-y-2">
-            <!-- Dynamic JS Track List -->
-          </div>
-        </div>
-
-        <!-- Son Yüklenen Albümler -->
-        <div>
-          <h3 class="text-sm font-bold text-white mb-3 flex items-center gap-2">
-            <i class="fa-solid fa-compact-disc text-brand-accent"></i> Yeni Albümler
-          </h3>
-          <div class="flex gap-3 overflow-x-auto pb-2 -mx-4 px-4 snap-x">
-            <div onclick="playTrack(2)" class="snap-start shrink-0 w-36 bg-brand-card p-2.5 rounded-xl border border-gray-800/80 hover:border-brand-accent/50 transition cursor-pointer">
-              <img src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=300" class="w-full h-32 object-cover rounded-lg mb-2 shadow" alt="Albüm">
-              <h4 class="text-xs font-bold text-white truncate">Sonsuz Karanlık</h4>
-              <p class="text-[10px] text-gray-400 truncate">Karslı Arap • 12 Parça</p>
-            </div>
-            <div onclick="playTrack(0)" class="snap-start shrink-0 w-36 bg-brand-card p-2.5 rounded-xl border border-gray-800/80 hover:border-brand-accent/50 transition cursor-pointer">
-              <img src="https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=300" class="w-full h-32 object-cover rounded-lg mb-2 shadow" alt="Albüm">
-              <h4 class="text-xs font-bold text-white truncate">Zamanın Ötesinde</h4>
-              <p class="text-[10px] text-gray-400 truncate">Hamza Kalafat • Single</p>
-            </div>
-          </div>
+          <div id="popularTracksList" class="space-y-2"></div>
         </div>
       </section>
 
-      <!-- TAB 2: SANATÇI PROFİLLERİ (DIRECTORY) -->
+      <!-- TAB 2: SANATÇILAR -->
       <section id="tab-artists" class="tab-content hidden space-y-4">
         <div>
           <h2 class="text-base font-bold text-white flex items-center gap-2">
@@ -181,13 +131,10 @@
           </h2>
           <p class="text-xs text-gray-400 mt-0.5">Platformdaki tüm mavi tikli bağımsız sanatçılar</p>
         </div>
-
-        <div id="artistsGrid" class="grid grid-cols-2 gap-3">
-          <!-- Dynamic JS Artist Cards -->
-        </div>
+        <div id="artistsGrid" class="grid grid-cols-2 gap-3"></div>
       </section>
 
-      <!-- TAB 3: İÇERİK YÜKLE (UPLOAD CENTER) -->
+      <!-- TAB 3: YÜKLE -->
       <section id="tab-upload" class="tab-content hidden space-y-5">
         <div>
           <h2 class="text-base font-bold text-white flex items-center gap-2">
@@ -196,85 +143,36 @@
           <p class="text-xs text-gray-400 mt-0.5">Eserini Zaman Perdesi Music ile tüm dünyaya duyur.</p>
         </div>
 
-        <!-- Toggle Single / Album / Video -->
-        <div class="flex p-1 bg-brand-card rounded-xl border border-gray-800 text-[11px]">
-          <button id="singleTypeBtn" onclick="switchUploadType('single')" class="flex-1 py-1.5 font-semibold rounded-lg bg-brand-accent text-black shadow transition">
-            🎵 Tekli (Single)
-          </button>
-          <button id="albumTypeBtn" onclick="switchUploadType('album')" class="flex-1 py-1.5 font-semibold rounded-lg text-gray-400 hover:text-white transition">
-            💽 Albüm
-          </button>
-          <button id="videoTypeBtn" onclick="switchUploadType('video')" class="flex-1 py-1.5 font-semibold rounded-lg text-gray-400 hover:text-white transition">
-            🎬 Video (Klip)
-          </button>
-        </div>
-
-        <!-- UPLOAD FORM -->
         <form id="uploadForm" onsubmit="handleUploadSubmit(event)" class="space-y-4">
           <div class="space-y-1">
-            <label class="text-xs font-medium text-gray-300">Albüm / Single / Klip Kapağı</label>
+            <label class="text-xs font-medium text-gray-300">Albüm / Single Kapağı</label>
             <div class="border-2 border-dashed border-gray-700 hover:border-brand-accent bg-brand-card/50 rounded-xl p-4 text-center cursor-pointer transition">
               <i class="fa-solid fa-image text-2xl text-gray-500 mb-1"></i>
               <p class="text-xs text-gray-400">Görsel Seç (JPG/PNG)</p>
-              <span class="text-[10px] text-gray-500">Maksimum 5MB</span>
             </div>
           </div>
-
-          <div id="singleFields" class="space-y-3">
-            <div>
-              <label class="text-xs font-medium text-gray-300">Şarkı Adı</label>
-              <input type="text" placeholder="Örn: Kalbim" class="w-full bg-brand-card text-xs text-white p-2.5 rounded-xl border border-gray-800 focus:outline-none focus:border-brand-accent mt-1">
-            </div>
-
-            <div>
-              <label class="text-xs font-medium text-gray-300">Ses Dosyası (MP3 / WAV)</label>
-              <input type="file" accept="audio/*" class="w-full text-xs text-gray-400 bg-brand-card p-2 rounded-xl border border-gray-800 mt-1 file:mr-3 file:py-1 file:px-2 file:rounded-lg file:border-0 file:text-xs file:bg-brand-accent file:text-black file:font-semibold">
-            </div>
-
-            <div>
-              <label class="text-xs font-medium text-gray-300">Şarkı Sözleri (Lyrics)</label>
-              <textarea rows="3" placeholder="Şarkının tüm sözlerini yazın..." class="w-full bg-brand-card text-xs text-white p-2.5 rounded-xl border border-gray-800 focus:outline-none focus:border-brand-accent mt-1"></textarea>
-            </div>
-
-            <div class="bg-brand-card p-3 rounded-xl border border-gray-800 space-y-2">
-              <span class="text-xs font-bold text-brand-accent block">📜 Şarkı Künyesi (Credits)</span>
-              <div class="grid grid-cols-2 gap-2">
-                <input type="text" placeholder="Söz Yazarı" class="bg-brand-dark text-xs p-2 rounded-lg border border-gray-800 text-white">
-                <input type="text" placeholder="Beste / Müzik" class="bg-brand-dark text-xs p-2 rounded-lg border border-gray-800 text-white">
-                <input type="text" placeholder="Aranjör (Arranger)" class="bg-brand-dark text-xs p-2 rounded-lg border border-gray-800 text-white">
-                <input type="text" placeholder="Mix & Mastering" class="bg-brand-dark text-xs p-2 rounded-lg border border-gray-800 text-white">
-              </div>
-            </div>
+          <div>
+            <label class="text-xs font-medium text-gray-300">Şarkı Adı</label>
+            <input type="text" placeholder="Örn: Kalbim" class="w-full bg-brand-card text-xs text-white p-2.5 rounded-xl border border-gray-800 mt-1">
           </div>
-
-          <div id="albumFields" class="hidden space-y-3">
-            <div>
-              <label class="text-xs font-medium text-gray-300">Albüm Adı</label>
-              <input type="text" placeholder="Örn: Gece Sefası Albümü" class="w-full bg-brand-card text-xs text-white p-2.5 rounded-xl border border-gray-800 focus:outline-none focus:border-brand-accent mt-1">
-            </div>
+          <div>
+            <label class="text-xs font-medium text-gray-300">Ses Dosyası (MP3 / WAV)</label>
+            <input type="file" accept="audio/*" class="w-full text-xs text-gray-400 bg-brand-card p-2 rounded-xl border border-gray-800 mt-1">
           </div>
-
-          <div id="videoFields" class="hidden space-y-3">
-            <div>
-              <label class="text-xs font-medium text-gray-300">Video / Klip Adı</label>
-              <input type="text" placeholder="Örn: Kalbim Official Music Video" class="w-full bg-brand-card text-xs text-white p-2.5 rounded-xl border border-gray-800 focus:outline-none focus:border-brand-accent mt-1">
-            </div>
-          </div>
-
-          <button type="submit" class="w-full bg-gradient-to-r from-brand-accent to-brand-blue text-black font-bold text-xs py-3 rounded-xl shadow-lg hover:opacity-95 transition active:scale-98">
+          <button type="submit" class="w-full bg-gradient-to-r from-brand-accent to-brand-blue text-black font-bold text-xs py-3 rounded-xl shadow-lg hover:opacity-95 transition">
             🚀 Platforma Yayınla (Mavi Tikli)
           </button>
         </form>
       </section>
 
-      <!-- TAB 4: PROFİLİM & FAVORİLER -->
+      <!-- TAB 4: PROFİLİM -->
       <section id="tab-profile" class="tab-content hidden space-y-5">
         <div class="flex items-center gap-3 bg-brand-card p-3.5 rounded-2xl border border-gray-800">
           <img id="userAvatar" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200" class="w-14 h-14 rounded-full object-cover border-2 border-brand-accent" alt="Profile">
           <div>
             <div class="flex items-center gap-1.5">
               <h3 id="profileNameDisplay" class="text-sm font-bold text-white">Misafir Kullanıcı</h3>
-              <i id="profileBadgeIcon" class="fa-solid fa-circle-check text-brand-accent text-xs" title="Onaylı Sanatçı"></i>
+              <i id="profileBadgeIcon" class="fa-solid fa-circle-check text-brand-accent text-xs"></i>
             </div>
             <p id="profileEmailDisplay" class="text-[11px] text-gray-400">Giriş yapılmadı</p>
             <span id="profileRoleTag" class="inline-block mt-1 bg-brand-accent/20 text-brand-accent text-[10px] px-2 py-0.5 rounded-full border border-brand-accent/30 font-medium">
@@ -289,16 +187,11 @@
         </div>
 
         <div class="space-y-3">
-          <div class="flex border-b border-gray-800 text-xs justify-between items-center">
-            <div class="flex">
-              <button onclick="toggleProfileSubTab('myTracks')" id="subTabMyTracks" class="pb-2 px-3 font-semibold text-brand-accent border-b-2 border-brand-accent">
-                🎵 İçeriklerim
-              </button>
-              <button onclick="toggleProfileSubTab('favorites')" id="subTabFavs" class="pb-2 px-3 font-semibold text-gray-400">
-                ❤️ Favorilerim
-              </button>
-            </div>
-            <button onclick="handleLogout()" class="text-red-400 hover:text-red-300 text-xs pb-2 px-2 font-semibold flex items-center gap-1">
+          <div class="flex border-b border-gray-800 text-xs justify-between items-center pb-1">
+            <button onclick="toggleProfileSubTab('myTracks')" id="subTabMyTracks" class="pb-2 px-3 font-semibold text-brand-accent border-b-2 border-brand-accent">
+              🎵 İçeriklerim
+            </button>
+            <button onclick="handleLogout()" class="text-red-400 hover:text-red-300 text-xs pb-2 px-3 font-semibold flex items-center gap-1.5 bg-red-950/30 border border-red-900/50 rounded-lg transition">
               <i class="fa-solid fa-right-from-bracket"></i> Çıkış Yap
             </button>
           </div>
@@ -318,24 +211,23 @@
         </div>
       </section>
 
-      <!-- ARTIST DETAIL PROFILE VIEW -->
+      <!-- ARTIST DETAIL VIEW -->
       <section id="artistDetailView" class="hidden space-y-4">
         <button onclick="closeArtistDetail()" class="text-xs text-brand-accent flex items-center gap-1 font-semibold">
           <i class="fa-solid fa-arrow-left"></i> Geri Dön
         </button>
-        <div class="text-center space-y-2 bg-brand-card p-5 rounded-2xl border border-gray-800 relative">
+        <div class="text-center space-y-2 bg-brand-card p-5 rounded-2xl border border-gray-800">
           <img id="artistDetailImg" src="" class="w-20 h-20 rounded-full mx-auto object-cover border-2 border-brand-accent shadow-lg">
-          <div class="flex items-center justify-center gap-1.5">
-            <h2 id="artistDetailName" class="text-base font-bold text-white"></h2>
-            <i class="fa-solid fa-circle-check text-brand-accent text-sm" title="Onaylı Sanatçı"></i>
-          </div>
-          <p id="artistDetailBio" class="text-xs text-gray-400 max-w-xs mx-auto">Zaman Perdesi Music Onaylı Sanatçısı.</p>
+          <h2 id="artistDetailName" class="text-base font-bold text-white"></h2>
+          <p id="artistDetailBio" class="text-xs text-gray-400"></p>
         </div>
+        <h3 class="text-xs font-bold text-gray-300 uppercase tracking-wider">Sanatçının Şarkıları</h3>
+        <div id="artistTracksList" class="space-y-2"></div>
       </section>
 
     </main>
 
-    <!-- STICKY BOTTOM PLAYER (MINI) -->
+    <!-- STICKY BOTTOM PLAYER -->
     <div id="miniPlayer" class="absolute bottom-[58px] left-0 right-0 bg-brand-dark/95 backdrop-blur-md border-t border-cyan-500/30 p-2.5 px-3 flex items-center justify-between z-30 cursor-pointer shadow-2xl">
       <div onclick="openFullPlayer()" class="flex items-center gap-2.5 min-w-0 flex-1">
         <img id="playerCover" src="https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=100" class="w-10 h-10 rounded-lg object-cover shadow border border-gray-700">
@@ -344,56 +236,57 @@
           <p id="playerArtist" class="text-[10px] text-brand-accent truncate">Hamza Kalafat</p>
         </div>
       </div>
-
       <div class="flex items-center gap-3">
-        <button onclick="toggleLikeCurrent()" id="likeBtn" class="text-gray-400 hover:text-red-500 transition">
-          <i class="fa-regular fa-heart text-sm"></i>
-        </button>
-        <button onclick="togglePlayPause(event)" id="playPauseBtn" class="w-8 h-8 rounded-full bg-brand-accent text-black flex items-center justify-center font-bold shadow-md hover:scale-105 transition">
+        <button onclick="togglePlayPause(event)" id="playPauseBtn" class="w-8 h-8 rounded-full bg-brand-accent text-black flex items-center justify-center font-bold shadow-md">
           <i class="fa-solid fa-pause text-xs"></i>
         </button>
-        <button onclick="openFullPlayer()" class="text-gray-400 hover:text-white">
-          <i class="fa-solid fa-chevron-up text-xs"></i>
-        </button>
+        <button onclick="openFullPlayer()" class="text-gray-400 hover:text-white"><i class="fa-solid fa-chevron-up text-xs"></i></button>
       </div>
     </div>
 
     <!-- FULL PLAYER MODAL -->
-    <div id="fullPlayerModal" class="hidden absolute inset-0 bg-brand-black/98 backdrop-blur-xl z-50 flex flex-col p-5 overflow-y-auto space-y-5 animate-fade-in">
+    <div id="fullPlayerModal" class="hidden absolute inset-0 bg-brand-black/98 backdrop-blur-xl z-50 flex flex-col p-5 overflow-y-auto space-y-5">
       <div class="flex items-center justify-between border-b border-gray-800/80 pb-3">
-        <button onclick="closeFullPlayer()" class="text-gray-400 hover:text-white p-1">
-          <i class="fa-solid fa-chevron-down text-lg"></i>
-        </button>
+        <button onclick="closeFullPlayer()" class="text-gray-400 hover:text-white p-1"><i class="fa-solid fa-chevron-down text-lg"></i></button>
         <span class="text-xs font-bold uppercase tracking-widest text-brand-accent">Şimdi Çalıyor</span>
       </div>
-
       <div class="text-center pt-2">
         <img id="fullPlayerCover" src="https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=400" class="w-56 h-56 rounded-2xl mx-auto object-cover shadow-2xl border border-gray-800">
       </div>
-
       <div class="text-center space-y-1">
         <h2 id="fullPlayerTitle" class="text-base font-extrabold text-white">Kalbim</h2>
         <p id="fullPlayerArtist" class="text-xs text-brand-accent font-semibold">Hamza Kalafat</p>
       </div>
+      <div class="bg-brand-card rounded-2xl p-4 border border-gray-800 space-y-3">
+        <div class="flex border-b border-gray-800 text-xs">
+          <button onclick="switchPlayerSubTab('lyrics')" id="playerTabLyrics" class="pb-2 px-3 font-semibold text-brand-accent border-b-2 border-brand-accent">📝 Sözler</button>
+          <button onclick="switchPlayerSubTab('credits')" id="playerTabCredits" class="pb-2 px-3 font-semibold text-gray-400">📜 Künye</button>
+        </div>
+        <div id="playerLyricsContent" class="text-xs text-gray-300 space-y-2 leading-relaxed max-h-40 overflow-y-auto">
+          <p id="lyricsText">Gözlerin bir gece vakti düşer kalbime...<br>Zaman perdesi aralanır usulca.</p>
+        </div>
+        <div id="playerCreditsContent" class="hidden text-xs space-y-1.5 text-gray-300">
+          <div class="flex justify-between border-b border-gray-800 pb-1"><span class="text-gray-500">Söz Yazarı:</span><span id="creditWriter" class="font-semibold text-white">Hamza Kalafat</span></div>
+          <div class="flex justify-between border-b border-gray-800 pb-1"><span class="text-gray-500">Beste / Müzik:</span><span id="creditComposer" class="font-semibold text-white">Hamza Kalafat</span></div>
+          <div class="flex justify-between"><span class="text-gray-500">Aranjör:</span><span id="creditArranger" class="font-semibold text-white">Ahmet Yıldız</span></div>
+        </div>
+      </div>
     </div>
 
-    <!-- BOTTOM APP NAVIGATION TABS BAR -->
+    <!-- BOTTOM NAVIGATION TABS -->
     <nav class="absolute bottom-0 left-0 right-0 bg-brand-dark/95 backdrop-blur-lg border-t border-gray-800 flex justify-around py-2.5 z-40">
       <button onclick="switchTab('home')" id="nav-home" class="flex flex-col items-center gap-1 text-brand-accent">
         <i class="fa-solid fa-house text-base"></i>
         <span class="text-[10px] font-semibold">Ana Sayfa</span>
       </button>
-
       <button onclick="switchTab('artists')" id="nav-artists" class="flex flex-col items-center gap-1 text-gray-400 hover:text-white">
         <i class="fa-solid fa-users text-base"></i>
         <span class="text-[10px] font-semibold">Sanatçılar</span>
       </button>
-
       <button onclick="switchTab('upload')" id="nav-upload" class="flex flex-col items-center gap-1 text-gray-400 hover:text-white">
         <i class="fa-solid fa-circle-plus text-base"></i>
         <span class="text-[10px] font-semibold">Yükle</span>
       </button>
-
       <button onclick="switchTab('profile')" id="nav-profile" class="flex flex-col items-center gap-1 text-gray-400 hover:text-white">
         <i class="fa-solid fa-user text-base"></i>
         <span class="text-[10px] font-semibold">Profilim</span>
@@ -403,54 +296,31 @@
     <!-- AUTHENTICATION MODAL -->
     <div id="authModal" class="hidden absolute inset-0 bg-black/85 backdrop-blur-md z-50 flex items-center justify-center p-4">
       <div class="w-full max-w-sm bg-brand-card p-5 rounded-2xl border border-gray-800 space-y-4 shadow-2xl relative">
-        <button onclick="closeAuthModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white">
-          <i class="fa-solid fa-xmark text-lg"></i>
-        </button>
+        <button onclick="closeAuthModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
 
         <div class="flex border-b border-gray-800 pb-2 gap-3 text-xs font-bold">
           <button id="authTabLogin" onclick="switchAuthMode('login')" class="text-brand-accent border-b-2 border-brand-accent pb-1">Giriş Yap</button>
           <button id="authTabRegister" onclick="switchAuthMode('register')" class="text-gray-400 pb-1">Kayıt Ol</button>
         </div>
 
-        <!-- LOGIN FORM -->
         <form id="loginForm" onsubmit="handleLogin(event)" class="space-y-3">
-          <div>
-            <label class="text-xs text-gray-300 font-medium">E-posta Adresi</label>
-            <input type="email" id="loginEmail" required placeholder="ornek@zamanperdesi.com" class="w-full bg-brand-dark text-xs text-white p-2.5 rounded-xl border border-gray-800 focus:outline-none focus:border-brand-accent mt-1">
-          </div>
-          <div>
-            <label class="text-xs text-gray-300 font-medium">Şifre</label>
-            <input type="password" id="loginPassword" required placeholder="••••••••" class="w-full bg-brand-dark text-xs text-white p-2.5 rounded-xl border border-gray-800 focus:outline-none focus:border-brand-accent mt-1">
-          </div>
-          <button type="submit" class="w-full bg-brand-accent text-black font-bold text-xs py-2.5 rounded-xl hover:opacity-90 transition">
-            Giriş Yap
-          </button>
+          <div><label class="text-xs text-gray-300 font-medium">E-posta Adresi</label><input type="email" id="loginEmail" required class="w-full bg-brand-dark text-xs text-white p-2.5 rounded-xl border border-gray-800 mt-1"></div>
+          <div><label class="text-xs text-gray-300 font-medium">Şifre</label><input type="password" id="loginPassword" required class="w-full bg-brand-dark text-xs text-white p-2.5 rounded-xl border border-gray-800 mt-1"></div>
+          <button type="submit" class="w-full bg-brand-accent text-black font-bold text-xs py-2.5 rounded-xl transition">Giriş Yap</button>
         </form>
 
-        <!-- REGISTER FORM -->
         <form id="registerForm" onsubmit="handleRegister(event)" class="hidden space-y-3">
-          <div>
-            <label class="text-xs text-gray-300 font-medium">Sanatçı / Kullanıcı Adı</label>
-            <input type="text" id="regName" required placeholder="Örn: Hamza Kalafat" class="w-full bg-brand-dark text-xs text-white p-2.5 rounded-xl border border-gray-800 focus:outline-none focus:border-brand-accent mt-1">
-          </div>
-          <div>
-            <label class="text-xs text-gray-300 font-medium">E-posta Adresi</label>
-            <input type="email" id="regEmail" required placeholder="ornek@zamanperdesi.com" class="w-full bg-brand-dark text-xs text-white p-2.5 rounded-xl border border-gray-800 focus:outline-none focus:border-brand-accent mt-1">
-          </div>
-          <div>
-            <label class="text-xs text-gray-300 font-medium">Şifre</label>
-            <input type="password" id="regPassword" required placeholder="••••••••" class="w-full bg-brand-dark text-xs text-white p-2.5 rounded-xl border border-gray-800 focus:outline-none focus:border-brand-accent mt-1">
-          </div>
-          <button type="submit" class="w-full bg-gradient-to-r from-brand-accent to-brand-blue text-black font-bold text-xs py-2.5 rounded-xl hover:opacity-90 transition">
-            Kayıt Ol & Otomatik Mavi Tik Al
-          </button>
+          <div><label class="text-xs text-gray-300 font-medium">Sanatçı / Kullanıcı Adı</label><input type="text" id="regName" required class="w-full bg-brand-dark text-xs text-white p-2.5 rounded-xl border border-gray-800 mt-1"></div>
+          <div><label class="text-xs text-gray-300 font-medium">E-posta Adresi</label><input type="email" id="regEmail" required class="w-full bg-brand-dark text-xs text-white p-2.5 rounded-xl border border-gray-800 mt-1"></div>
+          <div><label class="text-xs text-gray-300 font-medium">Şifre</label><input type="password" id="regPassword" required class="w-full bg-brand-dark text-xs text-white p-2.5 rounded-xl border border-gray-800 mt-1"></div>
+          <button type="submit" class="w-full bg-gradient-to-r from-brand-accent to-brand-blue text-black font-bold text-xs py-2.5 rounded-xl transition">Kayıt Ol & Mavi Tik Al</button>
         </form>
       </div>
     </div>
 
   </div>
 
-  <!-- FIREBASE SDKs & CONFIG -->
+  <!-- FIREBASE & APP LOGIC -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
@@ -475,13 +345,8 @@
       const pass = document.getElementById('regPassword').value;
 
       createUserWithEmailAndPassword(auth, email, pass)
-        .then((userCredential) => {
-          closeAuthModal();
-          alert(`Kayıt Başarılı! Hoş geldin ${name}`);
-        })
-        .catch((error) => {
-          alert("Kayıt Hatası: " + error.message);
-        });
+        .then(() => { closeAuthModal(); alert(`Kayıt Başarılı! Hoş geldin ${name}`); })
+        .catch((error) => { alert("Kayıt Hatası: " + error.message); });
     };
 
     window.handleLogin = function(e) {
@@ -490,21 +355,13 @@
       const pass = document.getElementById('loginPassword').value;
 
       signInWithEmailAndPassword(auth, email, pass)
-        .then((userCredential) => {
-          closeAuthModal();
-          alert("Giriş Başarılı!");
-        })
-        .catch((error) => {
-          alert("Giriş Hatası: " + error.message);
-        });
+        .then(() => { closeAuthModal(); alert("Giriş Başarılı!"); })
+        .catch((error) => { alert("Giriş Hatası: " + error.message); });
     };
 
     window.handleLogout = function() {
-      signOut(auth).then(() => {
-        alert("Oturum kapatıldı.");
-      }).catch((error) => {
-        alert("Çıkış yaparken hata oluştu.");
-      });
+      signOut(auth).then(() => { alert("Oturum kapatıldı."); switchTab('home'); })
+      .catch((error) => { alert("Çıkış hatası: " + error.message); });
     };
 
     onAuthStateChanged(auth, (user) => {
@@ -533,7 +390,7 @@
     });
   </script>
 
-  <!-- JAVASCRIPT APPLICATION LOGIC -->
+  <!-- JAVASCRIPT UI LOGIC -->
   <script>
     const demoArtists = [
       { id: 1, name: "Hamza Kalafat", img: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200", bio: "Zaman Perdesi Music Kurucu & Sanatçısı" },
@@ -543,48 +400,10 @@
     ];
 
     const demoTracks = [
-      {
-        id: 0,
-        title: "Kalbim",
-        artist: "Hamza Kalafat",
-        plays: "2.4k",
-        cover: "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=300",
-        lyrics: "Gözlerin bir gece vakti düşer kalbime...\nZaman perdesi aralanır usulca.\nSözler tükenir, geriye sadece sen kalırsın.\nKalbim atar senin ritminle...",
-        writer: "Hamza Kalafat",
-        composer: "Hamza Kalafat",
-        arranger: "Ahmet Yıldız",
-        mix: "Studio Zaman"
-      },
-      {
-        id: 1,
-        title: "Sonsuz Karanlık",
-        artist: "Karslı Arap",
-        plays: "1.8k",
-        cover: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=300",
-        lyrics: "Karanlık sokaklarda adımlarım yankılanır.\nSuskun şehir dinler feryadımı.\nKarslı derler adıma, eğilmez başım...",
-        writer: "Karslı Arap",
-        composer: "Karslı Arap",
-        arranger: "Karslı Arap",
-        mix: "Arap Sound"
-      },
-      {
-        id: 2,
-        title: "Zirve Yolu",
-        artist: "Ahmet Yıldız",
-        plays: "3.1k",
-        cover: "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=300",
-        lyrics: "Yollar uzun, engeller çok ama pes etmek yok.\nZaman perdesi altında herkes kendi hikayesini yazar...",
-        writer: "Ahmet Yıldız",
-        composer: "Ahmet Yıldız",
-        arranger: "Ahmet Yıldız",
-        mix: "Yıldız Audio"
-      }
+      { id: 0, title: "Kalbim", artist: "Hamza Kalafat", plays: "2.4k", cover: "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=300", lyrics: "Gözlerin bir gece vakti düşer kalbime...", writer: "Hamza Kalafat", composer: "Hamza Kalafat", arranger: "Ahmet Yıldız" },
+      { id: 1, title: "Sonsuz Karanlık", artist: "Karslı Arap", plays: "1.8k", cover: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=300", lyrics: "Karanlık sokaklarda adımlarım...", writer: "Karslı Arap", composer: "Karslı Arap", arranger: "Karslı Arap" },
+      { id: 2, title: "Zirve Yolu", artist: "Ahmet Yıldız", plays: "3.1k", cover: "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=300", lyrics: "Yollar uzun, engeller çok ama pes etmek yok...", writer: "Ahmet Yıldız", composer: "Ahmet Yıldız", arranger: "Ahmet Yıldız" }
     ];
-
-    let currentTrackIndex = 0;
-    let isPlaying = false;
-    let isShuffle = false;
-    let isRepeat = false;
 
     window.onload = function() {
       renderArtists();
@@ -598,17 +417,8 @@
         <div onclick="openArtistDetail(${artist.id})" class="bg-brand-card p-3 rounded-xl border border-gray-800 text-center cursor-pointer hover:border-brand-accent transition space-y-2">
           <img src="${artist.img}" class="w-16 h-16 rounded-full mx-auto object-cover border border-brand-accent shadow">
           <div>
-            <div class="flex items-center justify-center gap-1">
-              <h4 class="text-xs font-bold text-white truncate">${artist.name}</h4>
-              <i class="fa-solid fa-circle-check text-brand-accent text-[10px]" title="Onaylı"></i>
-            </div>
+            <h4 class="text-xs font-bold text-white truncate">${artist.name}</h4>
             <p class="text-[10px] text-gray-400 truncate mt-0.5">${artist.bio}</p>
-          </div>
-          <div class="flex justify-center gap-2.5 pt-1 text-gray-400 border-t border-gray-800/60">
-            <i class="fa-brands fa-instagram text-[11px] hover:text-pink-500"></i>
-            <i class="fa-brands fa-youtube text-[11px] hover:text-red-500"></i>
-            <i class="fa-brands fa-spotify text-[11px] hover:text-emerald-400"></i>
-            <i class="fa-brands fa-tiktok text-[11px] hover:text-cyan-400"></i>
           </div>
         </div>
       `).join('');
@@ -622,68 +432,73 @@
             <img src="${track.cover}" class="w-10 h-10 rounded-lg object-cover">
             <div class="min-w-0">
               <h4 class="text-xs font-bold text-white truncate">${track.title}</h4>
-              <p class="text-[10px] text-gray-400 truncate">${track.artist} • <span class="text-brand-accent"><i class="fa-solid fa-headphones text-[9px]"></i> ${track.plays}</span></p>
+              <p class="text-[10px] text-gray-400 truncate">${track.artist} • <span class="text-brand-accent">${track.plays}</span></p>
             </div>
           </div>
-          <button class="w-7 h-7 rounded-full bg-brand-dark flex items-center justify-center text-brand-accent text-xs">
-            <i class="fa-solid fa-play"></i>
-          </button>
         </div>
       `).join('');
     }
 
+    function loadTrack(index) {
+      const track = demoTracks[index];
+      document.getElementById('playerCover').src = track.cover;
+      document.getElementById('playerTitle').innerText = track.title;
+      document.getElementById('playerArtist').innerText = track.artist;
+      document.getElementById('fullPlayerCover').src = track.cover;
+      document.getElementById('fullPlayerTitle').innerText = track.title;
+      document.getElementById('fullPlayerArtist').innerText = track.artist;
+      document.getElementById('lyricsText').innerText = track.lyrics;
+      document.getElementById('creditWriter').innerText = track.writer;
+      document.getElementById('creditComposer').innerText = track.composer;
+      document.getElementById('creditArranger').innerText = track.arranger;
+    }
+
+    function playTrack(index) { loadTrack(index); }
+
     function switchTab(tabName) {
       document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
       document.getElementById(`tab-${tabName}`).classList.remove('hidden');
-
       document.querySelectorAll('nav button').forEach(btn => {
         btn.classList.remove('text-brand-accent');
         btn.classList.add('text-gray-400');
       });
       document.getElementById(`nav-${tabName}`).classList.add('text-brand-accent');
       document.getElementById(`nav-${tabName}`).classList.remove('text-gray-400');
-
       document.getElementById('searchResultsSection').classList.add('hidden');
     }
 
-    function loadTrack(index) {
-      currentTrackIndex = index;
-      const track = demoTracks[index];
+    function openFullPlayer() { document.getElementById('fullPlayerModal').classList.remove('hidden'); }
+    function closeFullPlayer() { document.getElementById('fullPlayerModal').classList.add('hidden'); }
 
-      document.getElementById('playerCover').src = track.cover;
-      document.getElementById('playerTitle').innerText = track.title;
-      document.getElementById('playerArtist').innerText = track.artist;
-
-      document.getElementById('fullPlayerCover').src = track.cover;
-      document.getElementById('fullPlayerTitle').innerText = track.title;
-      document.getElementById('fullPlayerArtist').innerText = track.artist;
-    }
-
-    function playTrack(index) {
-      loadTrack(index);
-      isPlaying = true;
-    }
-
-    function togglePlayPause(e) {
-      if(e) e.stopPropagation();
-      isPlaying = !isPlaying;
-    }
-
-    function openFullPlayer() {
-      document.getElementById('fullPlayerModal').classList.remove('hidden');
-    }
-
-    function closeFullPlayer() {
-      document.getElementById('fullPlayerModal').classList.add('hidden');
+    function switchPlayerSubTab(tab) {
+      if(tab === 'lyrics') {
+        document.getElementById('playerLyricsContent').classList.remove('hidden');
+        document.getElementById('playerCreditsContent').classList.add('hidden');
+        document.getElementById('playerTabLyrics').className = "pb-2 px-3 font-semibold text-brand-accent border-b-2 border-brand-accent";
+        document.getElementById('playerTabCredits').className = "pb-2 px-3 font-semibold text-gray-400";
+      } else {
+        document.getElementById('playerCreditsContent').classList.remove('hidden');
+        document.getElementById('playerLyricsContent').classList.add('hidden');
+        document.getElementById('playerTabCredits').className = "pb-2 px-3 font-semibold text-brand-accent border-b-2 border-brand-accent";
+        document.getElementById('playerTabLyrics').className = "pb-2 px-3 font-semibold text-gray-400";
+      }
     }
 
     function openArtistDetail(id) {
       const artist = demoArtists.find(a => a.id === id);
-      if(!artist) return;
-
       document.getElementById('artistDetailImg').src = artist.img;
       document.getElementById('artistDetailName').innerText = artist.name;
       document.getElementById('artistDetailBio').innerText = artist.bio;
+      
+      const artistTracksList = document.getElementById('artistTracksList');
+      artistTracksList.innerHTML = demoTracks.map((t, idx) => `
+        <div onclick="playTrack(${idx})" class="flex items-center justify-between p-2.5 bg-brand-card rounded-xl border border-gray-800 cursor-pointer">
+          <div class="flex items-center gap-2">
+            <img src="${t.cover}" class="w-9 h-9 rounded object-cover">
+            <div><h4 class="text-xs font-bold text-white">${t.title}</h4><p class="text-[10px] text-gray-400">${t.artist}</p></div>
+          </div>
+        </div>
+      `).join('');
 
       document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
       document.getElementById('artistDetailView').classList.remove('hidden');
@@ -699,114 +514,33 @@
       const resultsList = document.getElementById('searchResultsList');
       const clearBtn = document.getElementById('clearSearchBtn');
 
-      if (!val.trim()) {
-        resultsSection.classList.add('hidden');
-        clearBtn.classList.add('hidden');
-        return;
-      }
+      if (!val.trim()) { resultsSection.classList.add('hidden'); clearBtn.classList.add('hidden'); return; }
+      clearBtn.classList.remove('hidden'); resultsSection.classList.remove('hidden');
 
-      clearBtn.classList.remove('hidden');
-      resultsSection.classList.remove('hidden');
-
-      const filteredArtists = demoArtists.filter(a => a.name.toLowerCase().includes(val.toLowerCase()));
       const filteredTracks = demoTracks.filter(t => t.title.toLowerCase().includes(val.toLowerCase()) || t.artist.toLowerCase().includes(val.toLowerCase()));
-
-      let html = '';
-      filteredArtists.forEach(a => {
-        html += `
-          <div onclick="openArtistDetail(${a.id})" class="p-2 bg-brand-card rounded-xl border border-gray-800 flex items-center gap-2 cursor-pointer">
-            <img src="${a.img}" class="w-8 h-8 rounded-full object-cover">
-            <div>
-              <p class="text-xs font-bold text-white">${a.name} <i class="fa-solid fa-circle-check text-brand-accent text-[10px]"></i></p>
-              <span class="text-[10px] text-gray-400">Sanatçı</span>
-            </div>
-          </div>
-        `;
-      });
-
-      filteredTracks.forEach(t => {
-        html += `
-          <div onclick="playTrack(${t.id})" class="p-2 bg-brand-card rounded-xl border border-gray-800 flex items-center justify-between cursor-pointer">
-            <div class="flex items-center gap-2">
-              <img src="${t.cover}" class="w-8 h-8 rounded object-cover">
-              <div>
-                <p class="text-xs font-bold text-white">${t.title}</p>
-                <span class="text-[10px] text-gray-400">${t.artist}</span>
-              </div>
-            </div>
-            <i class="fa-solid fa-play text-xs text-brand-accent"></i>
-          </div>
-        `;
-      });
-
-      resultsList.innerHTML = html || '<p class="text-xs text-gray-500">Sonuç bulunamadı.</p>';
+      resultsList.innerHTML = filteredTracks.map(t => `
+        <div onclick="playTrack(${t.id})" class="p-2 bg-brand-card rounded-xl border border-gray-800 flex items-center justify-between cursor-pointer">
+          <div class="flex items-center gap-2"><img src="${t.cover}" class="w-8 h-8 rounded object-cover"><div><p class="text-xs font-bold text-white">${t.title}</p><span class="text-[10px] text-gray-400">${t.artist}</span></div></div>
+        </div>
+      `).join('') || '<p class="text-xs text-gray-500">Sonuç bulunamadı.</p>';
     }
 
-    function clearSearch() {
-      document.getElementById('searchInput').value = '';
-      handleSearch('');
-    }
-
-    function switchUploadType(type) {
-      document.getElementById('singleFields').classList.add('hidden');
-      document.getElementById('albumFields').classList.add('hidden');
-      document.getElementById('videoFields').classList.add('hidden');
-
-      document.getElementById('singleTypeBtn').className = "flex-1 py-1.5 font-semibold rounded-lg text-gray-400 hover:text-white transition";
-      document.getElementById('albumTypeBtn').className = "flex-1 py-1.5 font-semibold rounded-lg text-gray-400 hover:text-white transition";
-      document.getElementById('videoTypeBtn').className = "flex-1 py-1.5 font-semibold rounded-lg text-gray-400 hover:text-white transition";
-
-      if(type === 'single') {
-        document.getElementById('singleFields').classList.remove('hidden');
-        document.getElementById('singleTypeBtn').className = "flex-1 py-1.5 font-semibold rounded-lg bg-brand-accent text-black shadow transition";
-      } else if(type === 'album') {
-        document.getElementById('albumFields').classList.remove('hidden');
-        document.getElementById('albumTypeBtn').className = "flex-1 py-1.5 font-semibold rounded-lg bg-brand-accent text-black shadow transition";
-      } else if(type === 'video') {
-        document.getElementById('videoFields').classList.remove('hidden');
-        document.getElementById('videoTypeBtn').className = "flex-1 py-1.5 font-semibold rounded-lg bg-brand-accent text-black shadow transition";
-      }
-    }
-
-    function handleUploadSubmit(e) {
-      e.preventDefault();
-      alert('Tebrikler! Eseriniz yüklendi ve platformda yayınlandı.');
-      switchTab('profile');
-    }
-
-    function openAuthModal() {
-      document.getElementById('authModal').classList.remove('hidden');
-    }
-
-    function closeAuthModal() {
-      document.getElementById('authModal').classList.add('hidden');
-    }
+    function clearSearch() { document.getElementById('searchInput').value = ''; handleSearch(''); }
+    function openAuthModal() { document.getElementById('authModal').classList.remove('hidden'); }
+    function closeAuthModal() { document.getElementById('authModal').classList.add('hidden'); }
 
     function switchAuthMode(mode) {
       document.getElementById('loginForm').classList.add('hidden');
       document.getElementById('registerForm').classList.add('hidden');
-
       document.getElementById('authTabLogin').className = "text-gray-400 pb-1";
       document.getElementById('authTabRegister').className = "text-gray-400 pb-1";
 
       if(mode === 'login') {
         document.getElementById('loginForm').classList.remove('hidden');
         document.getElementById('authTabLogin').className = "text-brand-accent border-b-2 border-brand-accent pb-1";
-      } else if(mode === 'register') {
+      } else {
         document.getElementById('registerForm').classList.remove('hidden');
         document.getElementById('authTabRegister').className = "text-brand-accent border-b-2 border-brand-accent pb-1";
-      }
-    }
-
-    function toggleLikeCurrent() {
-      const btn = document.getElementById('likeBtn');
-      btn.classList.toggle('text-red-500');
-    }
-
-    function toggleProfileSubTab(tab) {
-      if(tab === 'myTracks') {
-        document.getElementById('myTracksView').classList.remove('hidden');
-        document.getElementById('subTabMyTracks').className = "pb-2 px-3 font-semibold text-brand-accent border-b-2 border-brand-accent";
       }
     }
   </script>
