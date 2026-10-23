@@ -48,13 +48,13 @@
     }
   </style>
 </head>
-<body class="font-sans antialiased h-screen overflow-hidden flex justify-center bg-black">
+<body class="font-sans antialiased h-[100dvh] overflow-hidden flex justify-center bg-black">
 
   <!-- Mobile Simulator Container -->
-  <div class="w-full max-w-md h-full bg-brand-black flex flex-col relative overflow-hidden shadow-2xl border-x border-gray-800">
+  <div class="w-full max-w-md h-[100dvh] bg-brand-black flex flex-col relative overflow-hidden shadow-2xl border-x border-gray-800">
 
     <!-- TOP HEADER -->
-    <header class="p-4 bg-brand-dark/90 backdrop-blur-md border-b border-gray-800/60 flex items-center justify-between z-20 sticky top-0">
+    <header class="p-4 bg-brand-dark/90 backdrop-blur-md border-b border-gray-800/60 flex items-center justify-between z-25 sticky top-0">
       <div class="flex items-center gap-2">
         <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-brand-blue to-brand-accent flex items-center justify-center text-black font-extrabold text-lg shadow-lg shadow-cyan-500/20">
           Z
@@ -77,7 +77,7 @@
     </header>
 
     <!-- SEARCH BAR -->
-    <div class="px-4 py-2.5 bg-brand-dark/50 border-b border-gray-800/40">
+    <div class="px-4 py-2.5 bg-brand-dark/50 border-b border-gray-800/40 z-20">
       <div class="relative">
         <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs"></i>
         <input type="text" id="searchInput" oninput="handleSearch(this.value)" placeholder="Sanatçı, şarkı veya albüm ara..." 
@@ -88,8 +88,8 @@
       </div>
     </div>
 
-    <!-- MAIN SCROLLABLE CONTENT AREA -->
-    <main id="mainContent" class="flex-1 overflow-y-auto pb-32 p-4 space-y-6">
+    <!-- MAIN SCROLLABLE CONTENT AREA (BOŞLUKLAR AYARLANDI) -->
+    <main id="mainContent" class="flex-1 overflow-y-auto pb-40 p-4 space-y-6">
 
       <!-- SEARCH RESULTS OVERLAY -->
       <section id="searchResultsSection" class="hidden space-y-4">
@@ -153,7 +153,7 @@
         <div id="artistsGrid" class="grid grid-cols-2 gap-3"></div>
       </section>
 
-      <!-- TAB 3: YÜKLE -->
+      <!-- TAB 3: YÜKLE (TEKLİ, ALBÜM, VİDEO SEKMELERİ) -->
       <section id="tab-upload" class="tab-content hidden space-y-5">
         <div>
           <h2 class="text-base font-bold text-white flex items-center gap-2">
@@ -318,7 +318,7 @@
     </main>
 
     <!-- STICKY BOTTOM PLAYER -->
-    <div id="miniPlayer" class="absolute bottom-[58px] left-0 right-0 bg-brand-dark/95 backdrop-blur-md border-t border-cyan-500/30 p-2.5 px-3 flex items-center justify-between z-30 cursor-pointer shadow-2xl">
+    <div id="miniPlayer" class="absolute bottom-[56px] left-0 right-0 bg-brand-dark/95 backdrop-blur-md border-t border-cyan-500/30 p-2.5 px-3 flex items-center justify-between z-30 cursor-pointer shadow-2xl">
       <div onclick="openFullPlayer()" class="flex items-center gap-2.5 min-w-0 flex-1">
         <img id="playerCover" src="https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=100" class="w-10 h-10 rounded-lg object-cover shadow border border-gray-700">
         <div class="min-w-0 flex-1">
@@ -370,19 +370,19 @@
       </div>
     </div>
 
-    <!-- BOTTOM NAVIGATION TABS BAR (DÜZELTİLDİ VE GÖRÜNÜRLÜK GARANTİLENDİ) -->
+    <!-- BOTTOM NAVIGATION TABS BAR (SABİT EN ALT) -->
     <nav class="absolute bottom-0 left-0 right-0 bg-brand-dark/95 backdrop-blur-lg border-t border-gray-800 flex justify-around py-2.5 z-40">
       <button onclick="switchTab('home')" id="nav-home" class="flex flex-col items-center gap-1 text-brand-accent transition">
-        <i class="fa-solid fa-house text-base"></i><span class="text-[10px] font-semibold text-gray-200">Ana Sayfa</span>
+        <i class="fa-solid fa-house text-base"></i><span class="text-[10px] font-semibold">Ana Sayfa</span>
       </button>
       <button onclick="switchTab('artists')" id="nav-artists" class="flex flex-col items-center gap-1 text-gray-400 hover:text-white transition">
-        <i class="fa-solid fa-users text-base"></i><span class="text-[10px] font-semibold text-gray-400">Sanatçılar</span>
+        <i class="fa-solid fa-users text-base"></i><span class="text-[10px] font-semibold">Sanatçılar</span>
       </button>
       <button onclick="switchTab('upload')" id="nav-upload" class="flex flex-col items-center gap-1 text-gray-400 hover:text-white transition">
-        <i class="fa-solid fa-circle-plus text-base"></i><span class="text-[10px] font-semibold text-gray-400">Yükle</span>
+        <i class="fa-solid fa-circle-plus text-base"></i><span class="text-[10px] font-semibold">Yükle</span>
       </button>
       <button onclick="switchTab('profile')" id="nav-profile" class="flex flex-col items-center gap-1 text-gray-400 hover:text-white transition">
-        <i class="fa-solid fa-user text-base"></i><span class="text-[10px] font-semibold text-gray-400">Profilim</span>
+        <i class="fa-solid fa-user text-base"></i><span class="text-[10px] font-semibold">Profilim</span>
       </button>
     </nav>
 
@@ -473,7 +473,7 @@
       `).join('');
     }
 
-    // SEKME GEÇİŞLERİ (GÜÇLENDİRİLDİ)
+    // SEKME GEÇİŞLERİ
     function switchTab(tabName) {
       document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
       const targetTab = document.getElementById(`tab-${tabName}`);
@@ -591,6 +591,7 @@
       `).join('') || '<p class="text-xs text-gray-500">Sonuç bulunamadı.</p>';
     }
 
+    function clearSession() { localStorage.clear(); }
     function clearSearch() { document.getElementById('searchInput').value = ''; handleSearch(''); }
   </script>
 </body>
