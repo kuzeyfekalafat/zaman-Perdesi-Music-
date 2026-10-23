@@ -395,10 +395,10 @@
   </div>
 
   <script>
-    // KINDIRILAMAZ DEFAULT RESİM SVG FALLBACKS (KIRIK RESİM GÖSTERMEZ)
+    // KIRIK RESİM GÖSTERMEYEN DEFAULT SVG RESİMLER
     const DEFAULT_COVER = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300" viewBox="0 0 300 300"><rect width="300" height="300" fill="%231a1c23"/><circle cx="150" cy="150" r="80" fill="%2300d2ff" opacity="0.2"/><path d="M135 110v80l60-40z" fill="%2300d2ff"/></svg>';
     const DEFAULT_AVATAR = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200"><rect width="200" height="200" fill="%231a1c23"/><circle cx="100" cy="80" r="40" fill="%2300d2ff"/><path d="M40 170c0-33 27-60 60-60s60 27 60 60z" fill="%2300d2ff"/></svg>';
-    const DEFAULT_AUDIO = 'https://actions.google.com/sounds/v1/ambiences/outdoor_synth.ogg'; // Telifsiz Çalışan Test Sesi
+    const DEFAULT_AUDIO = 'https://actions.google.com/sounds/v1/ambiences/outdoor_synth.ogg'; 
 
     let usersDB = JSON.parse(localStorage.getItem('zaman_users')) || {
       'kuzeyfe@zamanperdesi.com': {
@@ -738,7 +738,7 @@
       if(!videoEl.paused) videoEl.pause();
     }
 
-    // SÖZLER - KÜNYE - YORUMLAR SEKMELERİNİ DEĞİŞTİRME
+    // SÖZLER - KÜNYE - YORUMLAR SEKMELERİ
     function switchPlayerSubTab(tab) {
       document.getElementById('playerLyricsContent').classList.add('hidden');
       document.getElementById('playerCreditsContent').classList.add('hidden');
