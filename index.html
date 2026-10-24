@@ -221,7 +221,7 @@
         </form>
       </section>
 
-      <!-- TAB 4: PROFİLİM (YENİ: İSTATİSTİK DASHBOARD & ÇALMA LİSTELERİ) -->
+      <!-- TAB 4: PROFİLİM -->
       <section id="tab-profile" class="tab-content hidden space-y-5">
         <div class="flex items-center gap-3 bg-brand-card p-3.5 rounded-2xl border border-gray-800 relative">
           <img id="userAvatar" src="" class="w-14 h-14 rounded-full object-cover border-2 border-brand-accent" alt="Profile">
@@ -245,7 +245,7 @@
           </div>
         </div>
 
-        <!-- 📊 GELİŞMİŞ İSTATİSTİK / DİNLENME SAYACI (MİNİ DASHBOARD) -->
+        <!-- 📊 GELİŞMİŞ İSTATİSTİK / DİNLENME SAYACI -->
         <div class="bg-gradient-to-br from-brand-card to-brand-dark p-3.5 rounded-2xl border border-gray-800 space-y-3 shadow-xl">
           <div class="flex items-center justify-between">
             <span class="text-xs font-bold text-brand-accent flex items-center gap-1.5"><i class="fa-solid fa-chart-line"></i> Performans & İstatistikler</span>
@@ -282,7 +282,7 @@
           </div>
         </div>
 
-        <!-- PROFİL SEKMELERİ (İÇERİKLERİM - FAVORİLERİM - ÇALMA LİSTELERİM) -->
+        <!-- PROFİL SEKMELERİ -->
         <div class="space-y-3">
           <div class="flex border-b border-gray-800 text-xs justify-between">
             <button onclick="toggleProfileSubTab('myTracks')" id="subTabMyTracks" class="pb-2 px-2 font-semibold text-brand-accent border-b-2 border-brand-accent">🎵 İçeriklerim</button>
@@ -318,10 +318,11 @@
         <button onclick="closeArtistDetail()" class="text-xs text-brand-accent flex items-center gap-1 font-semibold">
           <i class="fa-solid fa-arrow-left"></i> Geri Dön
         </button>
-        <div class="text-center space-y-2 bg-brand-card p-5 rounded-2xl border border-gray-800">
+        <div class="text-center space-y-2 bg-brand-card p-5 rounded-2xl border border-gray-800 relative">
           <img id="artistDetailImg" src="" class="w-20 h-20 rounded-full mx-auto object-cover border-2 border-brand-accent shadow-lg">
           <h2 id="artistDetailName" class="text-base font-bold text-white"></h2>
           <p id="artistDetailBio" class="text-xs text-gray-400"></p>
+          <div id="artistAdminControls" class="pt-2"></div>
         </div>
         <div id="artistTracksList" class="space-y-2"></div>
       </section>
@@ -460,8 +461,8 @@
 
         <!-- ADMIN FORMU -->
         <form id="adminForm" onsubmit="handleAdminLogin(event)" class="hidden space-y-3">
-          <div class="p-2 bg-red-950/40 border border-red-800/50 rounded-xl text-[11px] text-red-300">🛡️ Admin Girişi</div>
-          <div><label class="text-xs text-gray-300">Admin E-posta</label><input type="email" id="adminEmail" required class="w-full bg-brand-dark text-xs text-white p-2.5 rounded-xl border border-gray-800 mt-1"></div>
+          <div class="p-2 bg-red-950/40 border border-red-800/50 rounded-xl text-[11px] text-red-300">🛡️ Admin / Kurucu Girişi</div>
+          <div><label class="text-xs text-gray-300">Admin E-posta</label><input type="email" id="adminEmail" placeholder="kuzeyfe@zamanperdesi.com" required class="w-full bg-brand-dark text-xs text-white p-2.5 rounded-xl border border-gray-800 mt-1"></div>
           <div><label class="text-xs text-gray-300">Şifre</label><input type="password" required class="w-full bg-brand-dark text-xs text-white p-2.5 rounded-xl border border-gray-800 mt-1"></div>
           <button type="submit" class="w-full bg-red-600 text-white font-bold text-xs py-2.5 rounded-xl">Admin Giriş Yap</button>
         </form>
@@ -479,11 +480,11 @@
           <div><label class="text-xs text-gray-300">Fotoğraf Dosyası Seç</label><input type="file" id="editAvatarFile" accept="image/*" class="w-full text-xs text-gray-400 bg-brand-dark p-2 rounded-xl border border-gray-800 mt-1 file:mr-3 file:py-1 file:px-2 file:rounded-lg file:border-0 file:text-xs file:bg-brand-accent file:text-black file:font-semibold"></div>
           
           <div class="space-y-2 pt-2 border-t border-gray-800">
-            <span class="text-xs font-bold text-brand-accent block">🔗 Sosyal Medya Bağlantıları (6 Adet)</span>
+            <span class="text-xs font-bold text-brand-accent block">🔗 Sosyal Medya Bağlantıları</span>
             <div><label class="text-[10px] text-gray-400 mb-0.5 block">YouTube Kanal Linki</label><input type="url" id="editYoutubeInput" class="w-full bg-brand-dark text-xs text-white p-2 rounded-lg border border-gray-800"></div>
             <div><label class="text-[10px] text-gray-400 mb-0.5 block">Instagram Profil Linki</label><input type="url" id="editInstagramInput" class="w-full bg-brand-dark text-xs text-white p-2 rounded-lg border border-gray-800"></div>
             <div><label class="text-[10px] text-gray-400 mb-0.5 block">Spotify Profil Linki</label><input type="url" id="editSpotifyInput" class="w-full bg-brand-dark text-xs text-white p-2 rounded-lg border border-gray-800"></div>
-            <div><label class="text-[10px] text-gray-400 mb-0.5 block">TikTok Profil Linki</label><input type="url" id="editTiktokInput" class="w-full bg-brand-dark text-xs text-white p-2.5 rounded-lg border border-gray-800"></div>
+            <div><label class="text-[10px] text-gray-400 mb-0.5 block">TikTok Profil Linki</label><input type="url" id="editTiktokInput" class="w-full bg-brand-dark text-xs text-white p-2 rounded-lg border border-gray-800"></div>
             <div><label class="text-[10px] text-gray-400 mb-0.5 block">Facebook Profil Linki</label><input type="url" id="editFacebookInput" class="w-full bg-brand-dark text-xs text-white p-2 rounded-lg border border-gray-800"></div>
             <div><label class="text-[10px] text-gray-400 mb-0.5 block">Twitter Profil Linki</label><input type="url" id="editTwitterInput" class="w-full bg-brand-dark text-xs text-white p-2 rounded-lg border border-gray-800"></div>
           </div>
@@ -521,6 +522,8 @@
         email: 'kuzeyfe@zamanperdesi.com',
         bio: 'Zaman Perdesi Music Kurucusu & Söz Yazarı.',
         avatar: DEFAULT_AVATAR,
+        role: 'admin',
+        title: 'Platform Kurucusu',
         youtube: 'https://www.youtube.com/@kuzeyfe.kalafat', 
         instagram: 'https://www.instagram.com/kuzeyfekalafat', 
         spotify: 'https://open.spotify.com/artist/kuzeyfekalafat', 
@@ -530,7 +533,7 @@
       }
     };
 
-    let currentUserEmail = localStorage.getItem('zaman_current_user') || null;
+    let currentUserEmail = localStorage.getItem('zaman_current_user') || 'kuzeyfe@zamanperdesi.com';
 
     let initialTracks = [
       {
@@ -610,6 +613,15 @@
         document.getElementById('profileBioDisplay').innerText = u.bio || "Henüz biyografi eklenmedi.";
         document.getElementById('userAvatar').src = u.avatar || DEFAULT_AVATAR;
 
+        const roleTag = document.getElementById('profileRoleTag');
+        if(u.role === 'admin') {
+          roleTag.innerText = "🛡️ Kuruncu & Sistem Yöneticisi";
+          roleTag.className = "inline-block mt-1 bg-red-500/20 text-red-400 text-[10px] px-2 py-0.5 rounded-full border border-red-500/30 font-semibold";
+        } else {
+          roleTag.innerText = u.title || "Doğrulanmış Sanatçı";
+          roleTag.className = "inline-block mt-1 bg-brand-accent/25 text-brand-accent text-[10px] px-2 py-0.5 rounded-full border border-brand-accent/30 font-medium";
+        }
+
         toggleSocialLink('linkYoutube', u.youtube);
         toggleSocialLink('linkInstagram', u.instagram);
         toggleSocialLink('linkSpotify', u.spotify);
@@ -678,6 +690,7 @@
       container.innerHTML = html;
     }
 
+    // SANATÇI KARTLARININ TEMİZ VE BOZUKSUZ ÇİZİLDİĞİ YER
     function renderArtists() {
       const grid = document.getElementById('artistsGrid');
       const allUsers = Object.values(usersDB);
@@ -685,16 +698,24 @@
         grid.innerHTML = '<p class="text-xs text-gray-500 italic col-span-2">Henüz kayıtlı sanatçı bulunmuyor.</p>';
         return;
       }
-      grid.innerHTML = allUsers.map(a => `
-        <div onclick="openArtistDetail('${a.email}')" class="bg-brand-card p-3 rounded-xl border border-gray-800 text-center cursor-pointer space-y-1">
-          <img src="${a.avatar || DEFAULT_AVATAR}" class="w-16 h-16 rounded-full mx-auto object-cover border border-brand-accent">
-          <div class="flex items-center justify-center gap-1">
-            <h4 class="text-xs font-bold text-white truncate">${a.name}</h4>
-            <i class="fa-solid fa-circle-check text-brand-accent text-[10px]"></i>
+      
+      grid.innerHTML = allUsers.map(a => {
+        const isAdmin = a.role === 'admin';
+        const titleText = isAdmin ? 'Sistem Yöneticisi' : (a.title || 'Zaman Perdesi Sanatçısı');
+        
+        return `
+          <div onclick="openArtistDetail('${a.email}')" class="bg-brand-card p-3 rounded-xl border border-gray-800 text-center cursor-pointer space-y-2 hover:border-brand-accent transition">
+            <img src="${a.avatar || DEFAULT_AVATAR}" class="w-16 h-16 rounded-full mx-auto object-cover border border-brand-accent">
+            <div>
+              <div class="flex items-center justify-center gap-1">
+                <h4 class="text-xs font-bold text-white truncate">${a.name}</h4>
+                <i class="fa-solid fa-circle-check text-brand-accent text-[10px]"></i>
+              </div>
+              <p class="text-[10px] text-gray-400 truncate">${titleText}</p>
+            </div>
           </div>
-          <p class="text-[10px] text-gray-400 truncate">${a.bio || 'Bağımsız Sanatçı'}</p>
-        </div>
-      `).join('');
+        `;
+      }).join('');
       setupImageErrorHandlers();
     }
 
@@ -704,6 +725,8 @@
         container.innerHTML = '<p class="text-xs text-gray-500 italic">Henüz platforma yüklenen bir içerik bulunmuyor.</p>';
         return;
       }
+      const isCurAdmin = currentUserEmail && usersDB[currentUserEmail] && usersDB[currentUserEmail].role === 'admin';
+      
       container.innerHTML = demoTracks.map((t, idx) => `
         <div onclick="playTrack(${idx})" class="flex items-center justify-between p-2.5 rounded-xl bg-brand-card border border-gray-800 cursor-pointer">
           <div class="flex items-center gap-2.5">
@@ -713,7 +736,10 @@
               <p class="text-[10px] text-gray-400">${t.artist} • <span class="text-brand-accent">${t.type || 'Tekli'}</span></p>
             </div>
           </div>
-          <i class="fa-solid fa-play text-brand-accent text-xs"></i>
+          <div class="flex items-center gap-2">
+            ${isCurAdmin ? `<button onclick="deleteTrack(event, ${t.id})" class="text-red-400 p-1 hover:text-red-300" title="Admin Olarak Sil"><i class="fa-solid fa-trash-can text-xs"></i></button>` : ''}
+            <i class="fa-solid fa-play text-brand-accent text-xs"></i>
+          </div>
         </div>
       `).join('');
       setupImageErrorHandlers();
@@ -740,14 +766,15 @@
               <p class="text-[10px] text-gray-400">${t.type || 'Eser'} • ${t.plays || 0} Dinlenme</p>
             </div>
           </div>
-          <button onclick="deleteTrack(${t.id})" class="text-red-400 hover:text-red-300 p-1.5"><i class="fa-solid fa-trash-can text-xs"></i></button>
+          <button onclick="deleteTrack(event, ${t.id})" class="text-red-400 hover:text-red-300 p-1.5"><i class="fa-solid fa-trash-can text-xs"></i></button>
         </div>
       `).join('');
       setupImageErrorHandlers();
     }
 
-    function deleteTrack(id) {
-      if(confirm('Bu içeriği silmek istediğinize emin misiniz?')) {
+    function deleteTrack(e, id) {
+      if(e) e.stopPropagation();
+      if(confirm('Bu içeriği platformdan silmek istediğinize emin misiniz?')) {
         demoTracks = demoTracks.filter(t => t.id !== id);
         saveAppData();
         renderDynamicFeed();
@@ -1126,7 +1153,7 @@
       e.preventDefault(); 
       const name = document.getElementById('regName').value.trim();
       const email = document.getElementById('regEmail').value.trim();
-      usersDB[email] = { name, email, bio: "Zaman Perdesi Sanatçısı", avatar: DEFAULT_AVATAR, youtube:'', instagram:'', spotify:'', tiktok:'', facebook:'', twitter:'' };
+      usersDB[email] = { name, email, bio: "Zaman Perdesi Sanatçısı", avatar: DEFAULT_AVATAR, role: 'user', youtube:'', instagram:'', spotify:'', tiktok:'', facebook:'', twitter:'' };
       currentUserEmail = email;
       saveAppData();
       checkAuthSession();
@@ -1146,12 +1173,31 @@
     function handleAdminLogin(e) { 
       e.preventDefault(); 
       const adminEmail = document.getElementById('adminEmail').value.trim();
-      if(!usersDB[adminEmail]) { usersDB[adminEmail] = { name: "Admin", email: adminEmail, bio: "Sistem Yöneticisi", avatar: DEFAULT_AVATAR }; }
+      if(!usersDB[adminEmail]) { 
+        usersDB[adminEmail] = { name: "Kuzeyfe Kalafat", email: adminEmail, bio: "Zaman Perdesi Music Kurucusu & Söz Yazarı.", avatar: DEFAULT_AVATAR, role: 'admin' }; 
+      } else {
+        usersDB[adminEmail].role = 'admin';
+      }
       currentUserEmail = adminEmail;
       saveAppData();
       checkAuthSession();
+      renderArtists();
       closeAuthModal(); 
-      alert('Admin girişi yapıldı!');
+      alert('Admin / Kurucu olarak giriş yapıldı!');
+    }
+
+    function deleteUserByAdmin(email) {
+      if(email === 'kuzeyfe@zamanperdesi.com') {
+        alert('Kurucu hesabı silinemez!');
+        return;
+      }
+      if(confirm(`${email} kullanıcısını platformdan tamamen silmek istediğinize emin misiniz?`)) {
+        delete usersDB[email];
+        saveAppData();
+        renderArtists();
+        closeArtistDetail();
+        alert('Kullanıcı silindi.');
+      }
     }
 
     function handleLogout() {
@@ -1258,8 +1304,21 @@
       if(!a) return;
       document.getElementById('artistDetailImg').src = a.avatar || DEFAULT_AVATAR;
       document.getElementById('artistDetailName').innerText = a.name;
-      document.getElementById('artistDetailBio').innerText = a.bio;
+      document.getElementById('artistDetailBio').innerText = a.bio || 'Açıklama yok.';
       
+      const isCurAdmin = currentUserEmail && usersDB[currentUserEmail] && usersDB[currentUserEmail].role === 'admin';
+      const adminControls = document.getElementById('artistAdminControls');
+      
+      if(isCurAdmin && email !== currentUserEmail) {
+        adminControls.innerHTML = `
+          <button onclick="deleteUserByAdmin('${email}')" class="bg-red-950/60 hover:bg-red-900 border border-red-800 text-red-400 text-xs px-3 py-1.5 rounded-xl font-bold flex items-center justify-center gap-1.5 mx-auto transition">
+            <i class="fa-solid fa-user-xmark"></i> Kullanıcıyı Platformdan Sil
+          </button>
+        `;
+      } else {
+        adminControls.innerHTML = '';
+      }
+
       const artistTracks = demoTracks.filter(t => t.artist === a.name);
       const tracksList = document.getElementById('artistTracksList');
       tracksList.innerHTML = artistTracks.length ? artistTracks.map(t => `
@@ -1270,7 +1329,7 @@
           </div>
           <i class="fa-solid fa-play text-brand-accent text-xs"></i>
         </div>
-      `).join('') : '<p class="text-xs text-gray-500 italic">Bu sanatçının eseri yok.</p>';
+      `).join('') : '<p class="text-xs text-gray-500 italic text-center">Bu sanatçının eseri yok.</p>';
 
       document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
       document.getElementById('artistDetailView').classList.remove('hidden');
