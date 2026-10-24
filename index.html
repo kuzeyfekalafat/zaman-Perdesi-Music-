@@ -85,7 +85,7 @@
       <div class="flex items-center gap-2">
         <div id="authStatusBtn" onclick="openAuthModal()" class="flex items-center gap-1.5 bg-brand-card hover:bg-brand-hover border border-gray-800 px-3 py-1.5 rounded-full cursor-pointer transition">
           <i class="fa-solid fa-user-check text-brand-accent text-xs"></i>
-          <span id="headerUserName" class="text-xs font-semibold max-w-[80px] truncate">Giriş Yap</span>
+          <span id="headerUserName" class="text-xs font-semibold max-w-[90px] truncate">Kuzeyfe Kalafat</span>
           <i class="fa-solid fa-circle-check text-brand-accent text-[11px]" title="Onaylı Sanatçı"></i>
         </div>
       </div>
@@ -231,8 +231,8 @@
               <i class="fa-solid fa-circle-check text-brand-accent text-xs"></i>
             </div>
             <p id="profileEmailDisplay" class="text-[11px] text-gray-400 truncate">kuzeyfe@zamanperdesi.com</p>
-            <span id="profileRoleTag" class="inline-block mt-1 bg-brand-accent/25 text-brand-accent text-[10px] px-2 py-0.5 rounded-full border border-brand-accent/30 font-medium">
-              Doğrulanmış Sanatçı
+            <span id="profileRoleTag" class="inline-block mt-1 bg-red-500/20 text-red-400 text-[10px] px-2 py-0.5 rounded-full border border-red-500/30 font-semibold">
+              🛡️ Kurucu & Sistem Yöneticisi
             </span>
           </div>
           <div class="flex flex-col gap-1.5">
@@ -534,6 +534,11 @@
     };
 
     let currentUserEmail = localStorage.getItem('zaman_current_user') || 'kuzeyfe@zamanperdesi.com';
+    
+    // Admin girişinde adın her zaman Kuzeyfe Kalafat olarak kalmasını garantiliyoruz
+    if(usersDB[currentUserEmail]) {
+      usersDB[currentUserEmail].name = 'Kuzeyfe Kalafat';
+    }
 
     let initialTracks = [
       {
@@ -607,6 +612,9 @@
     function checkAuthSession() {
       if(currentUserEmail && usersDB[currentUserEmail]) {
         let u = usersDB[currentUserEmail];
+        if(u.role === 'admin') {
+          u.name = 'Kuzeyfe Kalafat'; // Admin adını sabitle
+        }
         document.getElementById('headerUserName').innerText = u.name;
         document.getElementById('profileNameDisplay').innerText = u.name;
         document.getElementById('profileEmailDisplay').innerText = currentUserEmail;
@@ -615,7 +623,7 @@
 
         const roleTag = document.getElementById('profileRoleTag');
         if(u.role === 'admin') {
-          roleTag.innerText = "🛡️ Kuruncu & Sistem Yöneticisi";
+          roleTag.innerText = "🛡️ Kurucu & Sistem Yöneticisi";
           roleTag.className = "inline-block mt-1 bg-red-500/20 text-red-400 text-[10px] px-2 py-0.5 rounded-full border border-red-500/30 font-semibold";
         } else {
           roleTag.innerText = u.title || "Doğrulanmış Sanatçı";
@@ -690,7 +698,6 @@
       container.innerHTML = html;
     }
 
-    // SANATÇI KARTLARININ TEMİZ VE BOZUKSUZ ÇİZİLDİĞİ YER
     function renderArtists() {
       const grid = document.getElementById('artistsGrid');
       const allUsers = Object.values(usersDB);
@@ -702,13 +709,14 @@
       grid.innerHTML = allUsers.map(a => {
         const isAdmin = a.role === 'admin';
         const titleText = isAdmin ? 'Sistem Yöneticisi' : (a.title || 'Zaman Perdesi Sanatçısı');
+        const displayName = isAdmin ? 'Kuzeyfe Kalafat' : a.name;
         
         return `
           <div onclick="openArtistDetail('${a.email}')" class="bg-brand-card p-3 rounded-xl border border-gray-800 text-center cursor-pointer space-y-2 hover:border-brand-accent transition">
             <img src="${a.avatar || DEFAULT_AVATAR}" class="w-16 h-16 rounded-full mx-auto object-cover border border-brand-accent">
             <div>
               <div class="flex items-center justify-center gap-1">
-                <h4 class="text-xs font-bold text-white truncate">${a.name}</h4>
+                <h4 class="text-xs font-bold text-white truncate">${displayName}</h4>
                 <i class="fa-solid fa-circle-check text-brand-accent text-[10px]"></i>
               </div>
               <p class="text-[10px] text-gray-400 truncate">${titleText}</p>
@@ -1177,6 +1185,7 @@
         usersDB[adminEmail] = { name: "Kuzeyfe Kalafat", email: adminEmail, bio: "Zaman Perdesi Music Kurucusu & Söz Yazarı.", avatar: DEFAULT_AVATAR, role: 'admin' }; 
       } else {
         usersDB[adminEmail].role = 'admin';
+        usersDB[adminEmail].name = 'Kuzeyfe Kalafat';
       }
       currentUserEmail = adminEmail;
       saveAppData();
@@ -1303,7 +1312,7 @@
       const a = usersDB[email];
       if(!a) return;
       document.getElementById('artistDetailImg').src = a.avatar || DEFAULT_AVATAR;
-      document.getElementById('artistDetailName').innerText = a.name;
+      document.getElementById('artistDetailName').innerText = (a.role === 'admin') ? 'Kuzeyfe Kalafat' : a.name;
       document.getElementById('artistDetailBio').innerText = a.bio || 'Açıklama yok.';
       
       const isCurAdmin = currentUserEmail && usersDB[currentUserEmail] && usersDB[currentUserEmail].role === 'admin';
@@ -1319,7 +1328,8 @@
         adminControls.innerHTML = '';
       }
 
-      const artistTracks = demoTracks.filter(t => t.artist === a.name);
+      const targetName = (a.role === 'admin') ? 'Kuzeyfe Kalafat' : a.name;
+      const artistTracks = demoTracks.filter(t => t.artist === targetName);
       const tracksList = document.getElementById('artistTracksList');
       tracksList.innerHTML = artistTracks.length ? artistTracks.map(t => `
         <div onclick="playTrack(${t.id})" class="flex items-center justify-between p-2.5 bg-brand-card rounded-xl border border-gray-800 cursor-pointer">
