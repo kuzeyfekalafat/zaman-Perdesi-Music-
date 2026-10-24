@@ -516,28 +516,34 @@
     const DEFAULT_AVATAR = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200"><rect width="200" height="200" fill="%231a1c23"/><circle cx="100" cy="80" r="40" fill="%2300d2ff"/><path d="M40 170c0-33 27-60 60-60s60 27 60 60z" fill="%2300d2ff"/></svg>';
     const DEFAULT_AUDIO = 'https://actions.google.com/sounds/v1/ambiences/outdoor_synth.ogg'; 
 
-    let usersDB = JSON.parse(localStorage.getItem('zaman_users')) || {
-      'kuzeyfe@zamanperdesi.com': {
-        name: 'Kuzeyfe Kalafat',
-        email: 'kuzeyfe@zamanperdesi.com',
-        bio: 'Zaman Perdesi Music Kurucusu & Söz Yazarı.',
-        avatar: DEFAULT_AVATAR,
-        role: 'admin',
-        title: 'Platform Kurucusu',
-        youtube: 'https://www.youtube.com/@kuzeyfe.kalafat', 
-        instagram: 'https://www.instagram.com/kuzeyfekalafat', 
-        spotify: 'https://open.spotify.com/artist/kuzeyfekalafat', 
-        tiktok: 'https://www.tiktok.com/@kuzeyfe.kalafat', 
-        facebook: 'https://www.facebook.com/kuzeyfekalafat.1', 
-        twitter: 'https://www.twitter.com/kuzeyfe_kalafat'
-      }
+    let usersDB = JSON.parse(localStorage.getItem('zaman_users')) || {};
+
+    // KESİN TEMİZLİK VE ADMIN SABİTLEME: Bozuk/hatalı hesabı uçuruyoruz, asıl hesabı kurucu yapıyoruz
+    usersDB['kuzeyfe@zamanperdesi.com'] = {
+      name: 'Kuzeyfe Kalafat',
+      email: 'kuzeyfe@zamanperdesi.com',
+      bio: 'Zaman Perdesi Music Kurucusu & Söz Yazarı.',
+      avatar: DEFAULT_AVATAR,
+      role: 'admin',
+      title: 'Platform Kurucusu',
+      youtube: 'https://www.youtube.com/@kuzeyfe.kalafat', 
+      instagram: 'https://www.instagram.com/kuzeyfekalafat', 
+      spotify: 'https://open.spotify.com/artist/kuzeyfekalafat', 
+      tiktok: 'https://www.tiktok.com/@kuzeyfe.kalafat', 
+      facebook: 'https://www.facebook.com/kuzeyfekalafat.1', 
+      twitter: 'https://www.twitter.com/kuzeyfe_kalafat'
     };
 
-    let currentUserEmail = localStorage.getItem('zaman_current_user') || 'kuzeyfe@zamanperdesi.com';
-    
-    // Admin girişinde adın her zaman Kuzeyfe Kalafat olarak kalmasını garantiliyoruz
-    if(usersDB[currentUserEmail]) {
-      usersDB[currentUserEmail].name = 'Kuzeyfe Kalafat';
+    // Hatalı/bozuk olabilecek diğer sahte/admin hesapları veritabanından siliyoruz
+    Object.keys(usersDB).forEach(key => {
+      if(key !== 'kuzeyfe@zamanperdesi.com' && (usersDB[key].name === 'Admin' || !usersDB[key].name)) {
+        delete usersDB[key];
+      }
+    });
+
+    let currentUserEmail = localStorage.getItem('zaman_current_user');
+    if(!currentUserEmail || !usersDB[currentUserEmail]) {
+      currentUserEmail = 'kuzeyfe@zamanperdesi.com';
     }
 
     let initialTracks = [
@@ -612,9 +618,6 @@
     function checkAuthSession() {
       if(currentUserEmail && usersDB[currentUserEmail]) {
         let u = usersDB[currentUserEmail];
-        if(u.role === 'admin') {
-          u.name = 'Kuzeyfe Kalafat'; // Admin adını sabitle
-        }
         document.getElementById('headerUserName').innerText = u.name;
         document.getElementById('profileNameDisplay').innerText = u.name;
         document.getElementById('profileEmailDisplay').innerText = currentUserEmail;
@@ -708,15 +711,14 @@
       
       grid.innerHTML = allUsers.map(a => {
         const isAdmin = a.role === 'admin';
-        const titleText = isAdmin ? 'Sistem Yöneticisi' : (a.title || 'Zaman Perdesi Sanatçısı');
-        const displayName = isAdmin ? 'Kuzeyfe Kalafat' : a.name;
+        const titleText = isAdmin ? 'Platform Kurucusu' : (a.title || 'Zaman Perdesi Sanatçısı');
         
         return `
           <div onclick="openArtistDetail('${a.email}')" class="bg-brand-card p-3 rounded-xl border border-gray-800 text-center cursor-pointer space-y-2 hover:border-brand-accent transition">
             <img src="${a.avatar || DEFAULT_AVATAR}" class="w-16 h-16 rounded-full mx-auto object-cover border border-brand-accent">
             <div>
               <div class="flex items-center justify-center gap-1">
-                <h4 class="text-xs font-bold text-white truncate">${displayName}</h4>
+                <h4 class="text-xs font-bold text-white truncate">${a.name}</h4>
                 <i class="fa-solid fa-circle-check text-brand-accent text-[10px]"></i>
               </div>
               <p class="text-[10px] text-gray-400 truncate">${titleText}</p>
@@ -1181,13 +1183,11 @@
     function handleAdminLogin(e) { 
       e.preventDefault(); 
       const adminEmail = document.getElementById('adminEmail').value.trim();
-      if(!usersDB[adminEmail]) { 
-        usersDB[adminEmail] = { name: "Kuzeyfe Kalafat", email: adminEmail, bio: "Zaman Perdesi Music Kurucusu & Söz Yazarı.", avatar: DEFAULT_AVATAR, role: 'admin' }; 
-      } else {
-        usersDB[adminEmail].role = 'admin';
-        usersDB[adminEmail].name = 'Kuzeyfe Kalafat';
-      }
-      currentUserEmail = adminEmail;
+      
+      // Admin girişinde her zaman kurucu hesabını aktif ediyoruz
+      currentUserEmail = 'kuzeyfe@zamanperdesi.com';
+      usersDB['kuzeyfe@zamanperdesi.com'].role = 'admin';
+
       saveAppData();
       checkAuthSession();
       renderArtists();
@@ -1280,7 +1280,7 @@
     }
 
     function deletePlaylist(id) {
-      if(confirm('Bu listeyi silmek istiyor musun?')) {
+      if(confirm('This list will be deleted?')) {
         userPlaylists = userPlaylists.filter(p => p.id !== id);
         saveAppData();
         renderPlaylists();
@@ -1312,13 +1312,13 @@
       const a = usersDB[email];
       if(!a) return;
       document.getElementById('artistDetailImg').src = a.avatar || DEFAULT_AVATAR;
-      document.getElementById('artistDetailName').innerText = (a.role === 'admin') ? 'Kuzeyfe Kalafat' : a.name;
+      document.getElementById('artistDetailName').innerText = a.name;
       document.getElementById('artistDetailBio').innerText = a.bio || 'Açıklama yok.';
       
       const isCurAdmin = currentUserEmail && usersDB[currentUserEmail] && usersDB[currentUserEmail].role === 'admin';
       const adminControls = document.getElementById('artistAdminControls');
       
-      if(isCurAdmin && email !== currentUserEmail) {
+      if(isCurAdmin && email !== 'kuzeyfe@zamanperdesi.com') {
         adminControls.innerHTML = `
           <button onclick="deleteUserByAdmin('${email}')" class="bg-red-950/60 hover:bg-red-900 border border-red-800 text-red-400 text-xs px-3 py-1.5 rounded-xl font-bold flex items-center justify-center gap-1.5 mx-auto transition">
             <i class="fa-solid fa-user-xmark"></i> Kullanıcıyı Platformdan Sil
@@ -1328,8 +1328,7 @@
         adminControls.innerHTML = '';
       }
 
-      const targetName = (a.role === 'admin') ? 'Kuzeyfe Kalafat' : a.name;
-      const artistTracks = demoTracks.filter(t => t.artist === targetName);
+      const artistTracks = demoTracks.filter(t => t.artist === a.name);
       const tracksList = document.getElementById('artistTracksList');
       tracksList.innerHTML = artistTracks.length ? artistTracks.map(t => `
         <div onclick="playTrack(${t.id})" class="flex items-center justify-between p-2.5 bg-brand-card rounded-xl border border-gray-800 cursor-pointer">
