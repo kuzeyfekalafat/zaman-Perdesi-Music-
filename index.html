@@ -518,7 +518,6 @@
 
     let usersDB = JSON.parse(localStorage.getItem('zaman_users')) || {};
 
-    // KESİN TEMİZLİK VE ADMIN SABİTLEME
     usersDB['kuzeyfe@zamanperdesi.com'] = {
       name: 'Kuzeyfe Kalafat',
       email: 'kuzeyfe@zamanperdesi.com',
@@ -534,7 +533,6 @@
       twitter: 'https://www.twitter.com/kuzeyfe_kalafat'
     };
 
-    // Bozuk/hatalı olabilecek sahte hesapları temizle
     Object.keys(usersDB).forEach(key => {
       if(key !== 'kuzeyfe@zamanperdesi.com' && (usersDB[key].name === 'Admin' || !usersDB[key].name)) {
         delete usersDB[key];
@@ -701,6 +699,7 @@
       container.innerHTML = html;
     }
 
+    // 🔥 HATANIN DÜZELTİLDİĞİ YER (GÜVENLİ HTML KATALOĞU)
     function renderArtists() {
       const grid = document.getElementById('artistsGrid');
       const allUsers = Object.values(usersDB);
@@ -709,13 +708,15 @@
         return;
       }
       
-      grid.innerHTML = allUsers.map(a => {
+      let htmlContent = '';
+      allUsers.forEach(a => {
         const isAdmin = a.role === 'admin';
         const titleText = isAdmin ? 'Platform Kurucusu' : (a.title || 'Zaman Perdesi Sanatçısı');
-        
-        return `
+        const avatarSrc = a.avatar || DEFAULT_AVATAR;
+
+        htmlContent += `
           <div onclick="openArtistDetail('${a.email}')" class="bg-brand-card p-3 rounded-xl border border-gray-800 text-center cursor-pointer space-y-2 hover:border-brand-accent transition">
-            <img src="${a.avatar || DEFAULT_AVATAR}" class="w-16 h-16 rounded-full mx-auto object-cover border border-brand-accent">
+            <img src="${avatarSrc}" class="w-16 h-16 rounded-full mx-auto object-cover border border-brand-accent">
             <div>
               <div class="flex items-center justify-center gap-1">
                 <h4 class="text-xs font-bold text-white truncate">${a.name}</h4>
@@ -725,7 +726,8 @@
             </div>
           </div>
         `;
-      }).join('');
+      });
+      grid.innerHTML = htmlContent;
       setupImageErrorHandlers();
     }
 
@@ -1349,7 +1351,7 @@
       const clearBtn = document.getElementById('clearSearchBtn');
       if (!val.trim()) { resultsSection.classList.add('hidden'); clearBtn.classList.add('hidden'); return; }
       clearBtn.classList.remove('hidden');
-      resultsSection.classList.add('hidden');
+      resultsSection.classList.remove('hidden');
       const filtered = demoTracks.filter(t => t.title.toLowerCase().includes(val.toLowerCase()) || t.artist.toLowerCase().includes(val.toLowerCase()));
       resultsList.innerHTML = filtered.map(t => `
         <div onclick="playTrack(${t.id})" class="p-2 bg-brand-card rounded-xl border border-gray-800 flex items-center justify-between cursor-pointer">
