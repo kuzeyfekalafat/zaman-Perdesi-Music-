@@ -642,7 +642,6 @@
         document.getElementById('profileBioDisplay').innerText = u.bio || "Biyografi eklenmedi.";
         document.getElementById('userAvatar').src = u.avatar || DEFAULT_AVATAR;
 
-        // Sosyal Medya Linkleri
         const ytLink = document.getElementById('linkYoutube');
         const igLink = document.getElementById('linkInstagram');
         if(u.youtube) { ytLink.href = u.youtube; ytLink.classList.remove('hidden'); } else { ytLink.classList.add('hidden'); }
@@ -690,8 +689,9 @@
         card.className = "bg-gray-100 dark:bg-brand-card p-3 rounded-xl border border-gray-200 dark:border-gray-800 text-center cursor-pointer space-y-2 hover:border-brand-accent transition";
         card.onclick = () => openArtistDetail(a.email);
 
+        const avatarSrc = a.avatar || DEFAULT_AVATAR;
         card.innerHTML = `
-          <img src="${a.avatar || DEFAULT_AVATAR}" class="w-16 h-16 rounded-full mx-auto object-cover border border-brand-accent">
+          <img src="${avatarSrc}" class="w-16 h-16 rounded-full mx-auto object-cover border border-brand-accent">
           <div>
             <div class="flex items-center justify-center gap-1">
               <h4 class="text-xs font-bold text-gray-900 dark:text-white truncate">${a.name}</h4>
@@ -760,9 +760,21 @@
       document.getElementById('singleFields').classList.add('hidden');
       document.getElementById('albumFields').classList.add('hidden');
       document.getElementById('videoFields').classList.add('hidden');
-      if (type === 'single') document.getElementById('singleFields').classList.remove('hidden');
-      else if (type === 'album') document.getElementById('albumFields').classList.remove('hidden');
-      else if (type === 'video') document.getElementById('videoFields').classList.remove('hidden');
+      
+      document.getElementById('singleTypeBtn').className = "flex-1 py-1.5 font-semibold rounded-lg text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition";
+      document.getElementById('albumTypeBtn').className = "flex-1 py-1.5 font-semibold rounded-lg text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition";
+      document.getElementById('videoTypeBtn').className = "flex-1 py-1.5 font-semibold rounded-lg text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition";
+
+      if (type === 'single') {
+        document.getElementById('singleFields').classList.remove('hidden');
+        document.getElementById('singleTypeBtn').className = "flex-1 py-1.5 font-semibold rounded-lg bg-brand-accent text-black shadow transition";
+      } else if (type === 'album') {
+        document.getElementById('albumFields').classList.remove('hidden');
+        document.getElementById('albumTypeBtn').className = "flex-1 py-1.5 font-semibold rounded-lg bg-brand-accent text-black shadow transition";
+      } else if (type === 'video') {
+        document.getElementById('videoFields').classList.remove('hidden');
+        document.getElementById('videoTypeBtn').className = "flex-1 py-1.5 font-semibold rounded-lg bg-brand-accent text-black shadow transition";
+      }
     }
 
     function loadTrack(i) {
