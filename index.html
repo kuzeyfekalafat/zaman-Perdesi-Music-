@@ -35,7 +35,7 @@
     window.db = db;
     window.firestoreFns = { collection, getDocs, setDoc, doc, deleteDoc, onSnapshot };
 
-    // Bildirim İzni İsteme
+    // Bildirim İzni İsteme ve Token Alma
     window.requestNotificationPermission = async function() {
       try {
         const permission = await Notification.requestPermission();
@@ -51,6 +51,7 @@
       }
     };
 
+    // Ön plandayken gelen mesaj bildirimlerini yakalama
     onMessage(messaging, (payload) => {
       console.log('Yeni Firebase Bildirimi:', payload);
       if("Notification" in window && Notification.permission === "granted") {
@@ -112,10 +113,12 @@
       </div>
 
       <div class="flex items-center gap-2">
+        <!-- BİLDİRİM İZİN BUTONU -->
         <button onclick="requestNotificationPermission()" class="w-8 h-8 rounded-full bg-gray-100 dark:bg-brand-card hover:bg-gray-200 dark:hover:bg-brand-hover border border-gray-200 dark:border-gray-800 flex items-center justify-center text-brand-accent text-xs transition" title="Bildirimleri Aç">
           <i class="fa-solid fa-bell"></i>
         </button>
 
+        <!-- TEMA DEĞİŞTİRME BUTONU -->
         <button onclick="toggleTheme()" class="w-8 h-8 rounded-full bg-gray-100 dark:bg-brand-card hover:bg-gray-200 dark:hover:bg-brand-hover border border-gray-200 dark:border-gray-800 flex items-center justify-center text-brand-accent text-xs transition" title="Tema Değiştir">
           <i id="themeIcon" class="fa-solid fa-moon"></i>
         </button>
@@ -230,6 +233,10 @@
               <label class="text-xs font-medium text-gray-700 dark:text-gray-300">Albüm Adı</label>
               <input type="text" id="uploadAlbumTitle" placeholder="Örn: Zirve Yolu Albümü" class="w-full bg-gray-100 dark:bg-brand-card text-xs text-gray-900 dark:text-white p-2.5 rounded-xl border border-gray-200 dark:border-gray-800 focus:outline-none focus:border-brand-accent mt-1">
             </div>
+            <div class="space-y-2 max-h-60 overflow-y-auto pr-1">
+              <label class="text-xs font-bold text-brand-accent block">Albüm Parçaları (15 Şarkı)</label>
+              <div id="albumTracksContainer" class="space-y-2"></div>
+            </div>
           </div>
 
           <div id="videoFields" class="hidden space-y-3">
@@ -318,13 +325,26 @@
           <div class="flex border-b border-gray-200 dark:border-gray-800 text-xs justify-between">
             <button onclick="toggleProfileSubTab('myTracks')" id="subTabMyTracks" class="pb-2 px-2 font-semibold text-brand-accent border-b-2 border-brand-accent">🎵 İçeriklerim</button>
             <button onclick="toggleProfileSubTab('favorites')" id="subTabFavs" class="pb-2 px-2 font-semibold text-gray-500 dark:text-gray-400">❤️ Favoriler</button>
+            <button onclick="toggleProfileSubTab('playlists')" id="subTabPlaylists" class="pb-2 px-2 font-semibold text-gray-500 dark:text-gray-400">📂 Çalma Listeleri</button>
           </div>
+
           <div id="myTracksView" class="space-y-2">
             <div id="myUploadedTracksList" class="space-y-2"></div>
           </div>
+
           <div id="favoritesView" class="hidden space-y-2">
             <div id="favoritesListContainer" class="space-y-2">
               <p class="text-xs text-gray-500">Henüz favori eklenmedi.</p>
+            </div>
+          </div>
+
+          <div id="playlistsView" class="hidden space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold text-gray-900 dark:text-white">Özel Çalma Listelerin</span>
+              <button onclick="openCreatePlaylistModal()" class="bg-brand-accent text-black text-[10px] font-bold px-2.5 py-1 rounded-lg shadow"><i class="fa-solid fa-plus"></i> Yeni Liste</button>
+            </div>
+            <div id="playlistsContainer" class="space-y-2">
+              <p class="text-xs text-gray-500 italic">Henüz çalma listesi oluşturulmadı.</p>
             </div>
           </div>
         </div>
@@ -363,7 +383,7 @@
       <div id="chatMessagesContainer" class="flex-1 overflow-y-auto space-y-2 p-2 bg-gray-50 dark:bg-brand-black/60 rounded-xl border border-gray-200 dark:border-gray-800 text-xs"></div>
 
       <form onsubmit="sendPrivateMessage(event)" class="flex gap-2 pt-2 border-t border-gray-200 dark:border-gray-800 flex-shrink-0">
-        <input type="text" id="chatInputMessage" placeholder="Mesajınızı yazın..." required autocomplete="off" class="flex-1 bg-gray-100 dark:bg-brand-card text-xs text-gray-900 dark:text-white p-2.5 rounded-xl border border-gray-200 dark:border-gray-700 focus:outline-none focus:border-brand-accent">
+        <input type="text" id="chatInputMessage" placeholder="Mesajınızı buraya yazın..." required autocomplete="off" class="flex-1 bg-gray-100 dark:bg-brand-card text-xs text-gray-900 dark:text-white p-2.5 rounded-xl border border-gray-200 dark:border-gray-700 focus:outline-none focus:border-brand-accent">
         <button type="submit" class="bg-brand-accent text-black px-3.5 py-2.5 rounded-xl text-xs font-bold shadow hover:opacity-90 transition"><i class="fa-solid fa-paper-plane"></i></button>
       </form>
     </div>
@@ -376,7 +396,7 @@
         <div class="h-56 relative">
           <canvas id="artistChart"></canvas>
         </div>
-        <p class="text-[10px] text-gray-500 text-center italic">Bulut tabanlı son 7 günlük dinlenme verileri.</p>
+        <p class="text-[10px] text-gray-500 text-center italic">Bulut tabanlı analiz verileri.</p>
       </div>
     </div>
 
@@ -390,7 +410,7 @@
         </div>
       </div>
       <div class="flex items-center gap-2.5">
-        <button onclick="downloadCurrentTrack(event)" title="İndir" class="text-gray-400 hover:text-brand-accent transition p-1"><i class="fa-solid fa-download text-xs"></i></button>
+        <button onclick="downloadCurrentTrack(event)" title="Şarkıyı İndir" class="text-gray-400 hover:text-brand-accent transition p-1"><i class="fa-solid fa-download text-xs"></i></button>
         <button onclick="toggleLikeCurrent()" id="likeBtn" class="text-gray-400 hover:text-red-500 transition p-1"><i class="fa-regular fa-heart text-xs"></i></button>
         <button onclick="togglePlayPause(event)" id="playPauseBtn" class="w-8 h-8 rounded-full bg-brand-accent text-black flex items-center justify-center font-bold shadow-md"><i class="fa-solid fa-play text-xs"></i></button>
         <button onclick="openFullPlayer()" class="text-gray-400 hover:text-gray-900 dark:hover:text-white p-1"><i class="fa-solid fa-chevron-up text-xs"></i></button>
@@ -411,6 +431,7 @@
 
       <div class="text-center pt-1 relative">
         <img id="fullPlayerCover" src="" class="w-48 h-48 rounded-2xl mx-auto object-cover shadow-2xl border border-gray-200 dark:border-gray-800">
+        <video id="fullPlayerVideo" class="hidden w-48 h-48 rounded-2xl mx-auto object-cover shadow-2xl border border-gray-200 dark:border-gray-800" controls></video>
       </div>
 
       <div class="text-center space-y-0.5">
@@ -438,16 +459,25 @@
         <div class="flex border-b border-gray-200 dark:border-gray-800 text-xs">
           <button onclick="switchPlayerSubTab('lyrics')" id="playerTabLyrics" class="flex-1 pb-2 font-semibold text-brand-accent border-b-2 border-brand-accent">📜 Sözler</button>
           <button onclick="switchPlayerSubTab('credits')" id="playerTabCredits" class="flex-1 pb-2 font-semibold text-gray-500 dark:text-gray-400">📜 Künye</button>
+          <button onclick="switchPlayerSubTab('comments')" id="playerTabComments" class="flex-1 pb-2 font-semibold text-gray-500 dark:text-gray-400">💬 Yorumlar</button>
         </div>
 
         <div id="playerLyricsContent" class="text-xs text-gray-700 dark:text-gray-300 space-y-2 leading-relaxed max-h-36 overflow-y-auto p-1">
-          <p id="lyricsText">Yine toplandık sahilde akşam vaktinde...</p>
+          <p id="lyricsText">Yine toplandık sahilde akşam vaktinde,<br>Gelişin tüm yükü kaldı o eski şehirde...</p>
         </div>
 
         <div id="playerCreditsContent" class="hidden text-xs space-y-2 text-gray-700 dark:text-gray-300 max-h-36 overflow-y-auto p-1">
           <div class="flex justify-between border-b border-gray-200 dark:border-gray-800/80 pb-1.5"><span class="text-gray-500">Söz & Müzik:</span><span id="creditWriter" class="font-semibold text-gray-900 dark:text-white">Kuzeyfe Kalafat</span></div>
           <div class="flex justify-between border-b border-gray-200 dark:border-gray-800/80 pb-1.5"><span class="text-gray-500">Aranje / Düzenleme:</span><span id="creditArranger" class="font-semibold text-gray-900 dark:text-white">Zaman Perdesi</span></div>
           <div class="flex justify-between border-b border-gray-200 dark:border-gray-800/80 pb-1.5"><span class="text-gray-500">Yapım Şirketi:</span><span id="creditLabel" class="font-semibold text-brand-accent">Zaman Perdesi Music</span></div>
+        </div>
+
+        <div id="playerCommentsContent" class="hidden space-y-2">
+          <div id="commentsList" class="space-y-1.5 max-h-28 overflow-y-auto pr-1"></div>
+          <form onsubmit="addComment(event)" class="flex gap-2 pt-2 border-t border-gray-200 dark:border-gray-800">
+            <input type="text" id="commentInput" placeholder="Yorumunuzu yazın..." required class="flex-1 bg-white dark:bg-brand-dark text-xs text-gray-900 dark:text-white p-2 rounded-xl border border-gray-200 dark:border-gray-700 focus:outline-none focus:border-brand-accent">
+            <button type="submit" class="bg-brand-accent text-black px-3 py-2 rounded-xl text-xs font-bold"><i class="fa-solid fa-paper-plane"></i></button>
+          </form>
         </div>
       </div>
     </div>
@@ -513,6 +543,21 @@
       </div>
     </div>
 
+    <!-- CREATE PLAYLIST MODAL -->
+    <div id="createPlaylistModal" class="hidden absolute inset-0 bg-black/85 backdrop-blur-md z-50 flex items-center justify-center p-4">
+      <div class="w-full max-w-sm bg-white dark:bg-brand-card p-5 rounded-2xl border border-gray-200 dark:border-gray-800 space-y-4 shadow-2xl relative">
+        <button onclick="closeCreatePlaylistModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+        <h3 class="text-sm font-bold text-gray-900 dark:text-white flex items-center gap-2"><i class="fa-solid fa-folder-plus text-brand-accent"></i> Yeni Çalma Listesi Kur</h3>
+        <form onsubmit="handleCreatePlaylist(event)" class="space-y-3">
+          <div>
+            <label class="text-xs text-gray-700 dark:text-gray-300">Liste Adı</label>
+            <input type="text" id="playlistNameInput" placeholder="Örn: Favori Pop Şarkılarım" required class="w-full bg-gray-100 dark:bg-brand-dark text-xs text-gray-900 dark:text-white p-2.5 rounded-xl border border-gray-200 dark:border-gray-800 mt-1">
+          </div>
+          <button type="submit" class="w-full bg-brand-accent text-black font-bold text-xs py-2.5 rounded-xl shadow-lg">Listeyi Oluştur</button>
+        </form>
+      </div>
+    </div>
+
   </div>
 
   <script>
@@ -523,6 +568,7 @@
     let usersDB = {};
     let demoTracks = [];
     let privateMessages = [];
+    let userPlaylists = [];
     let currentUserEmail = localStorage.getItem('zaman_current_user') || 'kuzeyfe@zamanperdesi.com';
 
     let currentTheme = localStorage.getItem('zaman_theme') || 'dark';
@@ -552,15 +598,15 @@
 
     window.onload = function() {
       initTheme();
-      initFirebaseSync();
+      initFirebaseCloudSync();
       initAudioEvents();
     };
 
-    function initFirebaseSync() {
+    function initFirebaseCloudSync() {
       const { collection, onSnapshot, setDoc, doc } = window.firestoreFns;
       const db = window.db;
 
-      // Varsayılan kurucu hesap kontrolü
+      // Varsayılan Kurucu Hesabı Buluta Kaydet (İlk açılış garantisi)
       setDoc(doc(db, "users", "kuzeyfe@zamanperdesi.com"), {
         name: 'Kuzeyfe Kalafat',
         email: 'kuzeyfe@zamanperdesi.com',
@@ -568,11 +614,11 @@
         avatar: DEFAULT_AVATAR,
         role: 'admin',
         title: 'Platform Kurucusu',
-        youtube: 'https://www.youtube.com/@kuzeyfe.kalafat',
+        youtube: 'https://www.youtube.com/@kuzeyfe.kalafat', 
         instagram: 'https://www.instagram.com/kuzeyfekalafat'
       }, { merge: true });
 
-      // Canlı Veritabanı Dinleyicileri (Firestore Real-Time)
+      // Bulut Kullanıcıları Canlı Dinle
       onSnapshot(collection(db, "users"), (snapshot) => {
         usersDB = {};
         snapshot.forEach(docSnap => { usersDB[docSnap.id] = docSnap.data(); });
@@ -580,12 +626,21 @@
         renderArtists();
       });
 
+      // Bulut Şarkıları Canlı Dinle
       onSnapshot(collection(db, "tracks"), (snapshot) => {
         demoTracks = [];
         snapshot.forEach(docSnap => { demoTracks.push(docSnap.data()); });
         if(demoTracks.length === 0) {
-          // İlk açılış için örnek parça ekle
-          let sample = { id: 0, title: 'Ateş Ve Kumsal', artist: 'Kuzeyfe Kalafat', plays: 1240, cover: DEFAULT_COVER, mediaUrl: DEFAULT_AUDIO, type: 'Tekli' };
+          let sample = {
+            id: '0',
+            title: 'Ateş Ve Kumsal',
+            artist: 'Kuzeyfe Kalafat',
+            plays: 1240,
+            cover: DEFAULT_COVER,
+            mediaUrl: DEFAULT_AUDIO,
+            type: 'Tekli',
+            lyrics: 'Yine toplandık sahilde akşam vaktinde...'
+          };
           setDoc(doc(db, "tracks", "0"), sample);
         }
         renderDynamicFeed();
@@ -593,6 +648,7 @@
         updateDashboardStats();
       });
 
+      // Bulut Mesajları Canlı Dinle
       onSnapshot(collection(db, "messages"), (snapshot) => {
         privateMessages = [];
         snapshot.forEach(docSnap => { privateMessages.push(docSnap.data()); });
@@ -618,7 +674,7 @@
         document.getElementById('headerUserName').innerText = u.name.split(' ')[0];
         document.getElementById('profileNameDisplay').innerText = u.name;
         document.getElementById('profileEmailDisplay').innerText = currentUserEmail;
-        document.getElementById('profileBioDisplay').innerText = u.bio || "Biyografi yok.";
+        document.getElementById('profileBioDisplay').innerText = u.bio || "Biyografi eklenmedi.";
         document.getElementById('userAvatar').src = u.avatar || DEFAULT_AVATAR;
 
         const roleTag = document.getElementById('profileRoleTag');
@@ -643,6 +699,7 @@
       const currentName = usersDB[currentUserEmail].name;
       const userTracks = demoTracks.filter(t => t.artist === currentName);
       let totalPlays = userTracks.reduce((acc, t) => acc + (Number(t.plays) || 0), 0);
+
       document.getElementById('statTotalPlays').innerText = totalPlays.toLocaleString();
       document.getElementById('statTotalTracks').innerText = userTracks.length;
       document.getElementById('statTotalFavs').innerText = favorites.length;
@@ -652,11 +709,12 @@
       const grid = document.getElementById('artistsGrid');
       if (!grid) return;
       grid.innerHTML = '';
-      const allUsers = Object.values(usersDB);
       
+      const allUsers = Object.values(usersDB);
       allUsers.forEach(a => {
         const isAdmin = a.role === 'admin';
         const titleText = isAdmin ? 'Platform Kurucusu' : (a.title || 'Zaman Perdesi Sanatçısı');
+
         const card = document.createElement('div');
         card.className = "bg-gray-100 dark:bg-brand-card p-3 rounded-xl border border-gray-200 dark:border-gray-800 text-center cursor-pointer space-y-2 hover:border-brand-accent transition";
         card.onclick = () => openArtistDetail(a.email);
@@ -703,7 +761,7 @@
       const container = document.getElementById('myUploadedTracksList');
       if(!container) return;
       if(userTracks.length === 0) {
-        container.innerHTML = '<p class="text-xs text-gray-500 italic">Yüklediğiniz eser yok.</p>';
+        container.innerHTML = '<p class="text-xs text-gray-500 italic">Yüklediğiniz eser bulunmuyor.</p>';
         return;
       }
       container.innerHTML = userTracks.map(t => `
@@ -731,7 +789,6 @@
       document.getElementById('singleFields').classList.add('hidden');
       document.getElementById('albumFields').classList.add('hidden');
       document.getElementById('videoFields').classList.add('hidden');
-
       if (type === 'single') document.getElementById('singleFields').classList.remove('hidden');
       else if (type === 'album') document.getElementById('albumFields').classList.remove('hidden');
       else if (type === 'video') document.getElementById('videoFields').classList.remove('hidden');
@@ -809,14 +866,23 @@
       const artistName = usersDB[currentUserEmail].name;
       const title = document.getElementById('uploadTitle').value || "Yeni Eser";
       const newId = Date.now().toString();
-      
+
       const newTrack = {
-        id: newId, title, artist: artistName, plays: 0, cover: DEFAULT_COVER, mediaUrl: DEFAULT_AUDIO, type: "Tekli"
+        id: newId,
+        title,
+        artist: artistName,
+        plays: 0,
+        cover: DEFAULT_COVER,
+        mediaUrl: DEFAULT_AUDIO,
+        type: "Tekli",
+        writer: artistName,
+        arranger: "Zaman Perdesi",
+        label: "Zaman Perdesi Music"
       };
 
       const { setDoc, doc } = window.firestoreFns;
       await setDoc(doc(window.db, "tracks", newId), newTrack);
-      alert('Eser buluta başarıyla yüklendi ve tüm cihazlarla senkronize edildi!');
+      alert('Eser başarıyla buluta yüklendi ve herkese senkronize edildi!');
       switchTab('home');
     }
 
@@ -834,7 +900,7 @@
       if(mode === 'admin') document.getElementById('adminForm').classList.remove('hidden');
     }
 
-    async function handleLogin(e) { 
+    function handleLogin(e) { 
       e.preventDefault(); 
       const email = document.getElementById('loginEmail').value.trim();
       if(!usersDB[email]) { alert('Hesap bulunamadı!'); return; }
@@ -849,12 +915,20 @@
       e.preventDefault(); 
       const name = document.getElementById('regName').value.trim();
       const email = document.getElementById('regEmail').value.trim();
-      const newUser = { name, email, bio: "Zaman Perdesi Sanatçısı", avatar: DEFAULT_AVATAR, role: 'user', title: 'Zaman Perdesi Sanatçısı' };
-      
+      const newUser = {
+        name,
+        email,
+        bio: "Zaman Perdesi Sanatçısı",
+        avatar: DEFAULT_AVATAR,
+        role: 'user',
+        title: 'Zaman Perdesi Sanatçısı'
+      };
+
       const { setDoc, doc } = window.firestoreFns;
       await setDoc(doc(window.db, "users", email), newUser);
       currentUserEmail = email;
       localStorage.setItem('zaman_current_user', email);
+      checkAuthSession();
       closeAuthModal(); 
       alert('Kayıt oluşturuldu ve buluta kaydedildi!');
     }
@@ -865,7 +939,7 @@
       localStorage.setItem('zaman_current_user', currentUserEmail);
       checkAuthSession();
       closeAuthModal(); 
-      alert('Admin girişi yapıldı!');
+      alert('Admin olarak giriş yapıldı!');
     }
 
     function handleLogout() {
