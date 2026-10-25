@@ -476,28 +476,28 @@
     </nav>
 
     <!-- AUTH MODAL -->
-    <div id="authModal" class="hidden absolute inset-0 bg-black/85 backdrop-blur-md z-50 flex items-center justify-center p-4">
-      <div class="w-full max-w-sm bg-white dark:bg-brand-card p-5 rounded-2xl border border-gray-200 dark:border-gray-800 space-y-4 shadow-2xl relative">
-        <button type="button" onclick="closeAuthModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+    <div id="authModal" class="hidden absolute inset-0 bg-black/85 backdrop-blur-md z-[9999] flex items-center justify-center p-4">
+      <div class="w-full max-w-sm bg-white dark:bg-brand-card p-5 rounded-2xl border border-gray-200 dark:border-gray-800 space-y-4 shadow-2xl relative pointer-events-auto">
+        <button type="button" onclick="closeAuthModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white p-2 z-10"><i class="fa-solid fa-xmark text-lg"></i></button>
         
-        <div class="grid grid-cols-4 gap-1 border-b border-gray-200 dark:border-gray-800 pb-2 text-[10px] font-bold text-center">
-          <button type="button" id="authTabLogin" onclick="switchAuthMode('login', event)" class="text-brand-accent border-b-2 border-brand-accent pb-1 truncate">Giriş Yap</button>
-          <button type="button" id="authTabRegister" onclick="switchAuthMode('register', event)" class="text-gray-400 pb-1 truncate">Kayıt Ol</button>
+        <div class="grid grid-cols-4 gap-1 border-b border-gray-200 dark:border-gray-800 pb-2 text-[10px] font-bold text-center relative z-10">
+          <button type="button" id="authTabLogin" onclick="switchAuthMode('login', event)" class="text-gray-400 pb-1 truncate">Giriş Yap</button>
+          <button type="button" id="authTabRegister" onclick="switchAuthMode('register', event)" class="text-brand-accent border-b-2 border-brand-accent pb-1 truncate font-bold">Kayıt Ol</button>
           <button type="button" id="authTabForgot" onclick="switchAuthMode('forgot', event)" class="text-gray-400 pb-1 truncate">🔑 Şifre</button>
           <button type="button" id="authTabAdmin" onclick="switchAuthMode('admin', event)" class="text-red-400 pb-1 truncate">🛡️ Admin</button>
         </div>
 
-        <form id="loginForm" onsubmit="handleLogin(event)" class="space-y-3">
+        <form id="loginForm" onsubmit="handleLogin(event)" class="hidden space-y-3">
           <div><label class="text-xs text-gray-700 dark:text-gray-300">E-posta</label><input type="email" id="loginEmail" required class="w-full bg-gray-100 dark:bg-brand-dark text-xs text-gray-900 dark:text-white p-2.5 rounded-xl border border-gray-200 dark:border-gray-800 mt-1"></div>
           <div><label class="text-xs text-gray-700 dark:text-gray-300">Şifre</label><input type="password" id="loginPassword" required class="w-full bg-gray-100 dark:bg-brand-dark text-xs text-gray-900 dark:text-white p-2.5 rounded-xl border border-gray-200 dark:border-gray-800 mt-1"></div>
           <button type="submit" class="w-full bg-brand-accent text-black font-bold text-xs py-2.5 rounded-xl">Giriş Yap</button>
         </form>
 
-        <form id="registerForm" onsubmit="handleRegister(event)" class="hidden space-y-3">
+        <form id="registerForm" onsubmit="handleRegister(event)" class="space-y-3">
           <div><label class="text-xs text-gray-700 dark:text-gray-300">Ad Soyad / Sanatçı Adı</label><input type="text" id="regName" required class="w-full bg-gray-100 dark:bg-brand-dark text-xs text-gray-900 dark:text-white p-2.5 rounded-xl border border-gray-200 dark:border-gray-800 mt-1"></div>
           <div><label class="text-xs text-gray-700 dark:text-gray-300">E-posta</label><input type="email" id="regEmail" required class="w-full bg-gray-100 dark:bg-brand-dark text-xs text-gray-900 dark:text-white p-2.5 rounded-xl border border-gray-200 dark:border-gray-800 mt-1"></div>
           <div><label class="text-xs text-gray-700 dark:text-gray-300">Şifre</label><input type="password" id="regPassword" required class="w-full bg-gray-100 dark:bg-brand-dark text-xs text-gray-900 dark:text-white p-2.5 rounded-xl border border-gray-200 dark:border-gray-800 mt-1"></div>
-          <button type="submit" onclick="handleRegister(event)" class="w-full bg-brand-accent text-black font-bold text-xs py-2.5 rounded-xl cursor-pointer">Kayıt Ol & Mavi Tik Al</button>
+          <button type="button" onclick="handleRegisterDirect(event)" ontouchend="handleRegisterDirect(event)" class="w-full bg-brand-accent text-black font-bold text-xs py-3 rounded-xl shadow-xl cursor-pointer relative z-20 active:scale-95 transition">Kayıt Ol & Mavi Tik Al</button>
         </form>
 
         <form id="forgotForm" onsubmit="handleForgot(event)" class="hidden space-y-3">
@@ -981,13 +981,12 @@
       alert('Giriş yapıldı!');
     }
 
-    async function handleRegister(e) { 
-      if(e) e.preventDefault(); 
+    async function handleRegisterDirect(e) {
+      if(e) e.preventDefault();
       const nameInput = document.getElementById('regName');
       const emailInput = document.getElementById('regEmail');
-      const passInput = document.getElementById('regPassword');
 
-      if(!nameInput || !emailInput || !passInput) return;
+      if(!nameInput || !emailInput) return;
 
       const name = nameInput.value.trim();
       const email = emailInput.value.trim();
@@ -1014,6 +1013,8 @@
       closeAuthModal(); 
       alert('Kayıt oluşturuldu ve buluta kaydedildi!');
     }
+
+    function handleRegister(e) { handleRegisterDirect(e); }
 
     function handleForgot(e) {
       if(e) e.preventDefault();
