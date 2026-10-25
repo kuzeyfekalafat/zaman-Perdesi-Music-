@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="tr" class="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -8,6 +8,8 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- FontAwesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Chart.js for Dashboards -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <!-- Google Font - Inter -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
@@ -37,14 +39,11 @@
 
   <style>
     ::-webkit-scrollbar { width: 4px; height: 4px; }
-    ::-webkit-scrollbar-track { background: #0a0a0c; }
+    ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: #242731; border-radius: 4px; }
-    ::-webkit-scrollbar-thumb:hover { background: #00d2ff; }
     body {
       user-select: none;
       -webkit-tap-highlight-color: transparent;
-      background-color: #0a0a0c;
-      color: #f3f4f6;
     }
     nav {
       position: fixed !important;
@@ -60,20 +59,20 @@
     }
   </style>
 </head>
-<body class="font-sans antialiased h-screen overflow-hidden flex justify-center bg-black">
+<body class="font-sans antialiased h-screen overflow-hidden flex justify-center bg-gray-50 dark:bg-black text-gray-900 dark:text-gray-100 transition-colors duration-300">
 
   <audio id="audioPlayer" preload="auto"></audio>
 
-  <div class="w-full max-w-md h-full bg-brand-black flex flex-col relative overflow-hidden shadow-2xl border-x border-gray-800">
+  <div class="w-full max-w-md h-full bg-white dark:bg-brand-black flex flex-col relative overflow-hidden shadow-2xl border-x border-gray-200 dark:border-gray-800 transition-colors duration-300">
 
     <!-- TOP HEADER -->
-    <header class="p-4 bg-brand-dark/90 backdrop-blur-md border-b border-gray-800/60 flex items-center justify-between z-20 sticky top-0">
+    <header class="p-4 bg-white/90 dark:bg-brand-dark/90 backdrop-blur-md border-b border-gray-200 dark:border-gray-800/60 flex items-center justify-between z-20 sticky top-0 transition-colors duration-300">
       <div class="flex items-center gap-2">
         <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-brand-blue to-brand-accent flex items-center justify-center text-black font-extrabold text-lg shadow-lg shadow-cyan-500/20">
           Z
         </div>
         <div>
-          <h1 class="text-base font-bold tracking-tight bg-gradient-to-r from-white via-gray-200 to-brand-accent bg-clip-text text-transparent">
+          <h1 class="text-base font-bold tracking-tight bg-gradient-to-r from-gray-900 via-gray-700 dark:from-white dark:via-gray-200 to-brand-accent bg-clip-text text-transparent">
             Zaman Perdesi
           </h1>
           <p class="text-[10px] text-brand-accent font-medium -mt-1 tracking-wider uppercase">MUSIC PLATFORM</p>
@@ -81,20 +80,25 @@
       </div>
 
       <div class="flex items-center gap-2">
-        <div id="authStatusBtn" onclick="openAuthModal()" class="flex items-center gap-1.5 bg-brand-card hover:bg-brand-hover border border-gray-800 px-3 py-1.5 rounded-full cursor-pointer transition">
+        <!-- TEMA DEĞİŞTİRME BUTONU (ÖZELLİK 3) -->
+        <button onclick="toggleTheme()" class="w-8 h-8 rounded-full bg-gray-100 dark:bg-brand-card hover:bg-gray-200 dark:hover:bg-brand-hover border border-gray-200 dark:border-gray-800 flex items-center justify-center text-brand-accent text-xs transition" title="Tema Değiştir">
+          <i id="themeIcon" class="fa-solid fa-moon"></i>
+        </button>
+
+        <div id="authStatusBtn" onclick="openAuthModal()" class="flex items-center gap-1.5 bg-gray-100 dark:bg-brand-card hover:bg-gray-200 dark:hover:bg-brand-hover border border-gray-200 dark:border-gray-800 px-3 py-1.5 rounded-full cursor-pointer transition">
           <i class="fa-solid fa-user-check text-brand-accent text-xs"></i>
-          <span id="headerUserName" class="text-xs font-semibold max-w-[90px] truncate">Kuzeyfe Kalafat</span>
+          <span id="headerUserName" class="text-xs font-semibold max-w-[80px] truncate">Kuzeyfe</span>
           <i class="fa-solid fa-circle-check text-brand-accent text-[11px]" title="Onaylı Sanatçı"></i>
         </div>
       </div>
     </header>
 
     <!-- SEARCH BAR -->
-    <div class="px-4 py-2.5 bg-brand-dark/50 border-b border-gray-800/40">
+    <div class="px-4 py-2.5 bg-gray-50 dark:bg-brand-dark/50 border-b border-gray-200 dark:border-gray-800/40 transition-colors duration-300">
       <div class="relative">
         <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs"></i>
         <input type="text" id="searchInput" oninput="handleSearch(this.value)" placeholder="Sanatçı, şarkı veya albüm ara..." 
-          class="w-full bg-brand-card text-xs text-white pl-9 pr-8 py-2 rounded-xl border border-gray-800 focus:outline-none focus:border-brand-accent transition placeholder-gray-500">
+          class="w-full bg-gray-100 dark:bg-brand-card text-xs text-gray-900 dark:text-white pl-9 pr-8 py-2 rounded-xl border border-gray-200 dark:border-gray-800 focus:outline-none focus:border-brand-accent transition placeholder-gray-400 dark:placeholder-gray-500">
         <button id="clearSearchBtn" onclick="clearSearch()" class="hidden absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white">
           <i class="fa-solid fa-xmark text-xs"></i>
         </button>
@@ -113,7 +117,7 @@
       <section id="tab-home" class="tab-content space-y-6">
         <div>
           <div class="flex items-center justify-between mb-3">
-            <h3 class="text-sm font-bold text-white flex items-center gap-2">
+            <h3 class="text-sm font-bold text-gray-900 dark:text-white flex items-center gap-2">
               <i class="fa-solid fa-fire text-brand-accent"></i> Öne Çıkan Eserler & Yüklemeler
             </h3>
           </div>
@@ -124,10 +128,10 @@
       <!-- TAB 2: SANATÇILAR -->
       <section id="tab-artists" class="tab-content hidden space-y-4">
         <div>
-          <h2 class="text-base font-bold text-white flex items-center gap-2">
+          <h2 class="text-base font-bold text-gray-900 dark:text-white flex items-center gap-2">
             <i class="fa-solid fa-users text-brand-accent"></i> Onaylı Sanatçılar Kataloğu
           </h2>
-          <p class="text-xs text-gray-400 mt-0.5">Platforma kayıt olan onaylı bağımsız sanatçılar</p>
+          <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">Platforma kayıt olan onaylı bağımsız sanatçılar</p>
         </div>
         <div id="artistsGrid" class="grid grid-cols-2 gap-3"></div>
       </section>
@@ -135,61 +139,61 @@
       <!-- TAB 3: YÜKLE -->
       <section id="tab-upload" class="tab-content hidden space-y-5">
         <div>
-          <h2 class="text-base font-bold text-white flex items-center gap-2">
+          <h2 class="text-base font-bold text-gray-900 dark:text-white flex items-center gap-2">
             <i class="fa-solid fa-cloud-arrow-up text-brand-accent"></i> Müzik & Medya Yükle
           </h2>
-          <p class="text-xs text-gray-400 mt-0.5">Eserini Zaman Perdesi Music ile tüm dünyaya duyur.</p>
+          <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">Eserini Zaman Perdesi Music ile tüm dünyaya duyur.</p>
         </div>
 
-        <div class="flex p-1 bg-brand-card rounded-xl border border-gray-800 text-[11px]">
+        <div class="flex p-1 bg-gray-100 dark:bg-brand-card rounded-xl border border-gray-200 dark:border-gray-800 text-[11px]">
           <button type="button" id="singleTypeBtn" onclick="switchUploadType('single')" class="flex-1 py-1.5 font-semibold rounded-lg bg-brand-accent text-black shadow transition">🎵 Tekli (Single)</button>
-          <button type="button" id="albumTypeBtn" onclick="switchUploadType('album')" class="flex-1 py-1.5 font-semibold rounded-lg text-gray-400 hover:text-white transition">💽 Albüm</button>
-          <button type="button" id="videoTypeBtn" onclick="switchUploadType('video')" class="flex-1 py-1.5 font-semibold rounded-lg text-gray-400 hover:text-white transition">🎬 Video (Klip)</button>
+          <button type="button" id="albumTypeBtn" onclick="switchUploadType('album')" class="flex-1 py-1.5 font-semibold rounded-lg text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition">💽 Albüm</button>
+          <button type="button" id="videoTypeBtn" onclick="switchUploadType('video')" class="flex-1 py-1.5 font-semibold rounded-lg text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition">🎬 Video (Klip)</button>
         </div>
 
         <form id="uploadForm" onsubmit="handleUploadSubmit(event)" class="space-y-4">
           <div class="space-y-1">
-            <label class="text-xs font-medium text-gray-300">Kapak Görseli Dosyası Seç</label>
-            <input type="file" id="uploadCoverFile" accept="image/*" class="w-full text-xs text-gray-400 bg-brand-card p-2 rounded-xl border border-gray-800 file:mr-3 file:py-1 file:px-2 file:rounded-lg file:border-0 file:text-xs file:bg-brand-accent file:text-black file:font-semibold">
+            <label class="text-xs font-medium text-gray-700 dark:text-gray-300">Kapak Görseli Dosyası Seç</label>
+            <input type="file" id="uploadCoverFile" accept="image/*" class="w-full text-xs text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-brand-card p-2 rounded-xl border border-gray-200 dark:border-gray-800 file:mr-3 file:py-1 file:px-2 file:rounded-lg file:border-0 file:text-xs file:bg-brand-accent file:text-black file:font-semibold">
           </div>
 
-          <div class="p-3 bg-brand-dark/70 rounded-xl border border-gray-800 space-y-2">
+          <div class="p-3 bg-gray-50 dark:bg-brand-dark/70 rounded-xl border border-gray-200 dark:border-gray-800 space-y-2">
             <span class="text-xs font-bold text-brand-accent flex items-center gap-1"><i class="fa-solid fa-file-signature"></i> Eser Künye Bilgileri (Manuel)</span>
             <div class="grid grid-cols-2 gap-2">
               <div>
-                <label class="text-[10px] text-gray-400">Söz & Müzik</label>
-                <input type="text" id="uploadCreditWriter" placeholder="Örn: Kuzeyfe Kalafat" class="w-full bg-brand-card text-xs text-white p-2 rounded-lg border border-gray-700 mt-0.5">
+                <label class="text-[10px] text-gray-500 dark:text-gray-400">Söz & Müzik</label>
+                <input type="text" id="uploadCreditWriter" placeholder="Örn: Kuzeyfe Kalafat" class="w-full bg-white dark:bg-brand-card text-xs text-gray-900 dark:text-white p-2 rounded-lg border border-gray-200 dark:border-gray-700 mt-0.5">
               </div>
               <div>
-                <label class="text-[10px] text-gray-400">Aranje / Düzenleme</label>
-                <input type="text" id="uploadCreditArranger" placeholder="Örn: Zaman Perdesi" class="w-full bg-brand-card text-xs text-white p-2 rounded-lg border border-gray-700 mt-0.5">
+                <label class="text-[10px] text-gray-500 dark:text-gray-400">Aranje / Düzenleme</label>
+                <input type="text" id="uploadCreditArranger" placeholder="Örn: Zaman Perdesi" class="w-full bg-white dark:bg-brand-card text-xs text-gray-900 dark:text-white p-2 rounded-lg border border-gray-200 dark:border-gray-700 mt-0.5">
               </div>
             </div>
             <div>
-              <label class="text-[10px] text-gray-400">Yapım Şirketi / Etiket</label>
-              <input type="text" id="uploadCreditLabel" placeholder="Örn: Zaman Perdesi Music" class="w-full bg-brand-card text-xs text-white p-2 rounded-lg border border-gray-700 mt-0.5">
+              <label class="text-[10px] text-gray-500 dark:text-gray-400">Yapım Şirketi / Etiket</label>
+              <input type="text" id="uploadCreditLabel" placeholder="Örn: Zaman Perdesi Music" class="w-full bg-white dark:bg-brand-card text-xs text-gray-900 dark:text-white p-2 rounded-lg border border-gray-200 dark:border-gray-700 mt-0.5">
             </div>
           </div>
 
           <div id="singleFields" class="space-y-3">
             <div>
-              <label class="text-xs font-medium text-gray-300">Şarkı Adı</label>
-              <input type="text" id="uploadTitle" placeholder="Örn: Ateş Ve Kumsal" class="w-full bg-brand-card text-xs text-white p-2.5 rounded-xl border border-gray-800 focus:outline-none focus:border-brand-accent mt-1">
+              <label class="text-xs font-medium text-gray-700 dark:text-gray-300">Şarkı Adı</label>
+              <input type="text" id="uploadTitle" placeholder="Örn: Ateş Ve Kumsal" class="w-full bg-gray-100 dark:bg-brand-card text-xs text-gray-900 dark:text-white p-2.5 rounded-xl border border-gray-200 dark:border-gray-800 focus:outline-none focus:border-brand-accent mt-1">
             </div>
             <div>
-              <label class="text-xs font-medium text-gray-300">Ses Dosyası Seç (MP3 / WAV)</label>
-              <input type="file" id="uploadAudioFile" accept="audio/*" class="w-full text-xs text-gray-400 bg-brand-card p-2 rounded-xl border border-gray-800 mt-1 file:mr-3 file:py-1 file:px-2 file:rounded-lg file:border-0 file:text-xs file:bg-brand-accent file:text-black file:font-semibold">
+              <label class="text-xs font-medium text-gray-700 dark:text-gray-300">Ses Dosyası Seç (MP3 / WAV)</label>
+              <input type="file" id="uploadAudioFile" accept="audio/*" class="w-full text-xs text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-brand-card p-2 rounded-xl border border-gray-200 dark:border-gray-800 mt-1 file:mr-3 file:py-1 file:px-2 file:rounded-lg file:border-0 file:text-xs file:bg-brand-accent file:text-black file:font-semibold">
             </div>
             <div>
-              <label class="text-xs font-medium text-gray-300">Şarkı Sözleri (Lyrics)</label>
-              <textarea rows="3" id="uploadLyrics" placeholder="Şarkının sözlerini giriniz..." class="w-full bg-brand-card text-xs text-white p-2.5 rounded-xl border border-gray-800 focus:outline-none focus:border-brand-accent mt-1"></textarea>
+              <label class="text-xs font-medium text-gray-700 dark:text-gray-300">Şarkı Sözleri (Lyrics)</label>
+              <textarea rows="3" id="uploadLyrics" placeholder="Şarkının sözlerini giriniz..." class="w-full bg-gray-100 dark:bg-brand-card text-xs text-gray-900 dark:text-white p-2.5 rounded-xl border border-gray-200 dark:border-gray-800 focus:outline-none focus:border-brand-accent mt-1"></textarea>
             </div>
           </div>
 
           <div id="albumFields" class="hidden space-y-3">
             <div>
-              <label class="text-xs font-medium text-gray-300">Albüm Adı</label>
-              <input type="text" id="uploadAlbumTitle" placeholder="Örn: Zirve Yolu Albümü" class="w-full bg-brand-card text-xs text-white p-2.5 rounded-xl border border-gray-800 focus:outline-none focus:border-brand-accent mt-1">
+              <label class="text-xs font-medium text-gray-700 dark:text-gray-300">Albüm Adı</label>
+              <input type="text" id="uploadAlbumTitle" placeholder="Örn: Zirve Yolu Albümü" class="w-full bg-gray-100 dark:bg-brand-card text-xs text-gray-900 dark:text-white p-2.5 rounded-xl border border-gray-200 dark:border-gray-800 focus:outline-none focus:border-brand-accent mt-1">
             </div>
             <div class="space-y-2 max-h-60 overflow-y-auto pr-1">
               <label class="text-xs font-bold text-brand-accent block">Albüm Parçaları (15 Şarkı)</label>
@@ -199,12 +203,12 @@
 
           <div id="videoFields" class="hidden space-y-3">
             <div>
-              <label class="text-xs font-medium text-gray-300">Albüm / Klip Adı</label>
-              <input type="text" id="uploadVideoTitle" placeholder="Örn: Ateş Ve Kumsal Klip" class="w-full bg-brand-card text-xs text-white p-2.5 rounded-xl border border-gray-800 focus:outline-none focus:border-brand-accent mt-1">
+              <label class="text-xs font-medium text-gray-700 dark:text-gray-300">Albüm / Klip Adı</label>
+              <input type="text" id="uploadVideoTitle" placeholder="Örn: Ateş Ve Kumsal Klip" class="w-full bg-gray-100 dark:bg-brand-card text-xs text-gray-900 dark:text-white p-2.5 rounded-xl border border-gray-200 dark:border-gray-800 focus:outline-none focus:border-brand-accent mt-1">
             </div>
             <div>
-              <label class="text-xs font-medium text-gray-300">Video Dosyası Seç (MP4 / WebM)</label>
-              <input type="file" id="uploadVideoFile" accept="video/*" class="w-full text-xs text-gray-400 bg-brand-card p-2 rounded-xl border border-gray-800 mt-1 file:mr-3 file:py-1 file:px-2 file:rounded-lg file:border-0 file:text-xs file:bg-brand-accent file:text-black file:font-semibold">
+              <label class="text-xs font-medium text-gray-700 dark:text-gray-300">Video Dosyası Seç (MP4 / WebM)</label>
+              <input type="file" id="uploadVideoFile" accept="video/*" class="w-full text-xs text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-brand-card p-2 rounded-xl border border-gray-200 dark:border-gray-800 mt-1 file:mr-3 file:py-1 file:px-2 file:rounded-lg file:border-0 file:text-xs file:bg-brand-accent file:text-black file:font-semibold">
             </div>
           </div>
 
@@ -216,20 +220,20 @@
 
       <!-- TAB 4: PROFİLİM -->
       <section id="tab-profile" class="tab-content hidden space-y-5">
-        <div class="flex items-center gap-3 bg-brand-card p-3.5 rounded-2xl border border-gray-800 relative">
+        <div class="flex items-center gap-3 bg-gray-100 dark:bg-brand-card p-3.5 rounded-2xl border border-gray-200 dark:border-gray-800 relative">
           <img id="userAvatar" src="" class="w-14 h-14 rounded-full object-cover border-2 border-brand-accent" alt="Profile">
           <div class="min-w-0 flex-1">
             <div class="flex items-center gap-1.5">
-              <h3 id="profileNameDisplay" class="text-sm font-bold text-white truncate">Kuzeyfe Kalafat</h3>
+              <h3 id="profileNameDisplay" class="text-sm font-bold text-gray-900 dark:text-white truncate">Kuzeyfe Kalafat</h3>
               <i class="fa-solid fa-circle-check text-brand-accent text-xs"></i>
             </div>
-            <p id="profileEmailDisplay" class="text-[11px] text-gray-400 truncate">kuzeyfe@zamanperdesi.com</p>
+            <p id="profileEmailDisplay" class="text-[11px] text-gray-500 dark:text-gray-400 truncate">kuzeyfe@zamanperdesi.com</p>
             <span id="profileRoleTag" class="inline-block mt-1 bg-red-500/20 text-red-400 text-[10px] px-2 py-0.5 rounded-full border border-red-500/30 font-semibold">
               🛡️ Kurucu & Sistem Yöneticisi
             </span>
           </div>
           <div class="flex flex-col gap-1.5">
-            <button onclick="openEditProfileModal()" class="bg-brand-dark hover:bg-brand-hover border border-gray-700 text-brand-accent px-2.5 py-1.5 rounded-xl text-xs font-semibold flex items-center justify-center gap-1 transition">
+            <button onclick="openEditProfileModal()" class="bg-white dark:bg-brand-dark hover:bg-gray-200 dark:hover:bg-brand-hover border border-gray-200 dark:border-gray-700 text-brand-accent px-2.5 py-1.5 rounded-xl text-xs font-semibold flex items-center justify-center gap-1 transition">
               <i class="fa-solid fa-pen-to-square"></i> Düzenle
             </button>
             <button onclick="handleLogout()" class="bg-red-950/40 hover:bg-red-900/40 border border-red-800/50 text-red-400 px-2.5 py-1.5 rounded-xl text-xs font-semibold flex items-center justify-center gap-1 transition">
@@ -238,32 +242,39 @@
           </div>
         </div>
 
-        <div class="bg-gradient-to-br from-brand-card to-brand-dark p-3.5 rounded-2xl border border-gray-800 space-y-3 shadow-xl">
+        <div class="bg-gradient-to-br from-gray-100 dark:from-brand-card to-gray-50 dark:to-brand-dark p-3.5 rounded-2xl border border-gray-200 dark:border-gray-800 space-y-3 shadow-xl">
           <div class="flex items-center justify-between">
             <span class="text-xs font-bold text-brand-accent flex items-center gap-1.5"><i class="fa-solid fa-chart-line"></i> Performans & İstatistikler</span>
             <span class="text-[10px] bg-cyan-500/10 text-cyan-400 px-2 py-0.5 rounded-full border border-cyan-500/20 font-semibold">Canlı Veri</span>
           </div>
           <div class="grid grid-cols-3 gap-2 text-center">
-            <div class="bg-brand-black/60 p-2.5 rounded-xl border border-gray-800/80">
-              <span id="statTotalPlays" class="text-sm font-extrabold text-white block">0</span>
-              <span class="text-[9px] text-gray-400 uppercase tracking-wide">Dinlenme</span>
+            <div class="bg-white dark:bg-brand-black/60 p-2.5 rounded-xl border border-gray-200 dark:border-gray-800/80">
+              <span id="statTotalPlays" class="text-sm font-extrabold text-gray-900 dark:text-white block">0</span>
+              <span class="text-[9px] text-gray-500 dark:text-gray-400 uppercase tracking-wide">Dinlenme</span>
             </div>
-            <div class="bg-brand-black/60 p-2.5 rounded-xl border border-gray-800/80">
+            <div class="bg-white dark:bg-brand-black/60 p-2.5 rounded-xl border border-gray-200 dark:border-gray-800/80">
               <span id="statTotalTracks" class="text-sm font-extrabold text-brand-accent block">0</span>
-              <span class="text-[9px] text-gray-400 uppercase tracking-wide">Eser Sayısı</span>
+              <span class="text-[9px] text-gray-500 dark:text-gray-400 uppercase tracking-wide">Eser Sayısı</span>
             </div>
-            <div class="bg-brand-black/60 p-2.5 rounded-xl border border-gray-800/80">
+            <div class="bg-white dark:bg-brand-black/60 p-2.5 rounded-xl border border-gray-200 dark:border-gray-800/80">
               <span id="statTotalFavs" class="text-sm font-extrabold text-pink-400 block">0</span>
-              <span class="text-[9px] text-gray-400 uppercase tracking-wide">Favori</span>
+              <span class="text-[9px] text-gray-500 dark:text-gray-400 uppercase tracking-wide">Favori</span>
             </div>
+          </div>
+          
+          <!-- YENİ ÖZELLİK 2: DETAYLI SANATÇI GRAFİK PANELİ -->
+          <div class="pt-2 border-t border-gray-200 dark:border-gray-800">
+            <button onclick="openAnalyticsModal()" class="w-full bg-brand-accent/10 hover:bg-brand-accent/20 border border-brand-accent/30 text-brand-accent text-xs font-bold py-2 rounded-xl flex items-center justify-center gap-2 transition">
+              <i class="fa-solid fa-chart-pie"></i> Detaylı Dinlenme Grafikleri (Dashboard)
+            </button>
           </div>
         </div>
 
-        <div class="bg-brand-card p-3 rounded-xl border border-gray-800 space-y-2">
+        <div class="bg-gray-100 dark:bg-brand-card p-3 rounded-xl border border-gray-200 dark:border-gray-800 space-y-2">
           <span class="text-xs font-bold text-brand-accent block">✍️ Hakkında / Biyografi</span>
-          <p id="profileBioDisplay" class="text-xs text-gray-300">Zaman Perdesi Music Kurucusu & Söz Yazarı.</p>
+          <p id="profileBioDisplay" class="text-xs text-gray-600 dark:text-gray-300">Zaman Perdesi Music Kurucusu & Söz Yazarı.</p>
           
-          <div class="pt-2 border-t border-gray-800 flex items-center gap-3.5 text-base flex-wrap">
+          <div class="pt-2 border-t border-gray-200 dark:border-gray-800 flex items-center gap-3.5 text-base flex-wrap">
             <a id="linkYoutube" href="#" target="_blank" class="text-red-500 hover:scale-110 transition hidden" title="YouTube"><i class="fa-brands fa-youtube text-lg"></i></a>
             <a id="linkInstagram" href="#" target="_blank" class="text-pink-500 hover:scale-110 transition hidden" title="Instagram"><i class="fa-brands fa-instagram text-lg"></i></a>
             <a id="linkSpotify" href="#" target="_blank" class="text-green-500 hover:scale-110 transition hidden" title="Spotify"><i class="fa-brands fa-spotify text-lg"></i></a>
@@ -274,10 +285,10 @@
         </div>
 
         <div class="space-y-3">
-          <div class="flex border-b border-gray-800 text-xs justify-between">
+          <div class="flex border-b border-gray-200 dark:border-gray-800 text-xs justify-between">
             <button onclick="toggleProfileSubTab('myTracks')" id="subTabMyTracks" class="pb-2 px-2 font-semibold text-brand-accent border-b-2 border-brand-accent">🎵 İçeriklerim</button>
-            <button onclick="toggleProfileSubTab('favorites')" id="subTabFavs" class="pb-2 px-2 font-semibold text-gray-400">❤️ Favoriler</button>
-            <button onclick="toggleProfileSubTab('playlists')" id="subTabPlaylists" class="pb-2 px-2 font-semibold text-gray-400">📂 Çalma Listeleri</button>
+            <button onclick="toggleProfileSubTab('favorites')" id="subTabFavs" class="pb-2 px-2 font-semibold text-gray-500 dark:text-gray-400">❤️ Favoriler</button>
+            <button onclick="toggleProfileSubTab('playlists')" id="subTabPlaylists" class="pb-2 px-2 font-semibold text-gray-500 dark:text-gray-400">📂 Çalma Listeleri</button>
           </div>
 
           <div id="myTracksView" class="space-y-2">
@@ -292,7 +303,7 @@
 
           <div id="playlistsView" class="hidden space-y-3">
             <div class="flex items-center justify-between">
-              <span class="text-xs font-bold text-white">Özel Çalma Listelerin</span>
+              <span class="text-xs font-bold text-gray-900 dark:text-white">Özel Çalma Listelerin</span>
               <button onclick="openCreatePlaylistModal()" class="bg-brand-accent text-black text-[10px] font-bold px-2.5 py-1 rounded-lg shadow"><i class="fa-solid fa-plus"></i> Yeni Liste</button>
             </div>
             <div id="playlistsContainer" class="space-y-2">
@@ -307,10 +318,10 @@
         <button onclick="closeArtistDetail()" class="text-xs text-brand-accent flex items-center gap-1 font-semibold">
           <i class="fa-solid fa-arrow-left"></i> Geri Dön
         </button>
-        <div class="text-center space-y-2 bg-brand-card p-5 rounded-2xl border border-gray-800 relative">
+        <div class="text-center space-y-2 bg-gray-100 dark:bg-brand-card p-5 rounded-2xl border border-gray-200 dark:border-gray-800 relative">
           <img id="artistDetailImg" src="" class="w-20 h-20 rounded-full mx-auto object-cover border-2 border-brand-accent shadow-lg">
-          <h2 id="artistDetailName" class="text-base font-bold text-white"></h2>
-          <p id="artistDetailBio" class="text-xs text-gray-400"></p>
+          <h2 id="artistDetailName" class="text-base font-bold text-gray-900 dark:text-white"></h2>
+          <p id="artistDetailBio" class="text-xs text-gray-500 dark:text-gray-400"></p>
           <div id="artistMessageAction" class="pt-2"></div>
           <div id="artistAdminControls" class="pt-2"></div>
         </div>
@@ -319,36 +330,48 @@
 
     </main>
 
-    <!-- 💬 ÖZEL MESAJLAŞMA MODALI (GARANTİ EKRAN İÇİ GÖRÜNÜM) -->
-    <div id="chatModal" class="hidden absolute top-2 bottom-16 left-2 right-2 bg-brand-dark/98 backdrop-blur-xl z-50 flex flex-col p-3 rounded-2xl border border-cyan-500/40 shadow-2xl space-y-2">
+    <!-- 💬 ÖZEL MESAJLAŞMA MODALI (ÖZELLİK 1: REAL-TIME HAZIRLIKLI) -->
+    <div id="chatModal" class="hidden absolute top-2 bottom-16 left-2 right-2 bg-white/95 dark:bg-brand-dark/98 backdrop-blur-xl z-50 flex flex-col p-3 rounded-2xl border border-cyan-500/40 shadow-2xl space-y-2 transition-colors duration-300">
       <!-- Modal Header -->
-      <div class="flex items-center justify-between border-b border-gray-800 pb-2 flex-shrink-0">
+      <div class="flex items-center justify-between border-b border-gray-200 dark:border-gray-800 pb-2 flex-shrink-0">
         <div class="flex items-center gap-2">
           <img id="chatUserAvatar" src="" class="w-8 h-8 rounded-full object-cover border border-brand-accent">
           <div>
-            <h4 id="chatUserName" class="text-xs font-bold text-white">Sohbet</h4>
-            <p class="text-[9px] text-brand-accent">Özel Mesaj</p>
+            <h4 id="chatUserName" class="text-xs font-bold text-gray-900 dark:text-white">Sohbet</h4>
+            <p class="text-[9px] text-brand-accent flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span> Gerçek Zamanlı (Firebase/WS Hazır)</p>
           </div>
         </div>
-        <button onclick="closeChatModal()" class="text-gray-400 hover:text-white p-1 text-base"><i class="fa-solid fa-xmark"></i></button>
+        <button onclick="closeChatModal()" class="text-gray-400 hover:text-gray-900 dark:hover:text-white p-1 text-base"><i class="fa-solid fa-xmark"></i></button>
       </div>
 
-      <!-- Mesajlar Listesi (Kaydırılabilir Alan) -->
-      <div id="chatMessagesContainer" class="flex-1 overflow-y-auto space-y-2 p-2 bg-brand-black/60 rounded-xl border border-gray-800 text-xs"></div>
+      <!-- Mesajlar Listesi -->
+      <div id="chatMessagesContainer" class="flex-1 overflow-y-auto space-y-2 p-2 bg-gray-50 dark:bg-brand-black/60 rounded-xl border border-gray-200 dark:border-gray-800 text-xs"></div>
 
-      <!-- Mesaj Gönderme Formu (Kutunun İçinde En Altta Sabit) -->
-      <form onsubmit="sendPrivateMessage(event)" class="flex gap-2 pt-2 border-t border-gray-800 flex-shrink-0">
-        <input type="text" id="chatInputMessage" placeholder="Mesajınızı buraya yazın..." required autocomplete="off" class="flex-1 bg-brand-card text-xs text-white p-2.5 rounded-xl border border-gray-700 focus:outline-none focus:border-brand-accent">
+      <!-- Mesaj Gönderme Formu -->
+      <form onsubmit="sendPrivateMessage(event)" class="flex gap-2 pt-2 border-t border-gray-200 dark:border-gray-800 flex-shrink-0">
+        <input type="text" id="chatInputMessage" placeholder="Mesajınızı buraya yazın..." required autocomplete="off" class="flex-1 bg-gray-100 dark:bg-brand-card text-xs text-gray-900 dark:text-white p-2.5 rounded-xl border border-gray-200 dark:border-gray-700 focus:outline-none focus:border-brand-accent">
         <button type="submit" class="bg-brand-accent text-black px-3.5 py-2.5 rounded-xl text-xs font-bold shadow hover:opacity-90 transition"><i class="fa-solid fa-paper-plane"></i></button>
       </form>
     </div>
 
+    <!-- 📊 ANALYTICS DASHBOARD MODAL (ÖZELLİK 2) -->
+    <div id="analyticsModal" class="hidden absolute inset-0 bg-black/85 backdrop-blur-md z-50 flex items-center justify-center p-4">
+      <div class="w-full max-w-sm bg-white dark:bg-brand-card p-5 rounded-2xl border border-gray-200 dark:border-gray-800 space-y-4 shadow-2xl relative">
+        <button onclick="closeAnalyticsModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+        <h3 class="text-sm font-bold text-gray-900 dark:text-white flex items-center gap-2"><i class="fa-solid fa-chart-column text-brand-accent"></i> Sanatçı Dinlenme Grafikleri</h3>
+        <div class="h-56 relative">
+          <canvas id="artistChart"></canvas>
+        </div>
+        <p class="text-[10px] text-gray-500 text-center italic">Son 7 günlük dinlenme ve etkileşim analiz verileri.</p>
+      </div>
+    </div>
+
     <!-- MINI PLAYER -->
-    <div id="miniPlayer" class="absolute bottom-[58px] left-0 right-0 bg-brand-dark/95 backdrop-blur-md border-t border-cyan-500/30 p-2.5 px-3 flex items-center justify-between z-30 cursor-pointer shadow-2xl">
+    <div id="miniPlayer" class="absolute bottom-[58px] left-0 right-0 bg-white/95 dark:bg-brand-dark/95 backdrop-blur-md border-t border-cyan-500/30 p-2.5 px-3 flex items-center justify-between z-30 cursor-pointer shadow-2xl transition-colors duration-300">
       <div onclick="openFullPlayer()" class="flex items-center gap-2.5 min-w-0 flex-1">
-        <img id="playerCover" src="" class="w-10 h-10 rounded-lg object-cover shadow border border-gray-700">
+        <img id="playerCover" src="" class="w-10 h-10 rounded-lg object-cover shadow border border-gray-200 dark:border-gray-700">
         <div class="min-w-0 flex-1">
-          <h4 id="playerTitle" class="text-xs font-bold text-white truncate">Ateş Ve Kumsal</h4>
+          <h4 id="playerTitle" class="text-xs font-bold text-gray-900 dark:text-white truncate">Ateş Ve Kumsal</h4>
           <p id="playerArtist" class="text-[10px] text-brand-accent truncate">Kuzeyfe Kalafat</p>
         </div>
       </div>
@@ -356,14 +379,14 @@
         <button onclick="downloadCurrentTrack(event)" title="Şarkıyı İndir" class="text-gray-400 hover:text-brand-accent transition p-1"><i class="fa-solid fa-download text-xs"></i></button>
         <button onclick="toggleLikeCurrent()" id="likeBtn" class="text-gray-400 hover:text-red-500 transition p-1"><i class="fa-regular fa-heart text-xs"></i></button>
         <button onclick="togglePlayPause(event)" id="playPauseBtn" class="w-8 h-8 rounded-full bg-brand-accent text-black flex items-center justify-center font-bold shadow-md"><i class="fa-solid fa-play text-xs"></i></button>
-        <button onclick="openFullPlayer()" class="text-gray-400 hover:text-white p-1"><i class="fa-solid fa-chevron-up text-xs"></i></button>
+        <button onclick="openFullPlayer()" class="text-gray-400 hover:text-gray-900 dark:hover:text-white p-1"><i class="fa-solid fa-chevron-up text-xs"></i></button>
       </div>
     </div>
 
     <!-- FULL PLAYER MODAL -->
-    <div id="fullPlayerModal" class="hidden absolute inset-0 bg-brand-black/98 backdrop-blur-xl z-50 flex flex-col p-4 pb-20 overflow-y-auto space-y-3">
-      <div class="flex items-center justify-between border-b border-gray-800/80 pb-2">
-        <button onclick="closeFullPlayer()" class="text-gray-400 hover:text-white"><i class="fa-solid fa-chevron-down text-lg"></i></button>
+    <div id="fullPlayerModal" class="hidden absolute inset-0 bg-white/98 dark:bg-brand-black/98 backdrop-blur-xl z-50 flex flex-col p-4 pb-20 overflow-y-auto space-y-3 transition-colors duration-300">
+      <div class="flex items-center justify-between border-b border-gray-200 dark:border-gray-800/80 pb-2">
+        <button onclick="closeFullPlayer()" class="text-gray-400 hover:text-gray-900 dark:hover:text-white"><i class="fa-solid fa-chevron-down text-lg"></i></button>
         <span class="text-xs font-bold uppercase tracking-widest text-brand-accent">Şimdi Çalıyor</span>
         <div class="flex items-center gap-3">
           <button onclick="downloadCurrentTrack()" title="İndir" class="text-gray-400 hover:text-brand-accent"><i class="fa-solid fa-download text-base"></i></button>
@@ -373,52 +396,52 @@
       </div>
 
       <div class="text-center pt-1 relative">
-        <img id="fullPlayerCover" src="" class="w-48 h-48 rounded-2xl mx-auto object-cover shadow-2xl border border-gray-800">
-        <video id="fullPlayerVideo" class="hidden w-48 h-48 rounded-2xl mx-auto object-cover shadow-2xl border border-gray-800" controls></video>
+        <img id="fullPlayerCover" src="" class="w-48 h-48 rounded-2xl mx-auto object-cover shadow-2xl border border-gray-200 dark:border-gray-800">
+        <video id="fullPlayerVideo" class="hidden w-48 h-48 rounded-2xl mx-auto object-cover shadow-2xl border border-gray-200 dark:border-gray-800" controls></video>
       </div>
 
       <div class="text-center space-y-0.5">
-        <h2 id="fullPlayerTitle" class="text-base font-extrabold text-white">Ateş Ve Kumsal</h2>
+        <h2 id="fullPlayerTitle" class="text-base font-extrabold text-gray-900 dark:text-white">Ateş Ve Kumsal</h2>
         <p id="fullPlayerArtist" class="text-xs text-brand-accent font-semibold">Kuzeyfe Kalafat</p>
       </div>
 
-      <div id="visualPlayerControls" class="bg-brand-card p-3 rounded-2xl border border-gray-800/80 space-y-2">
+      <div id="visualPlayerControls" class="bg-gray-100 dark:bg-brand-card p-3 rounded-2xl border border-gray-200 dark:border-gray-800/80 space-y-2">
         <div class="space-y-1">
-          <input type="range" id="seekSlider" value="0" max="100" oninput="seekTrack(this.value)" class="w-full h-1.5 bg-gray-800 rounded-lg appearance-none cursor-pointer">
-          <div class="flex justify-between text-[10px] text-gray-400 font-mono">
+          <input type="range" id="seekSlider" value="0" max="100" oninput="seekTrack(this.value)" class="w-full h-1.5 bg-gray-300 dark:bg-gray-800 rounded-lg appearance-none cursor-pointer">
+          <div class="flex justify-between text-[10px] text-gray-500 dark:text-gray-400 font-mono">
             <span id="currentTimeDisplay">00:00</span>
             <span id="durationTimeDisplay">00:00</span>
           </div>
         </div>
 
         <div class="flex items-center justify-center gap-6">
-          <button onclick="prevTrack()" class="text-gray-400 hover:text-white text-base"><i class="fa-solid fa-backward-step"></i></button>
+          <button onclick="prevTrack()" class="text-gray-400 hover:text-gray-900 dark:hover:text-white text-base"><i class="fa-solid fa-backward-step"></i></button>
           <button onclick="togglePlayPause(event)" id="modalPlayBtn" class="w-11 h-11 rounded-full bg-brand-accent text-black flex items-center justify-center font-bold shadow-lg shadow-cyan-500/20"><i class="fa-solid fa-play text-sm"></i></button>
-          <button onclick="nextTrack()" class="text-gray-400 hover:text-white text-base"><i class="fa-solid fa-forward-step"></i></button>
+          <button onclick="nextTrack()" class="text-gray-400 hover:text-gray-900 dark:hover:text-white text-base"><i class="fa-solid fa-forward-step"></i></button>
         </div>
       </div>
 
-      <div class="bg-brand-card rounded-2xl p-3 border border-gray-800 space-y-2 flex-1 flex flex-col justify-between">
-        <div class="flex border-b border-gray-800 text-xs">
+      <div class="bg-gray-100 dark:bg-brand-card rounded-2xl p-3 border border-gray-200 dark:border-gray-800 space-y-2 flex-1 flex flex-col justify-between">
+        <div class="flex border-b border-gray-200 dark:border-gray-800 text-xs">
           <button onclick="switchPlayerSubTab('lyrics')" id="playerTabLyrics" class="flex-1 pb-2 font-semibold text-brand-accent border-b-2 border-brand-accent">📜 Sözler</button>
-          <button onclick="switchPlayerSubTab('credits')" id="playerTabCredits" class="flex-1 pb-2 font-semibold text-gray-400">📜 Künye</button>
-          <button onclick="switchPlayerSubTab('comments')" id="playerTabComments" class="flex-1 pb-2 font-semibold text-gray-400">💬 Yorumlar</button>
+          <button onclick="switchPlayerSubTab('credits')" id="playerTabCredits" class="flex-1 pb-2 font-semibold text-gray-500 dark:text-gray-400">📜 Künye</button>
+          <button onclick="switchPlayerSubTab('comments')" id="playerTabComments" class="flex-1 pb-2 font-semibold text-gray-500 dark:text-gray-400">💬 Yorumlar</button>
         </div>
 
-        <div id="playerLyricsContent" class="text-xs text-gray-300 space-y-2 leading-relaxed max-h-36 overflow-y-auto p-1">
+        <div id="playerLyricsContent" class="text-xs text-gray-700 dark:text-gray-300 space-y-2 leading-relaxed max-h-36 overflow-y-auto p-1">
           <p id="lyricsText">Yine toplandık sahilde akşam vaktinde,<br>Gelişin tüm yükü kaldı o eski şehirde...</p>
         </div>
 
-        <div id="playerCreditsContent" class="hidden text-xs space-y-2 text-gray-300 max-h-36 overflow-y-auto p-1">
-          <div class="flex justify-between border-b border-gray-800/80 pb-1.5"><span class="text-gray-500">Söz & Müzik:</span><span id="creditWriter" class="font-semibold text-white">Kuzeyfe Kalafat</span></div>
-          <div class="flex justify-between border-b border-gray-800/80 pb-1.5"><span class="text-gray-500">Aranje / Düzenleme:</span><span id="creditArranger" class="font-semibold text-white">Zaman Perdesi</span></div>
-          <div class="flex justify-between border-b border-gray-800/80 pb-1.5"><span class="text-gray-500">Yapım Şirketi:</span><span id="creditLabel" class="font-semibold text-brand-accent">Zaman Perdesi Music</span></div>
+        <div id="playerCreditsContent" class="hidden text-xs space-y-2 text-gray-700 dark:text-gray-300 max-h-36 overflow-y-auto p-1">
+          <div class="flex justify-between border-b border-gray-200 dark:border-gray-800/80 pb-1.5"><span class="text-gray-500">Söz & Müzik:</span><span id="creditWriter" class="font-semibold text-gray-900 dark:text-white">Kuzeyfe Kalafat</span></div>
+          <div class="flex justify-between border-b border-gray-200 dark:border-gray-800/80 pb-1.5"><span class="text-gray-500">Aranje / Düzenleme:</span><span id="creditArranger" class="font-semibold text-gray-900 dark:text-white">Zaman Perdesi</span></div>
+          <div class="flex justify-between border-b border-gray-200 dark:border-gray-800/80 pb-1.5"><span class="text-gray-500">Yapım Şirketi:</span><span id="creditLabel" class="font-semibold text-brand-accent">Zaman Perdesi Music</span></div>
         </div>
 
         <div id="playerCommentsContent" class="hidden space-y-2">
           <div id="commentsList" class="space-y-1.5 max-h-28 overflow-y-auto pr-1"></div>
-          <form onsubmit="addComment(event)" class="flex gap-2 pt-2 border-t border-gray-800">
-            <input type="text" id="commentInput" placeholder="Yorumunuzu yazın..." required class="flex-1 bg-brand-dark text-xs text-white p-2 rounded-xl border border-gray-700 focus:outline-none focus:border-brand-accent">
+          <form onsubmit="addComment(event)" class="flex gap-2 pt-2 border-t border-gray-200 dark:border-gray-800">
+            <input type="text" id="commentInput" placeholder="Yorumunuzu yazın..." required class="flex-1 bg-white dark:bg-brand-dark text-xs text-gray-900 dark:text-white p-2 rounded-xl border border-gray-200 dark:border-gray-700 focus:outline-none focus:border-brand-accent">
             <button type="submit" class="bg-brand-accent text-black px-3 py-2 rounded-xl text-xs font-bold"><i class="fa-solid fa-paper-plane"></i></button>
           </form>
         </div>
@@ -426,19 +449,19 @@
     </div>
 
     <!-- BOTTOM NAVIGATION -->
-    <nav class="absolute bottom-0 left-0 right-0 bg-brand-dark/95 backdrop-blur-lg border-t border-gray-800 flex justify-around py-2.5 z-40">
+    <nav class="absolute bottom-0 left-0 right-0 bg-white/95 dark:bg-brand-dark/95 backdrop-blur-lg border-t border-gray-200 dark:border-gray-800 flex justify-around py-2.5 z-40 transition-colors duration-300">
       <button onclick="switchTab('home')" id="nav-home" class="flex flex-col items-center gap-1 text-brand-accent"><i class="fa-solid fa-house text-base"></i><span class="text-[10px] font-semibold">Ana Sayfa</span></button>
-      <button onclick="switchTab('artists')" id="nav-artists" class="flex flex-col items-center gap-1 text-gray-400 hover:text-white"><i class="fa-solid fa-users text-base"></i><span class="text-[10px] font-semibold">Sanatçılar</span></button>
-      <button onclick="switchTab('upload')" id="nav-upload" class="flex flex-col items-center gap-1 text-gray-400 hover:text-white"><i class="fa-solid fa-circle-plus text-base"></i><span class="text-[10px] font-semibold">Yükle</span></button>
-      <button onclick="switchTab('profile')" id="nav-profile" class="flex flex-col items-center gap-1 text-gray-400 hover:text-white"><i class="fa-solid fa-user text-base"></i><span class="text-[10px] font-semibold">Profilim</span></button>
+      <button onclick="switchTab('artists')" id="nav-artists" class="flex flex-col items-center gap-1 text-gray-400 hover:text-gray-900 dark:hover:text-white"><i class="fa-solid fa-users text-base"></i><span class="text-[10px] font-semibold">Sanatçılar</span></button>
+      <button onclick="switchTab('upload')" id="nav-upload" class="flex flex-col items-center gap-1 text-gray-400 hover:text-gray-900 dark:hover:text-white"><i class="fa-solid fa-circle-plus text-base"></i><span class="text-[10px] font-semibold">Yükle</span></button>
+      <button onclick="switchTab('profile')" id="nav-profile" class="flex flex-col items-center gap-1 text-gray-400 hover:text-gray-900 dark:hover:text-white"><i class="fa-solid fa-user text-base"></i><span class="text-[10px] font-semibold">Profilim</span></button>
     </nav>
 
     <!-- AUTH MODAL -->
     <div id="authModal" class="hidden absolute inset-0 bg-black/85 backdrop-blur-md z-50 flex items-center justify-center p-4">
-      <div class="w-full max-w-sm bg-brand-card p-5 rounded-2xl border border-gray-800 space-y-4 shadow-2xl relative">
+      <div class="w-full max-w-sm bg-white dark:bg-brand-card p-5 rounded-2xl border border-gray-200 dark:border-gray-800 space-y-4 shadow-2xl relative">
         <button onclick="closeAuthModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
         
-        <div class="grid grid-cols-4 gap-1 border-b border-gray-800 pb-2 text-[10px] font-bold text-center">
+        <div class="grid grid-cols-4 gap-1 border-b border-gray-200 dark:border-gray-800 pb-2 text-[10px] font-bold text-center">
           <button id="authTabLogin" onclick="switchAuthMode('login')" class="text-brand-accent border-b-2 border-brand-accent pb-1 truncate">Giriş Yap</button>
           <button id="authTabRegister" onclick="switchAuthMode('register')" class="text-gray-400 pb-1 truncate">Kayıt Ol</button>
           <button id="authTabForgot" onclick="switchAuthMode('forgot')" class="text-gray-400 pb-1 truncate">🔑 Şifre Unuttum</button>
@@ -446,29 +469,29 @@
         </div>
 
         <form id="loginForm" onsubmit="handleLogin(event)" class="space-y-3">
-          <div><label class="text-xs text-gray-300">E-posta</label><input type="email" id="loginEmail" required class="w-full bg-brand-dark text-xs text-white p-2.5 rounded-xl border border-gray-800 mt-1"></div>
-          <div><label class="text-xs text-gray-300">Şifre</label><input type="password" required class="w-full bg-brand-dark text-xs text-white p-2.5 rounded-xl border border-gray-800 mt-1"></div>
+          <div><label class="text-xs text-gray-700 dark:text-gray-300">E-posta</label><input type="email" id="loginEmail" required class="w-full bg-gray-100 dark:bg-brand-dark text-xs text-gray-900 dark:text-white p-2.5 rounded-xl border border-gray-200 dark:border-gray-800 mt-1"></div>
+          <div><label class="text-xs text-gray-700 dark:text-gray-300">Şifre</label><input type="password" required class="w-full bg-gray-100 dark:bg-brand-dark text-xs text-gray-900 dark:text-white p-2.5 rounded-xl border border-gray-200 dark:border-gray-800 mt-1"></div>
           <button type="submit" class="w-full bg-brand-accent text-black font-bold text-xs py-2.5 rounded-xl">Giriş Yap</button>
         </form>
 
         <form id="registerForm" onsubmit="handleRegister(event)" class="hidden space-y-3">
-          <div><label class="text-xs text-gray-300">Ad Soyad / Sanatçı Adı</label><input type="text" id="regName" required class="w-full bg-brand-dark text-xs text-white p-2.5 rounded-xl border border-gray-800 mt-1"></div>
-          <div><label class="text-xs text-gray-300">E-posta</label><input type="email" id="regEmail" required class="w-full bg-brand-dark text-xs text-white p-2.5 rounded-xl border border-gray-800 mt-1"></div>
-          <div><label class="text-xs text-gray-300">Şifre</label><input type="password" required class="w-full bg-brand-dark text-xs text-white p-2.5 rounded-xl border border-gray-800 mt-1"></div>
+          <div><label class="text-xs text-gray-700 dark:text-gray-300">Ad Soyad / Sanatçı Adı</label><input type="text" id="regName" required class="w-full bg-gray-100 dark:bg-brand-dark text-xs text-gray-900 dark:text-white p-2.5 rounded-xl border border-gray-200 dark:border-gray-800 mt-1"></div>
+          <div><label class="text-xs text-gray-700 dark:text-gray-300">E-posta</label><input type="email" id="regEmail" required class="w-full bg-gray-100 dark:bg-brand-dark text-xs text-gray-900 dark:text-white p-2.5 rounded-xl border border-gray-200 dark:border-gray-800 mt-1"></div>
+          <div><label class="text-xs text-gray-700 dark:text-gray-300">Şifre</label><input type="password" required class="w-full bg-gray-100 dark:bg-brand-dark text-xs text-gray-900 dark:text-white p-2.5 rounded-xl border border-gray-200 dark:border-gray-800 mt-1"></div>
           <button type="submit" class="w-full bg-brand-accent text-black font-bold text-xs py-2.5 rounded-xl">Kayıt Ol & Mavi Tik Al</button>
         </form>
 
         <form id="forgotForm" onsubmit="handleForgot(event)" class="hidden space-y-3">
-          <div class="p-2 bg-brand-dark rounded-xl border border-gray-800 text-[11px] text-gray-300">🔑 Kayıtlı e-postanızı girerek yeni şifre belirleyebilirsiniz.</div>
-          <div><label class="text-xs text-gray-300">Kayıtlı E-posta</label><input type="email" id="forgotEmail" required class="w-full bg-brand-dark text-xs text-white p-2.5 rounded-xl border border-gray-800 mt-1"></div>
-          <div><label class="text-xs text-gray-300">Yeni Şifre</label><input type="password" id="forgotNewPass" required class="w-full bg-brand-dark text-xs text-white p-2.5 rounded-xl border border-gray-800 mt-1"></div>
+          <div class="p-2 bg-gray-100 dark:bg-brand-dark rounded-xl border border-gray-200 dark:border-gray-800 text-[11px] text-gray-700 dark:text-gray-300">🔑 Kayıtlı e-postanızı girerek yeni şifre belirleyebilirsiniz.</div>
+          <div><label class="text-xs text-gray-700 dark:text-gray-300">Kayıtlı E-posta</label><input type="email" id="forgotEmail" required class="w-full bg-gray-100 dark:bg-brand-dark text-xs text-gray-900 dark:text-white p-2.5 rounded-xl border border-gray-200 dark:border-gray-800 mt-1"></div>
+          <div><label class="text-xs text-gray-700 dark:text-gray-300">Yeni Şifre</label><input type="password" id="forgotNewPass" required class="w-full bg-gray-100 dark:bg-brand-dark text-xs text-gray-900 dark:text-white p-2.5 rounded-xl border border-gray-200 dark:border-gray-800 mt-1"></div>
           <button type="submit" class="w-full bg-brand-accent text-black font-bold text-xs py-2.5 rounded-xl">Şifreyi Güncelle</button>
         </form>
 
         <form id="adminForm" onsubmit="handleAdminLogin(event)" class="hidden space-y-3">
           <div class="p-2 bg-red-950/40 border border-red-800/50 rounded-xl text-[11px] text-red-300">🛡️ Admin / Kurucu Girişi</div>
-          <div><label class="text-xs text-gray-300">Admin E-posta</label><input type="email" id="adminEmail" placeholder="kuzeyfe@zamanperdesi.com" required class="w-full bg-brand-dark text-xs text-white p-2.5 rounded-xl border border-gray-800 mt-1"></div>
-          <div><label class="text-xs text-gray-300">Şifre</label><input type="password" required class="w-full bg-brand-dark text-xs text-white p-2.5 rounded-xl border border-gray-800 mt-1"></div>
+          <div><label class="text-xs text-gray-700 dark:text-gray-300">Admin E-posta</label><input type="email" id="adminEmail" placeholder="kuzeyfe@zamanperdesi.com" required class="w-full bg-gray-100 dark:bg-brand-dark text-xs text-gray-900 dark:text-white p-2.5 rounded-xl border border-gray-200 dark:border-gray-800 mt-1"></div>
+          <div><label class="text-xs text-gray-700 dark:text-gray-300">Şifre</label><input type="password" required class="w-full bg-gray-100 dark:bg-brand-dark text-xs text-gray-900 dark:text-white p-2.5 rounded-xl border border-gray-200 dark:border-gray-800 mt-1"></div>
           <button type="submit" class="w-full bg-red-600 text-white font-bold text-xs py-2.5 rounded-xl">Admin Giriş Yap</button>
         </form>
       </div>
@@ -476,22 +499,22 @@
 
     <!-- PROFILE EDIT MODAL -->
     <div id="editProfileModal" class="hidden absolute inset-0 bg-black/85 backdrop-blur-md z-50 flex items-center justify-center p-4">
-      <div class="w-full max-w-sm bg-brand-card p-5 rounded-2xl border border-gray-800 space-y-4 shadow-2xl relative max-h-[90vh] overflow-y-auto">
+      <div class="w-full max-w-sm bg-white dark:bg-brand-card p-5 rounded-2xl border border-gray-200 dark:border-gray-800 space-y-4 shadow-2xl relative max-h-[90vh] overflow-y-auto">
         <button onclick="closeEditProfileModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
-        <h3 class="text-sm font-bold text-white flex items-center gap-2"><i class="fa-solid fa-pen-to-square text-brand-accent"></i> Profili Düzenle</h3>
+        <h3 class="text-sm font-bold text-gray-900 dark:text-white flex items-center gap-2"><i class="fa-solid fa-pen-to-square text-brand-accent"></i> Profili Düzenle</h3>
         <form onsubmit="handleProfileUpdate(event)" class="space-y-3">
-          <div><label class="text-xs text-gray-300">Ad Soyad</label><input type="text" id="editNameInput" required class="w-full bg-brand-dark text-xs text-white p-2.5 rounded-xl border border-gray-800 mt-1"></div>
-          <div><label class="text-xs text-gray-300">Biyografi</label><textarea id="editBioInput" rows="2" class="w-full bg-brand-dark text-xs text-white p-2.5 rounded-xl border border-gray-800 mt-1"></textarea></div>
-          <div><label class="text-xs text-gray-300">Fotoğraf Dosyası Seç</label><input type="file" id="editAvatarFile" accept="image/*" class="w-full text-xs text-gray-400 bg-brand-dark p-2 rounded-xl border border-gray-800 mt-1 file:mr-3 file:py-1 file:px-2 file:rounded-lg file:border-0 file:text-xs file:bg-brand-accent file:text-black file:font-semibold"></div>
+          <div><label class="text-xs text-gray-700 dark:text-gray-300">Ad Soyad</label><input type="text" id="editNameInput" required class="w-full bg-gray-100 dark:bg-brand-dark text-xs text-gray-900 dark:text-white p-2.5 rounded-xl border border-gray-200 dark:border-gray-800 mt-1"></div>
+          <div><label class="text-xs text-gray-700 dark:text-gray-300">Biyografi</label><textarea id="editBioInput" rows="2" class="w-full bg-gray-100 dark:bg-brand-dark text-xs text-gray-900 dark:text-white p-2.5 rounded-xl border border-gray-200 dark:border-gray-800 mt-1"></textarea></div>
+          <div><label class="text-xs text-gray-700 dark:text-gray-300">Fotoğraf Dosyası Seç</label><input type="file" id="editAvatarFile" accept="image/*" class="w-full text-xs text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-brand-dark p-2 rounded-xl border border-gray-200 dark:border-gray-800 mt-1 file:mr-3 file:py-1 file:px-2 file:rounded-lg file:border-0 file:text-xs file:bg-brand-accent file:text-black file:font-semibold"></div>
           
-          <div class="space-y-2 pt-2 border-t border-gray-800">
+          <div class="space-y-2 pt-2 border-t border-gray-200 dark:border-gray-800">
             <span class="text-xs font-bold text-brand-accent block">🔗 Sosyal Medya Bağlantıları</span>
-            <div><label class="text-[10px] text-gray-400 mb-0.5 block">YouTube Kanal Linki</label><input type="url" id="editYoutubeInput" class="w-full bg-brand-dark text-xs text-white p-2 rounded-lg border border-gray-800"></div>
-            <div><label class="text-[10px] text-gray-400 mb-0.5 block">Instagram Profil Linki</label><input type="url" id="editInstagramInput" class="w-full bg-brand-dark text-xs text-white p-2 rounded-lg border border-gray-800"></div>
-            <div><label class="text-[10px] text-gray-400 mb-0.5 block">Spotify Profil Linki</label><input type="url" id="editSpotifyInput" class="w-full bg-brand-dark text-xs text-white p-2 rounded-lg border border-gray-800"></div>
-            <div><label class="text-[10px] text-gray-400 mb-0.5 block">TikTok Profil Linki</label><input type="url" id="editTiktokInput" class="w-full bg-brand-dark text-xs text-white p-2 rounded-lg border border-gray-800"></div>
-            <div><label class="text-[10px] text-gray-400 mb-0.5 block">Facebook Profil Linki</label><input type="url" id="editFacebookInput" class="w-full bg-brand-dark text-xs text-white p-2 rounded-lg border border-gray-800"></div>
-            <div><label class="text-[10px] text-gray-400 mb-0.5 block">Twitter Profil Linki</label><input type="url" id="editTwitterInput" class="w-full bg-brand-dark text-xs text-white p-2 rounded-lg border border-gray-800"></div>
+            <div><label class="text-[10px] text-gray-500 dark:text-gray-400 mb-0.5 block">YouTube Kanal Linki</label><input type="url" id="editYoutubeInput" class="w-full bg-gray-100 dark:bg-brand-dark text-xs text-gray-900 dark:text-white p-2 rounded-lg border border-gray-200 dark:border-gray-800"></div>
+            <div><label class="text-[10px] text-gray-500 dark:text-gray-400 mb-0.5 block">Instagram Profil Linki</label><input type="url" id="editInstagramInput" class="w-full bg-gray-100 dark:bg-brand-dark text-xs text-gray-900 dark:text-white p-2 rounded-lg border border-gray-200 dark:border-gray-800"></div>
+            <div><label class="text-[10px] text-gray-500 dark:text-gray-400 mb-0.5 block">Spotify Profil Linki</label><input type="url" id="editSpotifyInput" class="w-full bg-gray-100 dark:bg-brand-dark text-xs text-gray-900 dark:text-white p-2 rounded-lg border border-gray-200 dark:border-gray-800"></div>
+            <div><label class="text-[10px] text-gray-500 dark:text-gray-400 mb-0.5 block">TikTok Profil Linki</label><input type="url" id="editTiktokInput" class="w-full bg-gray-100 dark:bg-brand-dark text-xs text-gray-900 dark:text-white p-2 rounded-lg border border-gray-200 dark:border-gray-800"></div>
+            <div><label class="text-[10px] text-gray-500 dark:text-gray-400 mb-0.5 block">Facebook Profil Linki</label><input type="url" id="editFacebookInput" class="w-full bg-gray-100 dark:bg-brand-dark text-xs text-gray-900 dark:text-white p-2 rounded-lg border border-gray-200 dark:border-gray-800"></div>
+            <div><label class="text-[10px] text-gray-500 dark:text-gray-400 mb-0.5 block">Twitter Profil Linki</label><input type="url" id="editTwitterInput" class="w-full bg-gray-100 dark:bg-brand-dark text-xs text-gray-900 dark:text-white p-2 rounded-lg border border-gray-200 dark:border-gray-800"></div>
           </div>
 
           <button type="submit" class="w-full bg-brand-accent text-black font-bold text-xs py-2.5 rounded-xl shadow-lg">Kaydet & Güncelle</button>
@@ -501,13 +524,13 @@
 
     <!-- CREATE PLAYLIST MODAL -->
     <div id="createPlaylistModal" class="hidden absolute inset-0 bg-black/85 backdrop-blur-md z-50 flex items-center justify-center p-4">
-      <div class="w-full max-w-sm bg-brand-card p-5 rounded-2xl border border-gray-800 space-y-4 shadow-2xl relative">
+      <div class="w-full max-w-sm bg-white dark:bg-brand-card p-5 rounded-2xl border border-gray-200 dark:border-gray-800 space-y-4 shadow-2xl relative">
         <button onclick="closeCreatePlaylistModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
-        <h3 class="text-sm font-bold text-white flex items-center gap-2"><i class="fa-solid fa-folder-plus text-brand-accent"></i> Yeni Çalma Listesi Kur</h3>
+        <h3 class="text-sm font-bold text-gray-900 dark:text-white flex items-center gap-2"><i class="fa-solid fa-folder-plus text-brand-accent"></i> Yeni Çalma Listesi Kur</h3>
         <form onsubmit="handleCreatePlaylist(event)" class="space-y-3">
           <div>
-            <label class="text-xs text-gray-300">Liste Adı</label>
-            <input type="text" id="playlistNameInput" placeholder="Örn: Favori Pop Şarkılarım" required class="w-full bg-brand-dark text-xs text-white p-2.5 rounded-xl border border-gray-800 mt-1">
+            <label class="text-xs text-gray-700 dark:text-gray-300">Liste Adı</label>
+            <input type="text" id="playlistNameInput" placeholder="Örn: Favori Pop Şarkılarım" required class="w-full bg-gray-100 dark:bg-brand-dark text-xs text-gray-900 dark:text-white p-2.5 rounded-xl border border-gray-200 dark:border-gray-800 mt-1">
           </div>
           <button type="submit" class="w-full bg-brand-accent text-black font-bold text-xs py-2.5 rounded-xl shadow-lg">Listeyi Oluştur</button>
         </form>
@@ -542,6 +565,25 @@
     let currentUserEmail = localStorage.getItem('zaman_current_user') || 'kuzeyfe@zamanperdesi.com';
     let privateMessages = JSON.parse(localStorage.getItem('zaman_messages')) || [];
 
+    // ÖZELLİK 3: TEMA YÖNETİMİ
+    let currentTheme = localStorage.getItem('zaman_theme') || 'dark';
+    function initTheme() {
+      const htmlEl = document.documentElement;
+      const themeIcon = document.getElementById('themeIcon');
+      if(currentTheme === 'light') {
+        htmlEl.classList.remove('dark');
+        if(themeIcon) themeIcon.className = "fa-solid fa-sun";
+      } else {
+        htmlEl.classList.add('dark');
+        if(themeIcon) themeIcon.className = "fa-solid fa-moon";
+      }
+    }
+    function toggleTheme() {
+      currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      localStorage.setItem('zaman_theme', currentTheme);
+      initTheme();
+    }
+
     let initialTracks = [
       {
         id: 0,
@@ -568,6 +610,7 @@
     let isPlaying = false;
     let favorites = [];
     let activeChatEmail = null;
+    let chartInstance = null;
     const audioEl = document.getElementById('audioPlayer');
 
     function setupImageErrorHandlers() {
@@ -580,6 +623,7 @@
     }
 
     window.onload = function() {
+      initTheme();
       checkAuthSession();
       renderArtists();
       renderDynamicFeed();
@@ -589,6 +633,17 @@
       setupImageErrorHandlers();
       updateDashboardStats();
       renderPlaylists();
+      
+      // ÖZELLİK 1: Gerçek Zamanlı Mesajlaşma İçin Polling (Firebase/WebSocket Simülasyonu)
+      setInterval(() => {
+        let latestMessages = JSON.parse(localStorage.getItem('zaman_messages')) || [];
+        if(JSON.stringify(latestMessages) !== JSON.stringify(privateMessages)) {
+          privateMessages = latestMessages;
+          if(activeChatEmail && !document.getElementById('chatModal').classList.contains('hidden')) {
+            renderChatMessages();
+          }
+        }
+      }, 1000);
     };
 
     function initAudioEvents() {
@@ -616,7 +671,7 @@
     function checkAuthSession() {
       if(currentUserEmail && usersDB[currentUserEmail]) {
         let u = usersDB[currentUserEmail];
-        document.getElementById('headerUserName').innerText = u.name;
+        document.getElementById('headerUserName').innerText = u.name.split(' ')[0];
         document.getElementById('profileNameDisplay').innerText = u.name;
         document.getElementById('profileEmailDisplay').innerText = currentUserEmail;
         document.getElementById('profileBioDisplay').innerText = u.bio || "Henüz biyografi eklenmedi.";
@@ -689,10 +744,10 @@
       let html = '';
       for(let i = 1; i <= 15; i++) {
         html += `
-          <div class="p-2 bg-brand-dark rounded-xl border border-gray-800 space-y-1.5">
+          <div class="p-2 bg-gray-50 dark:bg-brand-dark rounded-xl border border-gray-200 dark:border-gray-800 space-y-1.5">
             <span class="text-[10px] text-brand-accent font-bold">Parça #${i}</span>
-            <input type="text" placeholder="Şarkı #${i} Adı" class="w-full bg-brand-card text-xs text-white p-2 rounded-lg border border-gray-700 album-track-name">
-            <input type="file" accept="audio/*" class="w-full text-[10px] text-gray-400 album-track-file">
+            <input type="text" placeholder="Şarkı #${i} Adı" class="w-full bg-white dark:bg-brand-card text-xs text-gray-900 dark:text-white p-2 rounded-lg border border-gray-200 dark:border-gray-700 album-track-name">
+            <input type="file" accept="audio/*" class="w-full text-[10px] text-gray-500 dark:text-gray-400 album-track-file">
           </div>
         `;
       }
@@ -716,7 +771,7 @@
         const avatarSrc = (a.avatar && !a.avatar.includes('class=')) ? a.avatar : DEFAULT_AVATAR;
 
         const card = document.createElement('div');
-        card.className = "bg-brand-card p-3 rounded-xl border border-gray-800 text-center cursor-pointer space-y-2 hover:border-brand-accent transition";
+        card.className = "bg-gray-100 dark:bg-brand-card p-3 rounded-xl border border-gray-200 dark:border-gray-800 text-center cursor-pointer space-y-2 hover:border-brand-accent transition";
         card.onclick = () => openArtistDetail(a.email);
 
         const img = document.createElement('img');
@@ -730,7 +785,7 @@
         nameRow.className = "flex items-center justify-center gap-1";
 
         const h4 = document.createElement('h4');
-        h4.className = "text-xs font-bold text-white truncate";
+        h4.className = "text-xs font-bold text-gray-900 dark:text-white truncate";
         h4.innerText = a.name;
 
         const icon = document.createElement('i');
@@ -740,7 +795,7 @@
         nameRow.appendChild(icon);
 
         const p = document.createElement('p');
-        p.className = "text-[10px] text-gray-400 truncate";
+        p.className = "text-[10px] text-gray-500 dark:text-gray-400 truncate";
         p.innerText = titleText;
 
         infoDiv.appendChild(nameRow);
@@ -762,12 +817,12 @@
       const isCurAdmin = currentUserEmail && usersDB[currentUserEmail] && usersDB[currentUserEmail].role === 'admin';
       
       container.innerHTML = demoTracks.map((t, idx) => `
-        <div onclick="playTrack(${idx})" class="flex items-center justify-between p-2.5 rounded-xl bg-brand-card border border-gray-800 cursor-pointer">
+        <div onclick="playTrack(${idx})" class="flex items-center justify-between p-2.5 rounded-xl bg-gray-100 dark:bg-brand-card border border-gray-200 dark:border-gray-800 cursor-pointer">
           <div class="flex items-center gap-2.5">
             <img src="${t.cover || DEFAULT_COVER}" class="w-10 h-10 rounded-lg object-cover">
             <div>
-              <h4 class="text-xs font-bold text-white">${t.title}</h4>
-              <p class="text-[10px] text-gray-400">${t.artist} • <span class="text-brand-accent">${t.type || 'Tekli'}</span></p>
+              <h4 class="text-xs font-bold text-gray-900 dark:text-white">${t.title}</h4>
+              <p class="text-[10px] text-gray-500 dark:text-gray-400">${t.artist} • <span class="text-brand-accent">${t.type || 'Tekli'}</span></p>
             </div>
           </div>
           <div class="flex items-center gap-2">
@@ -792,12 +847,12 @@
         return;
       }
       container.innerHTML = userTracks.map(t => `
-        <div class="flex items-center justify-between p-2.5 bg-brand-card rounded-xl border border-gray-800">
+        <div class="flex items-center justify-between p-2.5 bg-gray-100 dark:bg-brand-card rounded-xl border border-gray-200 dark:border-gray-800">
           <div class="flex items-center gap-2.5">
             <img src="${t.cover || DEFAULT_COVER}" class="w-10 h-10 rounded-lg object-cover">
             <div>
-              <h4 class="text-xs font-bold text-white">${t.title}</h4>
-              <p class="text-[10px] text-gray-400">${t.type || 'Eser'} • ${t.plays || 0} Dinlenme</p>
+              <h4 class="text-xs font-bold text-gray-900 dark:text-white">${t.title}</h4>
+              <p class="text-[10px] text-gray-500 dark:text-gray-400">${t.type || 'Eser'} • ${t.plays || 0} Dinlenme</p>
             </div>
           </div>
           <button onclick="deleteTrack(event, ${t.id})" class="text-red-400 hover:text-red-300 p-1.5"><i class="fa-solid fa-trash-can text-xs"></i></button>
@@ -830,9 +885,9 @@
       document.getElementById('albumFields').classList.add('hidden');
       document.getElementById('videoFields').classList.add('hidden');
 
-      document.getElementById('singleTypeBtn').className = "flex-1 py-1.5 font-semibold rounded-lg text-gray-400 hover:text-white transition";
-      document.getElementById('albumTypeBtn').className = "flex-1 py-1.5 font-semibold rounded-lg text-gray-400 hover:text-white transition";
-      document.getElementById('videoTypeBtn').className = "flex-1 py-1.5 font-semibold rounded-lg text-gray-400 hover:text-white transition";
+      document.getElementById('singleTypeBtn').className = "flex-1 py-1.5 font-semibold rounded-lg text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition";
+      document.getElementById('albumTypeBtn').className = "flex-1 py-1.5 font-semibold rounded-lg text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition";
+      document.getElementById('videoTypeBtn').className = "flex-1 py-1.5 font-semibold rounded-lg text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition";
 
       if (type === 'single') {
         document.getElementById('singleFields').classList.remove('hidden');
@@ -1001,9 +1056,9 @@
       document.getElementById('playerCreditsContent').classList.add('hidden');
       document.getElementById('playerCommentsContent').classList.add('hidden');
 
-      document.getElementById('playerTabLyrics').className = "flex-1 pb-2 font-semibold text-gray-400";
-      document.getElementById('playerTabCredits').className = "flex-1 pb-2 font-semibold text-gray-400";
-      document.getElementById('playerTabComments').className = "flex-1 pb-2 font-semibold text-gray-400";
+      document.getElementById('playerTabLyrics').className = "flex-1 pb-2 font-semibold text-gray-500 dark:text-gray-400";
+      document.getElementById('playerTabCredits').className = "flex-1 pb-2 font-semibold text-gray-500 dark:text-gray-400";
+      document.getElementById('playerTabComments').className = "flex-1 pb-2 font-semibold text-gray-500 dark:text-gray-400";
 
       if(tab === 'lyrics') {
         document.getElementById('playerLyricsContent').classList.remove('hidden');
@@ -1040,9 +1095,9 @@
         return;
       }
       listContainer.innerHTML = currentTrack.comments.map(c => `
-        <div class="bg-brand-dark p-2 rounded-xl text-xs space-y-0.5 border border-gray-800">
+        <div class="bg-gray-50 dark:bg-brand-dark p-2 rounded-xl text-xs space-y-0.5 border border-gray-200 dark:border-gray-800">
           <span class="font-bold text-brand-accent block text-[11px]">${c.user}</span>
-          <p class="text-gray-300 text-[11px]">${c.text}</p>
+          <p class="text-gray-700 dark:text-gray-300 text-[11px]">${c.text}</p>
         </div>
       `).join('');
     }
@@ -1254,10 +1309,10 @@
       if(!container) return;
       if(favorites.length === 0) { container.innerHTML = '<p class="text-xs text-gray-500">Henüz favori eklenmedi.</p>'; return; }
       container.innerHTML = favorites.map(t => `
-        <div onclick="playTrack(${t.id})" class="flex items-center justify-between p-2.5 bg-brand-card rounded-xl border border-gray-800 cursor-pointer">
+        <div onclick="playTrack(${t.id})" class="flex items-center justify-between p-2.5 bg-gray-100 dark:bg-brand-card rounded-xl border border-gray-200 dark:border-gray-800 cursor-pointer">
           <div class="flex items-center gap-2.5">
             <img src="${t.cover || DEFAULT_COVER}" class="w-10 h-10 rounded-lg object-cover">
-            <div><h4 class="text-xs font-bold text-white">${t.title}</h4><p class="text-[10px] text-gray-400">${t.artist}</p></div>
+            <div><h4 class="text-xs font-bold text-gray-900 dark:text-white">${t.title}</h4><p class="text-[10px] text-gray-500 dark:text-gray-400">${t.artist}</p></div>
           </div>
           <i class="fa-solid fa-heart text-red-500 text-xs"></i>
         </div>
@@ -1288,10 +1343,10 @@
         return;
       }
       container.innerHTML = userPlaylists.map(p => `
-        <div class="p-3 bg-brand-card rounded-xl border border-gray-800 flex items-center justify-between">
+        <div class="p-3 bg-gray-100 dark:bg-brand-card rounded-xl border border-gray-200 dark:border-gray-800 flex items-center justify-between">
           <div>
-            <h4 class="text-xs font-bold text-white"><i class="fa-solid fa-list text-brand-accent"></i> ${p.name}</h4>
-            <p class="text-[10px] text-gray-400">${p.tracks.length} Parça</p>
+            <h4 class="text-xs font-bold text-gray-900 dark:text-white"><i class="fa-solid fa-list text-brand-accent"></i> ${p.name}</h4>
+            <p class="text-[10px] text-gray-500 dark:text-gray-400">${p.tracks.length} Parça</p>
           </div>
           <button onclick="deletePlaylist(${p.id})" class="text-red-400 hover:text-red-300 text-xs p-1"><i class="fa-solid fa-trash"></i></button>
         </div>
@@ -1311,9 +1366,9 @@
       document.getElementById('favoritesView').classList.add('hidden');
       document.getElementById('playlistsView').classList.add('hidden');
 
-      document.getElementById('subTabMyTracks').className = "pb-2 px-2 font-semibold text-gray-400";
-      document.getElementById('subTabFavs').className = "pb-2 px-2 font-semibold text-gray-400";
-      document.getElementById('subTabPlaylists').className = "pb-2 px-2 font-semibold text-gray-400";
+      document.getElementById('subTabMyTracks').className = "pb-2 px-2 font-semibold text-gray-500 dark:text-gray-400";
+      document.getElementById('subTabFavs').className = "pb-2 px-2 font-semibold text-gray-500 dark:text-gray-400";
+      document.getElementById('subTabPlaylists').className = "pb-2 px-2 font-semibold text-gray-500 dark:text-gray-400";
 
       if(tab === 'myTracks') {
         document.getElementById('myTracksView').classList.remove('hidden');
@@ -1361,10 +1416,10 @@
       const artistTracks = demoTracks.filter(t => t.artist === a.name);
       const tracksList = document.getElementById('artistTracksList');
       tracksList.innerHTML = artistTracks.length ? artistTracks.map(t => `
-        <div onclick="playTrack(${t.id})" class="flex items-center justify-between p-2.5 bg-brand-card rounded-xl border border-gray-800 cursor-pointer">
+        <div onclick="playTrack(${t.id})" class="flex items-center justify-between p-2.5 bg-gray-100 dark:bg-brand-card rounded-xl border border-gray-200 dark:border-gray-800 cursor-pointer">
           <div class="flex items-center gap-2">
             <img src="${t.cover || DEFAULT_COVER}" class="w-9 h-9 rounded object-cover">
-            <div><h4 class="text-xs font-bold text-white">${t.title}</h4><p class="text-[10px] text-gray-400">${t.artist}</p></div>
+            <div><h4 class="text-xs font-bold text-gray-900 dark:text-white">${t.title}</h4><p class="text-[10px] text-gray-500 dark:text-gray-400">${t.artist}</p></div>
           </div>
           <i class="fa-solid fa-play text-xs text-brand-accent"></i>
         </div>
@@ -1377,7 +1432,7 @@
 
     function closeArtistDetail() { document.getElementById('artistDetailView').classList.add('hidden'); switchTab('artists'); }
     
-    // 💬 ÖZEL MESAJLAŞMA FONKSİYONLARI
+    // 💬 ÖZEL MESAJLAŞMA FONKSİYONLARI (ÖZELLİK 1)
     function openChatWithUser(email) {
       if(!currentUserEmail) { alert('Önce giriş yapmalısınız!'); openAuthModal(); return; }
       activeChatEmail = email;
@@ -1423,7 +1478,7 @@
         const isMe = m.sender === currentUserEmail;
         return `
           <div class="flex flex-col ${isMe ? 'items-end' : 'items-start'} space-y-0.5">
-            <div class="max-w-[75%] p-2.5 rounded-2xl text-xs ${isMe ? 'bg-brand-accent text-black rounded-br-none font-medium' : 'bg-brand-dark text-white rounded-bl-none border border-gray-700'}">
+            <div class="max-w-[75%] p-2.5 rounded-2xl text-xs ${isMe ? 'bg-brand-accent text-black rounded-br-none font-medium' : 'bg-gray-200 dark:bg-brand-dark text-gray-900 dark:text-white rounded-bl-none border border-gray-300 dark:border-gray-700'}">
               <p>${m.text}</p>
             </div>
             <span class="text-[9px] text-gray-500 px-1">${m.time}</span>
@@ -1431,6 +1486,61 @@
         `;
       }).join('');
       container.scrollTop = container.scrollHeight;
+    }
+
+    // 📊 ANALYTICS DASHBOARD GRAFİK FONKSİYONLARI (ÖZELLİK 2)
+    function openAnalyticsModal() {
+      document.getElementById('analyticsModal').classList.remove('hidden');
+      renderArtistChart();
+    }
+    function closeAnalyticsModal() {
+      document.getElementById('analyticsModal').classList.add('hidden');
+    }
+
+    function renderArtistChart() {
+      const ctx = document.getElementById('artistChart').getContext('2d');
+      if(chartInstance) {
+        chartInstance.destroy();
+      }
+      
+      const currentName = currentUserEmail && usersDB[currentUserEmail] ? usersDB[currentUserEmail].name : "Kuzeyfe Kalafat";
+      const userTracks = demoTracks.filter(t => t.artist === currentName);
+      let basePlays = userTracks.reduce((acc, t) => acc + (Number(t.plays) || 0), 10);
+
+      chartInstance = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: ['Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt', 'Paz'],
+          datasets: [{
+            label: 'Günlük Dinlenme',
+            data: [
+              Math.floor(basePlays * 0.1), 
+              Math.floor(basePlays * 0.15), 
+              Math.floor(basePlays * 0.12), 
+              Math.floor(basePlays * 0.2), 
+              Math.floor(basePlays * 0.25), 
+              Math.floor(basePlays * 0.35), 
+              basePlays
+            ],
+            borderColor: '#00d2ff',
+            backgroundColor: 'rgba(0, 210, 255, 0.1)',
+            borderWidth: 2,
+            fill: true,
+            tension: 0.3
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { labels: { color: currentTheme === 'dark' ? '#fff' : '#333', font: { size: 10 } } }
+          },
+          scales: {
+            x: { ticks: { color: currentTheme === 'dark' ? '#9ca3af' : '#666', font: { size: 9 } }, grid: { color: 'rgba(200,200,200,0.1)' } },
+            y: { ticks: { color: currentTheme === 'dark' ? '#9ca3af' : '#666', font: { size: 9 } }, grid: { color: 'rgba(200,200,200,0.1)' } }
+          }
+        }
+      });
     }
 
     function handleSearch(val) {
@@ -1442,10 +1552,10 @@
       resultsSection.classList.remove('hidden');
       const filtered = demoTracks.filter(t => t.title.toLowerCase().includes(val.toLowerCase()) || t.artist.toLowerCase().includes(val.toLowerCase()));
       resultsList.innerHTML = filtered.map(t => `
-        <div onclick="playTrack(${t.id})" class="p-2 bg-brand-card rounded-xl border border-gray-800 flex items-center justify-between cursor-pointer">
+        <div onclick="playTrack(${t.id})" class="p-2 bg-gray-100 dark:bg-brand-card rounded-xl border border-gray-200 dark:border-gray-800 flex items-center justify-between cursor-pointer">
           <div class="flex items-center gap-2">
             <img src="${t.cover || DEFAULT_COVER}" class="w-8 h-8 rounded object-cover">
-            <div><p class="text-xs font-bold text-white">${t.title}</p><span class="text-[10px] text-gray-400">${t.artist}</span></div>
+            <div><p class="text-xs font-bold text-gray-900 dark:text-white">${t.title}</p><span class="text-[10px] text-gray-500 dark:text-gray-400">${t.artist}</span></div>
           </div>
           <i class="fa-solid fa-play text-xs text-brand-accent"></i>
         </div>
