@@ -493,11 +493,12 @@
           <button type="submit" class="w-full bg-brand-accent text-black font-bold text-xs py-2.5 rounded-xl">Giriş Yap</button>
         </form>
 
+        <!-- KAYIT OL ALANI (FORM DIŞI BIRAKILDI, DOKUNMA GARANTİLİ) -->
         <div id="registerForm" class="space-y-3">
           <div><label class="text-xs text-gray-700 dark:text-gray-300">Ad Soyad / Sanatçı Adı</label><input type="text" id="regName" required class="w-full bg-gray-100 dark:bg-brand-dark text-xs text-gray-900 dark:text-white p-2.5 rounded-xl border border-gray-200 dark:border-gray-800 mt-1"></div>
           <div><label class="text-xs text-gray-700 dark:text-gray-300">E-posta</label><input type="email" id="regEmail" required class="w-full bg-gray-100 dark:bg-brand-dark text-xs text-gray-900 dark:text-white p-2.5 rounded-xl border border-gray-200 dark:border-gray-800 mt-1"></div>
           <div><label class="text-xs text-gray-700 dark:text-gray-300">Şifre</label><input type="password" id="regPassword" required class="w-full bg-gray-100 dark:bg-brand-dark text-xs text-gray-900 dark:text-white p-2.5 rounded-xl border border-gray-200 dark:border-gray-800 mt-1"></div>
-          <button type="button" onclick="executeRegister()" ontouchend="executeRegister()" class="w-full bg-brand-accent text-black font-bold text-xs py-3.5 rounded-xl shadow-2xl cursor-pointer relative z-30 active:scale-95 transition block text-center">Kayıt Ol & Mavi Tik Al</button>
+          <button type="button" id="directRegBtn" class="w-full bg-brand-accent text-black font-bold text-xs py-3.5 rounded-xl shadow-2xl cursor-pointer relative z-50 active:scale-95 transition block text-center">Kayıt Ol & Mavi Tik Al</button>
         </div>
 
         <form id="forgotForm" onsubmit="handleForgot(event)" class="hidden space-y-3">
@@ -570,7 +571,55 @@
       initFirebaseCloudSync();
       initAudioEvents();
       initAlbumTrackInputs();
+      initDirectRegisterEvent();
     };
+
+    function initDirectRegisterEvent() {
+      const btn = document.getElementById('directRegBtn');
+      if(!btn) return;
+
+      const triggerRegister = async function(e) {
+        if(e) { e.preventDefault(); e.stopPropagation(); }
+        
+        const nameInput = document.getElementById('regName');
+        const emailInput = document.getElementById('regEmail');
+
+        if(!nameInput || !emailInput) return;
+
+        const name = nameInput.value.trim();
+        const email = emailInput.value.trim();
+
+        if(!name || !email) {
+          alert('Lütfen ad soyad ve e-posta alanlarını doldurunuz!');
+          return;
+        }
+
+        const newUser = {
+          name,
+          email,
+          bio: "Zaman Perdesi Sanatçısı",
+          avatar: DEFAULT_AVATAR,
+          role: 'user',
+          title: 'Zaman Perdesi Sanatçısı'
+        };
+
+        try {
+          const { setDoc, doc } = window.firestoreFns;
+          await setDoc(doc(window.db, "users", email), newUser);
+          currentUserEmail = email;
+          localStorage.setItem('zaman_current_user', email);
+          checkAuthSession();
+          closeAuthModal(); 
+          alert('Kayıt oluşturuldu ve buluta kaydedildi!');
+        } catch (err) {
+          console.error(err);
+          alert('Kayıt sırasında hata oluştu: ' + err.message);
+        }
+      };
+
+      btn.onclick = triggerRegister;
+      btn.ontouchend = triggerRegister;
+    }
 
     function initAlbumTrackInputs() {
       const container = document.getElementById('albumTracksContainer');
@@ -980,41 +1029,6 @@
       closeAuthModal(); 
       alert('Giriş yapıldı!');
     }
-
-    async function executeRegister(e) {
-      if(e) e.preventDefault();
-      const nameInput = document.getElementById('regName');
-      const emailInput = document.getElementById('regEmail');
-
-      if(!nameInput || !emailInput) return;
-
-      const name = nameInput.value.trim();
-      const email = emailInput.value.trim();
-
-      if(!name || !email) {
-        alert('Lütfen ad soyad ve e-posta alanlarını doldurunuz!');
-        return;
-      }
-
-      const newUser = {
-        name,
-        email,
-        bio: "Zaman Perdesi Sanatçısı",
-        avatar: DEFAULT_AVATAR,
-        role: 'user',
-        title: 'Zaman Perdesi Sanatçısı'
-      };
-
-      const { setDoc, doc } = window.firestoreFns;
-      await setDoc(doc(window.db, "users", email), newUser);
-      currentUserEmail = email;
-      localStorage.setItem('zaman_current_user', email);
-      checkAuthSession();
-      closeAuthModal(); 
-      alert('Kayıt oluşturuldu ve buluta kaydedildi!');
-    }
-
-    function handleRegister(e) { executeRegister(e); }
 
     function handleForgot(e) {
       if(e) e.preventDefault();
