@@ -7,88 +7,243 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script>
-    tailwind.config = { darkMode: 'class', theme: { extend: { colors: { brand: { black: '#0a0a0c', dark: '#121318', card: '#1a1c23', accent: '#00d2ff', blue: '#0072ff' } } } } }
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: { black: '#0a0a0c', dark: '#121318', card: '#1a1c23', hover: '#242731', accent: '#00d2ff', blue: '#0072ff' }
+          }
+        }
+      }
+    }
   </script>
+  <style>
+    ::-webkit-scrollbar { width: 4px; height: 4px; }
+    ::-webkit-scrollbar-thumb { background: #242731; border-radius: 4px; }
+    body { user-select: none; -webkit-tap-highlight-color: transparent; }
+  </style>
 </head>
-<body class="font-sans antialiased h-screen overflow-hidden flex justify-center bg-black text-gray-100">
-  <div class="w-full max-w-md h-full bg-brand-black flex flex-col relative overflow-hidden shadow-2xl border-x border-gray-800">
+<body class="font-sans antialiased h-screen overflow-hidden flex justify-center bg-gray-50 dark:bg-black text-gray-900 dark:text-gray-100">
+
+  <audio id="audioPlayer" preload="auto"></audio>
+
+  <div class="w-full max-w-md h-full bg-white dark:bg-brand-black flex flex-col relative overflow-hidden shadow-2xl border-x border-gray-200 dark:border-gray-800">
 
     <!-- HEADER -->
-    <header class="p-4 bg-brand-dark border-b border-gray-800 flex items-center justify-between z-20">
+    <header class="p-4 bg-white/90 dark:bg-brand-dark/90 backdrop-blur-md border-b border-gray-200 dark:border-gray-800 flex items-center justify-between z-20 flex-shrink-0">
       <div class="flex items-center gap-2">
-        <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-brand-blue to-brand-accent flex items-center justify-center text-black font-extrabold text-lg">Z</div>
+        <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-brand-blue to-brand-accent flex items-center justify-center text-black font-extrabold text-lg shadow-lg">Z</div>
         <div>
-          <h1 class="text-base font-bold text-white">Zaman Perdesi</h1>
-          <p class="text-[10px] text-brand-accent font-medium uppercase">MUSIC PLATFORM</p>
+          <h1 class="text-base font-bold tracking-tight text-gray-900 dark:text-white">Zaman Perdesi</h1>
+          <p class="text-[10px] text-brand-accent font-medium -mt-1 tracking-wider uppercase">MUSIC PLATFORM</p>
         </div>
       </div>
-      <div class="bg-brand-card px-3 py-1.5 rounded-full flex items-center gap-1.5">
-        <i class="fa-solid fa-user-check text-brand-accent text-xs"></i>
-        <span class="text-xs font-semibold">Kuzeyfe</span>
+      <div class="flex items-center gap-2">
+        <button type="button" id="themeToggleBtn" class="w-8 h-8 rounded-full bg-gray-100 dark:bg-brand-card flex items-center justify-center text-brand-accent text-xs cursor-pointer">
+          <i id="themeIcon" class="fa-solid fa-moon"></i>
+        </button>
+        <div class="flex items-center gap-1.5 bg-gray-100 dark:bg-brand-card px-3 py-1.5 rounded-full">
+          <i class="fa-solid fa-user-check text-brand-accent text-xs"></i>
+          <span class="text-xs font-semibold">Kuzeyfe</span>
+        </div>
       </div>
     </header>
 
-    <!-- CONTENT -->
+    <!-- SEARCH BAR -->
+    <div class="px-4 py-2.5 bg-gray-50 dark:bg-brand-dark/50 border-b border-gray-200 dark:border-gray-800 flex-shrink-0">
+      <div class="relative">
+        <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs"></i>
+        <input type="text" id="searchInput" placeholder="Sanatçı, şarkı veya albüm ara..." 
+          class="w-full bg-gray-100 dark:bg-brand-card text-xs text-gray-900 dark:text-white pl-9 pr-8 py-2 rounded-xl border border-gray-200 dark:border-gray-800 focus:outline-none focus:border-brand-accent">
+      </div>
+    </div>
+
+    <!-- MAIN CONTENT -->
     <main class="flex-1 overflow-y-auto p-4 space-y-6 pb-24">
-      <section id="tab-home" class="tab-content space-y-4">
-        <h3 class="text-sm font-bold text-white flex items-center gap-2"><i class="fa-solid fa-fire text-brand-accent"></i> Öne Çıkan Eserler</h3>
-        <div id="feedList" class="space-y-2">
-          <div class="p-3 bg-brand-card rounded-xl border border-gray-800 flex justify-between items-center">
-            <div><h4 class="text-xs font-bold text-white">Ateş Ve Kumsal</h4><p class="text-[10px] text-gray-400">Hamza Kalafat</p></div>
-            <i class="fa-solid fa-play text-brand-accent text-xs"></i>
+      
+      <section id="searchResultsSection" class="hidden space-y-4">
+        <h2 class="text-xs font-bold uppercase tracking-wider text-brand-accent">Arama Sonuçları</h2>
+        <div id="searchResultsList" class="space-y-2"></div>
+      </section>
+
+      <!-- TAB 1: ANA SAYFA -->
+      <section id="tab-home" class="tab-content space-y-6">
+        <div>
+          <h3 class="text-sm font-bold text-gray-900 dark:text-white mb-3 flex items-center gap-2">
+            <i class="fa-solid fa-fire text-brand-accent"></i> Öne Çıkan Eserler & Yüklemeler
+          </h3>
+          <div id="feedList" class="space-y-2"></div>
+        </div>
+      </section>
+
+      <!-- TAB 2: SANATÇILAR -->
+      <section id="tab-artists" class="tab-content hidden space-y-4">
+        <div>
+          <h2 class="text-base font-bold text-gray-900 dark:text-white flex items-center gap-2">
+            <i class="fa-solid fa-users text-brand-accent"></i> Onaylı Sanatçılar Kataloğu
+          </h2>
+          <p class="text-xs text-gray-500 mt-0.5">Platforma kayıt olan onaylı sanatçılar</p>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div class="bg-gray-100 dark:bg-brand-card p-3 rounded-xl border border-gray-200 dark:border-gray-800 text-center space-y-2">
+            <div class="w-14 h-14 rounded-full bg-brand-accent/20 text-brand-accent font-bold flex items-center justify-center mx-auto text-lg">K</div>
+            <h4 class="text-xs font-bold text-white">Kuzeyfe</h4>
+            <p class="text-[10px] text-gray-400">Platform Kurucusu</p>
           </div>
         </div>
       </section>
 
-      <section id="tab-artists" class="tab-content hidden space-y-3">
-        <h2 class="text-base font-bold text-white">Sanatçılar</h2>
-        <div class="p-3 bg-brand-card rounded-xl border border-gray-800 text-xs">Kuzeyfe - Kurucu</div>
+      <!-- TAB 3: YÜKLE -->
+      <section id="tab-upload" class="tab-content hidden space-y-5">
+        <div>
+          <h2 class="text-base font-bold text-gray-900 dark:text-white flex items-center gap-2">
+            <i class="fa-solid fa-cloud-arrow-up text-brand-accent"></i> Müzik & Medya Yükle
+          </h2>
+          <p class="text-xs text-gray-500 mt-0.5">Eserini Zaman Perdesi Music ile tüm dünyaya duyur.</p>
+        </div>
+        <div class="space-y-3">
+          <div>
+            <label class="text-xs font-medium text-gray-700 dark:text-gray-300">Şarkı Adı</label>
+            <input type="text" id="uploadTitle" placeholder="Örn: Ateş Ve Kumsal" class="w-full bg-gray-100 dark:bg-brand-card text-xs text-gray-900 dark:text-white p-2.5 rounded-xl border border-gray-200 dark:border-gray-800 mt-1">
+          </div>
+          <div>
+            <label class="text-xs font-medium text-gray-700 dark:text-gray-300">Şarkı Sözleri (Lyrics)</label>
+            <textarea rows="3" id="uploadLyrics" placeholder="Şarkının sözlerini giriniz..." class="w-full bg-gray-100 dark:bg-brand-card text-xs text-gray-900 dark:text-white p-2.5 rounded-xl border border-gray-200 dark:border-gray-800 mt-1"></textarea>
+          </div>
+          <button type="button" id="uploadSubmitBtn" class="w-full bg-gradient-to-r from-brand-accent to-brand-blue text-black font-bold text-xs py-3 rounded-xl shadow-lg cursor-pointer">
+            🚀 Platforma Yayınla
+          </button>
+        </div>
       </section>
 
-      <section id="tab-upload" class="tab-content hidden space-y-3">
-        <h2 class="text-base font-bold text-white">Müzik Yükle</h2>
-        <input type="text" id="uploadTitle" placeholder="Şarkı Adı" class="w-full bg-brand-card text-xs text-white p-2.5 rounded-xl border border-gray-800">
-        <button type="button" id="uploadBtn" class="w-full bg-brand-accent text-black font-bold text-xs py-3 rounded-xl">Yayınla</button>
+      <!-- TAB 4: PROFİLİM -->
+      <section id="tab-profile" class="tab-content hidden space-y-5">
+        <div class="flex items-center gap-3 bg-gray-100 dark:bg-brand-card p-3.5 rounded-2xl border border-gray-200 dark:border-gray-800">
+          <div class="w-14 h-14 rounded-full bg-brand-accent flex items-center justify-center text-black font-bold text-xl">K</div>
+          <div class="min-w-0 flex-1">
+            <h3 class="text-sm font-bold text-gray-900 dark:text-white truncate">Kuzeyfe Kalafat</h3>
+            <p class="text-[11px] text-gray-500 dark:text-gray-400 truncate">kuzeyfe198634@gmail.com</p>
+            <span class="inline-block mt-1 bg-brand-accent/25 text-brand-accent text-[10px] px-2 py-0.5 rounded-full font-medium">Zaman Perdesi Sanatçısı</span>
+          </div>
+        </div>
       </section>
 
-      <section id="tab-profile" class="tab-content hidden space-y-3">
-        <h2 class="text-base font-bold text-white">Profilim</h2>
-        <div class="p-3 bg-brand-card rounded-xl border border-gray-800 text-xs">kuzeyfe198634@gmail.com</div>
-      </section>
     </main>
 
-    <!-- NAVIGATION -->
-    <nav class="bg-brand-dark border-t border-gray-800 flex justify-around py-3 z-40">
-      <button type="button" data-tab="home" class="nav-btn flex flex-col items-center gap-1 text-brand-accent p-1"><i class="fa-solid fa-house text-base"></i><span class="text-[10px]">Ana Sayfa</span></button>
-      <button type="button" data-tab="artists" class="nav-btn flex flex-col items-center gap-1 text-gray-400 p-1"><i class="fa-solid fa-users text-base"></i><span class="text-[10px]">Sanatçılar</span></button>
-      <button type="button" data-tab="upload" class="nav-btn flex flex-col items-center gap-1 text-gray-400 p-1"><i class="fa-solid fa-circle-plus text-base"></i><span class="text-[10px]">Yükle</span></button>
-      <button type="button" data-tab="profile" class="nav-btn flex flex-col items-center gap-1 text-gray-400 p-1"><i class="fa-solid fa-user text-base"></i><span class="text-[10px]">Profilim</span></button>
+    <!-- MINI PLAYER -->
+    <div class="bg-white/95 dark:bg-brand-dark/95 backdrop-blur-md border-t border-cyan-500/30 p-2.5 px-3 flex items-center justify-between z-30 flex-shrink-0">
+      <div class="flex items-center gap-2.5 min-w-0 flex-1">
+        <div class="w-10 h-10 rounded-lg bg-brand-card border border-gray-700 flex items-center justify-center text-brand-accent"><i class="fa-solid fa-music text-sm"></i></div>
+        <div class="min-w-0 flex-1">
+          <h4 id="playerTitle" class="text-xs font-bold text-gray-900 dark:text-white truncate">Ateş Ve Kumsal</h4>
+          <p id="playerArtist" class="text-[10px] text-brand-accent truncate">Hamza Kalafat</p>
+        </div>
+      </div>
+      <button type="button" id="playPauseBtn" class="w-8 h-8 rounded-full bg-brand-accent text-black flex items-center justify-center font-bold shadow-md cursor-pointer"><i class="fa-solid fa-play text-xs"></i></button>
+    </div>
+
+    <!-- ALT SEKMELER (NAV) -->
+    <nav class="bg-white dark:bg-brand-dark border-t border-gray-200 dark:border-gray-800 flex justify-around py-3 z-40 shadow-2xl flex-shrink-0">
+      <button type="button" data-tab="home" class="nav-btn flex flex-col items-center gap-1 text-brand-accent cursor-pointer p-1"><i class="fa-solid fa-house text-base"></i><span class="text-[10px] font-semibold">Ana Sayfa</span></button>
+      <button type="button" data-tab="artists" class="nav-btn flex flex-col items-center gap-1 text-gray-400 cursor-pointer p-1"><i class="fa-solid fa-users text-base"></i><span class="text-[10px] font-semibold">Sanatçılar</span></button>
+      <button type="button" data-tab="upload" class="nav-btn flex flex-col items-center gap-1 text-gray-400 cursor-pointer p-1"><i class="fa-solid fa-circle-plus text-base"></i><span class="text-[10px] font-semibold">Yükle</span></button>
+      <button type="button" data-tab="profile" class="nav-btn flex flex-col items-center gap-1 text-gray-400 cursor-pointer p-1"><i class="fa-solid fa-user text-base"></i><span class="text-[10px] font-semibold">Profilim</span></button>
     </nav>
 
   </div>
 
   <script>
     document.addEventListener("DOMContentLoaded", () => {
-      const btns = document.querySelectorAll('.nav-btn');
-      btns.forEach(b => {
-        b.addEventListener('click', () => {
-          const tab = b.getAttribute('data-tab');
-          document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
-          document.getElementById('tab-' + tab).classList.remove('hidden');
-          btns.forEach(x => { x.classList.remove('text-brand-accent'); x.classList.add('text-gray-400'); });
-          b.classList.remove('text-gray-400');
-          b.classList.add('text-brand-accent');
+      const navButtons = document.querySelectorAll('.nav-btn');
+      navButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+          const tabName = btn.getAttribute('data-tab');
+          document.querySelectorAll('.tab-content').forEach(sec => sec.classList.add('hidden'));
+          const targetSec = document.getElementById('tab-' + tabName);
+          if(targetSec) targetSec.classList.remove('hidden');
+
+          navButtons.forEach(b => {
+            b.classList.remove('text-brand-accent');
+            b.classList.add('text-gray-400');
+          });
+          btn.classList.remove('text-gray-400');
+          btn.classList.add('text-brand-accent');
         });
       });
 
-      const upBtn = document.getElementById('uploadBtn');
-      if(upBtn) {
-        upBtn.addEventListener('click', () => {
-          const val = document.getElementById('uploadTitle').value;
-          if(val) { alert('Yayınlandı: ' + val); document.querySelector('[data-tab="home"]').click(); }
-          else { alert('Şarkı adı giriniz!'); }
+      const themeBtn = document.getElementById('themeToggleBtn');
+      if(themeBtn) {
+        themeBtn.addEventListener('click', () => {
+          document.documentElement.classList.toggle('dark');
         });
       }
+
+      let tracks = [
+        { title: 'Ateş Ve Kumsal', artist: 'Hamza Kalafat', url: 'https://actions.google.com/sounds/v1/ambiences/outdoor_synth.ogg' },
+        { title: 'Zirve Yolu', artist: 'Kuzeyfe', url: 'https://actions.google.com/sounds/v1/ambiences/outdoor_synth.ogg' }
+      ];
+
+      const feedList = document.getElementById('feedList');
+      const audioEl = document.getElementById('audioPlayer');
+      const playPauseBtn = document.getElementById('playPauseBtn');
+
+      function renderFeed() {
+        if(!feedList) return;
+        feedList.innerHTML = tracks.map((t, idx) => `
+          <div onclick="playTrackIndex(${idx})" class="flex items-center justify-between p-3 rounded-xl bg-gray-100 dark:bg-brand-card border border-gray-200 dark:border-gray-800 cursor-pointer hover:border-brand-accent transition">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-lg bg-brand-accent/20 flex items-center justify-center text-brand-accent"><i class="fa-solid fa-music"></i></div>
+              <div>
+                <h4 class="text-xs font-bold text-gray-900 dark:text-white">${t.title}</h4>
+                <p class="text-[10px] text-gray-500">${t.artist}</p>
+              </div>
+            </div>
+            <i class="fa-solid fa-play text-brand-accent text-xs"></i>
+          </div>
+        `).join('');
+      }
+
+      window.playTrackIndex = (idx) => {
+        const t = tracks[idx];
+        if(!t) return;
+        document.getElementById('playerTitle').innerText = t.title;
+        document.getElementById('playerArtist').innerText = t.artist;
+        audioEl.src = t.url;
+        audioEl.play();
+        playPauseBtn.innerHTML = '<i class="fa-solid fa-pause text-xs"></i>';
+      };
+
+      if(playPauseBtn) {
+        playPauseBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          if(audioEl.paused) {
+            audioEl.play();
+            playPauseBtn.innerHTML = '<i class="fa-solid fa-pause text-xs"></i>';
+          } else {
+            audioEl.pause();
+            playPauseBtn.innerHTML = '<i class="fa-solid fa-play text-xs"></i>';
+          }
+        });
+      }
+
+      const uploadBtn = document.getElementById('uploadSubmitBtn');
+      if(uploadBtn) {
+        uploadBtn.addEventListener('click', () => {
+          const titleInput = document.getElementById('uploadTitle');
+          if(titleInput && titleInput.value.trim()) {
+            tracks.push({ title: titleInput.value.trim(), artist: 'Kuzeyfe', url: 'https://actions.google.com/sounds/v1/ambiences/outdoor_synth.ogg' });
+            renderFeed();
+            titleInput.value = '';
+            alert('Eser başarıyla yayınlandı!');
+            document.querySelector('[data-tab="home"]').click();
+          } else {
+            alert('Lütfen şarkı adını giriniz!');
+          }
+        });
+      }
+
+      renderFeed();
     });
   </script>
 </body>
