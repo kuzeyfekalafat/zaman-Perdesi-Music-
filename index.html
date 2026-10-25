@@ -13,60 +13,11 @@
   <!-- Google Font - Inter -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
-  <!-- SABİTLER EN BAŞTA TANIMLANDI (HATA ÇÖZÜMÜ) -->
   <script>
     const DEFAULT_COVER = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300" viewBox="0 0 300 300"><defs><linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="%230072ff"/><stop offset="100%" stop-color="%2300d2ff"/></linearGradient></defs><rect width="300" height="300" fill="%231a1c23"/><circle cx="150" cy="150" r="90" fill="url(%23g)" opacity="0.25"/><path d="M135 110v80l60-40z" fill="%2300d2ff"/><text x="50%" y="82%" text-anchor="middle" fill="%2300d2ff" font-family="sans-serif" font-size="14" font-weight="bold">ZAMAN PERDESİ</text></svg>';
     const DEFAULT_AVATAR = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200"><rect width="200" height="200" fill="%231a1c23"/><circle cx="100" cy="80" r="40" fill="%2300d2ff"/><path d="M40 170c0-33 27-60 60-60s60 27 60 60z" fill="%2300d2ff"/></svg>';
     const DEFAULT_AUDIO = 'https://actions.google.com/sounds/v1/ambiences/outdoor_synth.ogg'; 
-  </script>
 
-  <!-- Firebase SDK (Modular v9) -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
-    import { getFirestore, collection, getDocs, setDoc, doc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
-    import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-messaging.js";
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyAnmVE-9T0T6lDhQeafto4V-p0R6ZexGSA",
-      authDomain: "zamanperdesimusic-c3150.firebaseapp.com",
-      projectId: "zamanperdesimusic-c3150",
-      storageBucket: "zamanperdesimusic-c3150.firebasestorage.app",
-      messagingSenderId: "1041697921243",
-      appId: "1:1041697921243:web:298a02061d64d9cabd14fe"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-    const messaging = getMessaging(app);
-
-    window.db = db;
-    window.firestoreFns = { collection, getDocs, setDoc, doc, deleteDoc, onSnapshot };
-
-    window.requestNotificationPermission = async function() {
-      try {
-        const permission = await Notification.requestPermission();
-        if (permission === 'granted') {
-          const token = await getToken(messaging, { vapidKey: 'SENIN_VAPID_KEY_BURAYA' });
-          alert('Bildirimler başarıyla aktif edildi!');
-        } else {
-          alert('Bildirim izni reddedildi.');
-        }
-      } catch (error) {
-        console.error('Bildirim izni alınamadı:', error);
-      }
-    };
-
-    onMessage(messaging, (payload) => {
-      if("Notification" in window && Notification.permission === "granted") {
-        new Notification(payload.notification.title, {
-          body: payload.notification.body,
-          icon: DEFAULT_COVER
-        });
-      }
-    });
-  </script>
-
-  <script>
     tailwind.config = {
       darkMode: 'class',
       theme: {
@@ -496,6 +447,102 @@
 
   </div>
 
+  <!-- BÜTÜN FONKSİYONLAR GLOBAL SCOPE'A TAŞINDI -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
+    import { getFirestore, collection, getDocs, setDoc, doc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+    import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-messaging.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAnmVE-9T0T6lDhQeafto4V-p0R6ZexGSA",
+      authDomain: "zamanperdesimusic-c3150.firebaseapp.com",
+      projectId: "zamanperdesimusic-c3150",
+      storageBucket: "zamanperdesimusic-c3150.firebasestorage.app",
+      messagingSenderId: "1041697921243",
+      appId: "1:1041697921243:web:298a02061d64d9cabd14fe"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const messaging = getMessaging(app);
+
+    window.db = db;
+    window.firestoreFns = { collection, getDocs, setDoc, doc, deleteDoc, onSnapshot };
+
+    window.requestNotificationPermission = async function() {
+      try {
+        const permission = await Notification.requestPermission();
+        if (permission === 'granted') {
+          const token = await getToken(messaging, { vapidKey: 'SENIN_VAPID_KEY_BURAYA' });
+          alert('Bildirimler başarıyla aktif edildi!');
+        } else {
+          alert('Bildirim izni reddedildi.');
+        }
+      } catch (error) {
+        console.error('Bildirim izni alınamadı:', error);
+      }
+    };
+
+    onMessage(messaging, (payload) => {
+      if("Notification" in window && Notification.permission === "granted") {
+        new Notification(payload.notification.title, {
+          body: payload.notification.body,
+          icon: DEFAULT_COVER
+        });
+      }
+    });
+
+    // Firebase Canlı Veri Senkronizasyonu
+    window.initFirebaseCloudSync = function() {
+      setDoc(doc(db, "users", "zamanperdesimusic@gmail.com"), {
+        name: 'Kuzeyfe Kalafat',
+        email: 'zamanperdesimusic@gmail.com',
+        bio: 'Zaman Perdesi Music Kurucusu & Söz Yazarı.',
+        avatar: DEFAULT_AVATAR,
+        role: 'admin',
+        title: 'Platform Kurucusu',
+        youtube: 'https://www.youtube.com/@kuzeyfe.kalafat', 
+        instagram: 'https://www.instagram.com/kuzeyfekalafat'
+      }, { merge: true });
+
+      onSnapshot(collection(db, "users"), (snapshot) => {
+        window.usersDB = {};
+        snapshot.forEach(docSnap => { window.usersDB[docSnap.id] = docSnap.data(); });
+        window.checkAuthSession();
+        window.renderArtists();
+      });
+
+      onSnapshot(collection(db, "tracks"), (snapshot) => {
+        window.demoTracks = [];
+        snapshot.forEach(docSnap => { window.demoTracks.push(docSnap.data()); });
+        if(window.demoTracks.length === 0) {
+          let sample = {
+            id: '0',
+            title: 'Ateş Ve Kumsal',
+            artist: 'Hamza Kalafat',
+            plays: 1240,
+            cover: DEFAULT_COVER,
+            mediaUrl: DEFAULT_AUDIO,
+            type: 'Tekli',
+            lyrics: 'Yine toplandık sahilde akşam vaktinde...'
+          };
+          setDoc(doc(db, "tracks", "0"), sample);
+        }
+        window.renderDynamicFeed();
+        window.renderMyTracks();
+        window.updateDashboardStats();
+      });
+
+      onSnapshot(collection(db, "messages"), (snapshot) => {
+        window.privateMessages = [];
+        snapshot.forEach(docSnap => { window.privateMessages.push(docSnap.data()); });
+        if(window.activeChatEmail && !document.getElementById('chatModal').classList.contains('hidden')) {
+          window.renderChatMessages();
+        }
+      });
+    };
+  </script>
+
   <script>
     let usersDB = {};
     let demoTracks = [];
@@ -529,7 +576,7 @@
 
     window.onload = function() {
       initTheme();
-      initFirebaseCloudSync();
+      if(window.initFirebaseCloudSync) window.initFirebaseCloudSync();
       initAudioEvents();
       initAlbumTrackInputs();
       initDirectRegisterEvent();
@@ -652,58 +699,6 @@
       }
     }
 
-    function initFirebaseCloudSync() {
-      const { collection, onSnapshot, setDoc, doc } = window.firestoreFns;
-      const db = window.db;
-
-      setDoc(doc(db, "users", "zamanperdesimusic@gmail.com"), {
-        name: 'Kuzeyfe Kalafat',
-        email: 'zamanperdesimusic@gmail.com',
-        bio: 'Zaman Perdesi Music Kurucusu & Söz Yazarı.',
-        avatar: DEFAULT_AVATAR,
-        role: 'admin',
-        title: 'Platform Kurucusu',
-        youtube: 'https://www.youtube.com/@kuzeyfe.kalafat', 
-        instagram: 'https://www.instagram.com/kuzeyfekalafat'
-      }, { merge: true });
-
-      onSnapshot(collection(db, "users"), (snapshot) => {
-        usersDB = {};
-        snapshot.forEach(docSnap => { usersDB[docSnap.id] = docSnap.data(); });
-        checkAuthSession();
-        renderArtists();
-      });
-
-      onSnapshot(collection(db, "tracks"), (snapshot) => {
-        demoTracks = [];
-        snapshot.forEach(docSnap => { demoTracks.push(docSnap.data()); });
-        if(demoTracks.length === 0) {
-          let sample = {
-            id: '0',
-            title: 'Ateş Ve Kumsal',
-            artist: 'Hamza Kalafat',
-            plays: 1240,
-            cover: DEFAULT_COVER,
-            mediaUrl: DEFAULT_AUDIO,
-            type: 'Tekli',
-            lyrics: 'Yine toplandık sahilde akşam vaktinde...'
-          };
-          setDoc(doc(db, "tracks", "0"), sample);
-        }
-        renderDynamicFeed();
-        renderMyTracks();
-        updateDashboardStats();
-      });
-
-      onSnapshot(collection(db, "messages"), (snapshot) => {
-        privateMessages = [];
-        snapshot.forEach(docSnap => { privateMessages.push(docSnap.data()); });
-        if(activeChatEmail && !document.getElementById('chatModal').classList.contains('hidden')) {
-          renderChatMessages();
-        }
-      });
-    }
-
     function initAudioEvents() {
       audioEl.addEventListener('timeupdate', updatePlayerProgress);
       audioEl.addEventListener('loadedmetadata', function() {
@@ -714,7 +709,7 @@
       audioEl.addEventListener('ended', onTrackEnded);
     }
 
-    function checkAuthSession() {
+    window.checkAuthSession = function() {
       if(currentUserEmail && usersDB[currentUserEmail]) {
         let u = usersDB[currentUserEmail];
         document.getElementById('headerUserName').innerText = u.name.split(' ')[0];
@@ -746,9 +741,9 @@
       }
       renderMyTracks();
       updateDashboardStats();
-    }
+    };
 
-    function updateDashboardStats() {
+    window.updateDashboardStats = function() {
       if(!currentUserEmail || !usersDB[currentUserEmail]) return;
       const currentName = usersDB[currentUserEmail].name;
       const userTracks = demoTracks.filter(t => t.artist === currentName);
@@ -757,9 +752,9 @@
       document.getElementById('statTotalPlays').innerText = totalPlays.toLocaleString();
       document.getElementById('statTotalTracks').innerText = userTracks.length;
       document.getElementById('statTotalFavs').innerText = favorites.length;
-    }
+    };
 
-    function renderArtists() {
+    window.renderArtists = function() {
       const grid = document.getElementById('artistsGrid');
       if (!grid) return;
       grid.innerHTML = '';
@@ -791,9 +786,9 @@
         card.appendChild(infoDiv);
         grid.appendChild(card);
       });
-    }
+    };
 
-    function renderDynamicFeed() {
+    window.renderDynamicFeed = function() {
       const container = document.getElementById('dynamicUserFeedList');
       if(!container) return;
       if(demoTracks.length === 0) {
@@ -812,9 +807,9 @@
           <i class="fa-solid fa-play text-brand-accent text-xs"></i>
         </div>
       `).join('');
-    }
+    };
 
-    function renderMyTracks() {
+    window.renderMyTracks = function() {
       if(!currentUserEmail || !usersDB[currentUserEmail]) return;
       const currentName = usersDB[currentUserEmail].name;
       const userTracks = demoTracks.filter(t => t.artist === currentName);
@@ -835,17 +830,17 @@
           </div>
         </div>
       `).join('');
-    }
+    };
 
-    function switchTab(tabName) {
+    window.switchTab = function(tabName) {
       document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
       document.getElementById(`tab-${tabName}`).classList.remove('hidden');
       document.querySelectorAll('nav button').forEach(b => b.classList.remove('text-brand-accent'));
       document.getElementById(`nav-${tabName}`).classList.add('text-brand-accent');
       document.getElementById('searchResultsSection').classList.add('hidden');
-    }
+    };
 
-    function switchUploadType(type) {
+    window.switchUploadType = function(type) {
       document.getElementById('singleFields').classList.add('hidden');
       document.getElementById('albumFields').classList.add('hidden');
       document.getElementById('videoFields').classList.add('hidden');
@@ -864,9 +859,9 @@
         document.getElementById('videoFields').classList.remove('hidden');
         document.getElementById('videoTypeBtn').className = "flex-1 py-1.5 font-semibold rounded-lg bg-brand-accent text-black shadow transition cursor-pointer";
       }
-    }
+    };
 
-    function loadTrack(i) {
+    window.loadTrack = function(i) {
       currentTrackIndex = i;
       const t = demoTracks[i];
       if(!t) return;
@@ -879,20 +874,20 @@
       document.getElementById('lyricsText').innerText = t.lyrics || "Şarkı sözü eklenmemiş.";
       audioEl.src = t.mediaUrl || DEFAULT_AUDIO;
       audioEl.load();
-    }
+    };
 
-    function playTrack(i) { 
-      loadTrack(i); 
+    window.playTrack = function(i) { 
+      window.loadTrack(i); 
       audioEl.play().then(() => { isPlaying = true; updatePlayPauseUI(); }).catch(() => {});
-      openFullPlayer(); 
-    }
+      window.openFullPlayer(); 
+    };
 
-    function togglePlayPause(e) { 
+    window.togglePlayPause = function(e) { 
       if(e) e.stopPropagation(); 
       if(audioEl.paused) { audioEl.play(); isPlaying = true; } 
       else { audioEl.pause(); isPlaying = false; }
       updatePlayPauseUI();
-    }
+    };
 
     function updatePlayPauseUI() {
       document.getElementById('playPauseBtn').innerHTML = isPlaying ? '<i class="fa-solid fa-pause text-xs"></i>' : '<i class="fa-solid fa-play text-xs"></i>';
@@ -907,10 +902,10 @@
       document.getElementById('durationTimeDisplay').innerText = formatTime(audioEl.duration);
     }
 
-    function seekTrack(val) {
+    window.seekTrack = function(val) {
       if(!audioEl.duration) return;
       audioEl.currentTime = (val / 100) * audioEl.duration;
-    }
+    };
 
     function formatTime(seconds) {
       if(isNaN(seconds)) return "00:00";
@@ -919,21 +914,21 @@
       return `${min < 10 ? '0' : ''}${min}:${sec < 10 ? '0' : ''}${sec}`;
     }
 
-    function prevTrack() { if(currentTrackIndex > 0) playTrack(currentTrackIndex - 1); }
-    function nextTrack() { if(currentTrackIndex < demoTracks.length - 1) playTrack(currentTrackIndex + 1); }
+    window.prevTrack = function() { if(currentTrackIndex > 0) playTrack(currentTrackIndex - 1); };
+    window.nextTrack = function() { if(currentTrackIndex < demoTracks.length - 1) playTrack(currentTrackIndex + 1); };
     function onTrackEnded() { nextTrack(); }
 
-    function openFullPlayer() { document.getElementById('fullPlayerModal').classList.remove('hidden'); }
-    function closeFullPlayer() { document.getElementById('fullPlayerModal').classList.add('hidden'); }
+    window.openFullPlayer = function() { document.getElementById('fullPlayerModal').classList.remove('hidden'); };
+    window.closeFullPlayer = function() { document.getElementById('fullPlayerModal').classList.add('hidden'); };
 
-    function switchPlayerSubTab(tab) {
+    window.switchPlayerSubTab = function(tab) {
       document.getElementById('playerLyricsContent').classList.add('hidden');
       document.getElementById('playerCreditsContent').classList.add('hidden');
       if(tab === 'lyrics') document.getElementById('playerLyricsContent').classList.remove('hidden');
       if(tab === 'credits') document.getElementById('playerCreditsContent').classList.remove('hidden');
-    }
+    };
 
-    async function handleUploadSubmit(e) {
+    window.handleUploadSubmit = async function(e) {
       e.preventDefault();
       if(!currentUserEmail) { alert('Önce giriş yapmalısınız!'); openAuthModal(); return; }
       const artistName = usersDB[currentUserEmail].name;
@@ -998,12 +993,12 @@
       }
 
       switchTab('home');
-    }
+    };
 
-    function openAuthModal() { document.getElementById('authModal').classList.remove('hidden'); }
-    function closeAuthModal() { document.getElementById('authModal').classList.add('hidden'); }
+    window.openAuthModal = function() { document.getElementById('authModal').classList.remove('hidden'); };
+    window.closeAuthModal = function() { document.getElementById('authModal').classList.add('hidden'); };
     
-    function switchAuthMode(mode, event) {
+    window.switchAuthMode = function(mode, event) {
       if(event) event.preventDefault();
       document.getElementById('loginForm').classList.add('hidden');
       document.getElementById('registerForm').classList.add('hidden');
@@ -1031,33 +1026,33 @@
         document.getElementById('adminForm').classList.remove('hidden');
         document.getElementById('authTabAdmin').className = "text-red-400 border-b-2 border-red-500 pb-1 truncate font-bold cursor-pointer";
       }
-    }
+    };
 
-    function handleForgot(e) {
+    window.handleForgot = function(e) {
       if(e) e.preventDefault();
       alert('Şifre sıfırlama bağlantısı e-posta adresinize gönderildi!');
       closeAuthModal();
-    }
+    };
 
-    function handleAdminLogin(e) { 
+    window.handleAdminLogin = function(e) { 
       if(e) e.preventDefault(); 
       currentUserEmail = 'zamanperdesimusic@gmail.com';
       localStorage.setItem('zaman_current_user', currentUserEmail);
       checkAuthSession();
       closeAuthModal(); 
       alert('Admin olarak giriş yapıldı!');
-    }
+    };
 
-    function handleLogout() {
+    window.handleLogout = function() {
       if(confirm('Çıkış yapılsın mı?')) {
         currentUserEmail = null;
         localStorage.removeItem('zaman_current_user');
         checkAuthSession();
         alert('Çıkış yapıldı.');
       }
-    }
+    };
 
-    function openEditProfileModal() {
+    window.openEditProfileModal = function() {
       if(!currentUserEmail || !usersDB[currentUserEmail]) return;
       const u = usersDB[currentUserEmail];
       document.getElementById('editNameInput').value = u.name || '';
@@ -1065,13 +1060,13 @@
       document.getElementById('editYoutubeInput').value = u.youtube || '';
       document.getElementById('editInstagramInput').value = u.instagram || '';
       document.getElementById('editProfileModal').classList.remove('hidden');
-    }
+    };
 
-    function closeEditProfileModal() {
+    window.closeEditProfileModal = function() {
       document.getElementById('editProfileModal').classList.add('hidden');
-    }
+    };
 
-    async function handleProfileUpdate(e) {
+    window.handleProfileUpdate = async function(e) {
       e.preventDefault();
       if(!currentUserEmail) return;
 
@@ -1090,9 +1085,9 @@
 
       closeEditProfileModal();
       alert('Profiliniz başarıyla güncellendi!');
-    }
+    };
 
-    function openArtistDetail(email) {
+    window.openArtistDetail = function(email) {
       const a = usersDB[email];
       if(!a) return;
       document.getElementById('artistDetailImg').src = a.avatar || DEFAULT_AVATAR;
@@ -1117,11 +1112,11 @@
 
       document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
       document.getElementById('artistDetailView').classList.remove('hidden');
-    }
+    };
 
-    function closeArtistDetail() { document.getElementById('artistDetailView').classList.add('hidden'); switchTab('artists'); }
+    window.closeArtistDetail = function() { document.getElementById('artistDetailView').classList.add('hidden'); switchTab('artists'); };
 
-    function openChatWithUser(email) {
+    window.openChatWithUser = function(email) {
       if(!currentUserEmail) { alert('Önce giriş yapmalısınız!'); openAuthModal(); return; }
       activeChatEmail = email;
       const targetUser = usersDB[email];
@@ -1129,11 +1124,11 @@
       document.getElementById('chatUserAvatar').src = targetUser.avatar || DEFAULT_AVATAR;
       renderChatMessages();
       document.getElementById('chatModal').classList.remove('hidden');
-    }
+    };
 
-    function closeChatModal() { document.getElementById('chatModal').classList.add('hidden'); }
+    window.closeChatModal = function() { document.getElementById('chatModal').classList.add('hidden'); };
 
-    async function sendPrivateMessage(e) {
+    window.sendPrivateMessage = async function(e) {
       if(e) e.preventDefault();
       const input = document.getElementById('chatInputMessage');
       const text = input.value.trim();
@@ -1150,7 +1145,7 @@
       const { setDoc, doc } = window.firestoreFns;
       await setDoc(doc(window.db, "messages", msgId), newMsg);
       input.value = '';
-    }
+    };
 
     function renderChatMessages() {
       const container = document.getElementById('chatMessagesContainer');
@@ -1173,8 +1168,8 @@
       container.scrollTop = container.scrollHeight;
     }
 
-    function openAnalyticsModal() { document.getElementById('analyticsModal').classList.remove('hidden'); renderArtistChart(); }
-    function closeAnalyticsModal() { document.getElementById('analyticsModal').classList.add('hidden'); }
+    window.openAnalyticsModal = function() { document.getElementById('analyticsModal').classList.remove('hidden'); renderArtistChart(); };
+    window.closeAnalyticsModal = function() { document.getElementById('analyticsModal').classList.add('hidden'); };
 
     function renderArtistChart() {
       const ctx = document.getElementById('artistChart').getContext('2d');
@@ -1196,7 +1191,7 @@
       });
     }
 
-    function handleSearch(val) {
+    window.handleSearch = function(val) {
       const resultsSection = document.getElementById('searchResultsSection');
       const resultsList = document.getElementById('searchResultsList');
       if (!val.trim()) { resultsSection.classList.add('hidden'); return; }
@@ -1211,9 +1206,9 @@
           <i class="fa-solid fa-play text-xs text-brand-accent"></i>
         </div>
       `).join('') || '<p class="text-xs text-gray-500">Sonuç bulunamadı.</p>';
-    }
+    };
 
-    function clearSearch() { document.getElementById('searchInput').value = ''; handleSearch(''); }
+    window.clearSearch = function() { document.getElementById('searchInput').value = ''; handleSearch(''); };
   </script>
 </body>
 </html>
