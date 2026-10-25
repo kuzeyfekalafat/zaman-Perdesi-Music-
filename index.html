@@ -1,25 +1,23 @@
 <!DOCTYPE html>
-<html lang="tr" class="dark">
+<html lang="tr">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Zaman Perdesi</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <script>tailwind.config = { darkMode: 'class' }</script>
 </head>
 <body class="bg-black text-white h-screen flex justify-center overflow-hidden">
   <div class="w-full max-w-md h-full bg-zinc-950 flex flex-col relative">
     
     <header class="p-4 border-b border-zinc-800 flex justify-between items-center">
       <h1 class="font-bold text-cyan-400">Zaman Perdesi</h1>
-      <button onclick="toggleTheme()" class="text-xs bg-zinc-800 px-3 py-1 rounded-full">Tema</button>
+      <button onclick="toggleTheme()" class="text-xs bg-zinc-800 px-3 py-1 rounded-full cursor-pointer">Tema</button>
     </header>
 
     <main class="flex-1 overflow-y-auto p-4 pb-20">
       <div id="tab-home" class="page space-y-3">
         <h2 class="text-sm font-bold text-cyan-400">Ana Sayfa</h2>
-        <div onclick="playSong()" class="p-3 bg-zinc-900 rounded-xl cursor-pointer">Ateş Ve Kumsal (Çal)</div>
+        <div onclick="alert('Şarkı çalınıyor...')" class="p-3 bg-zinc-900 rounded-xl cursor-pointer">Ateş Ve Kumsal (Çal)</div>
       </div>
       <div id="tab-artists" class="page hidden space-y-3">
         <h2 class="text-sm font-bold text-cyan-400">Sanatçılar</h2>
@@ -27,8 +25,8 @@
       </div>
       <div id="tab-upload" class="page hidden space-y-3">
         <h2 class="text-sm font-bold text-cyan-400">Yükle</h2>
-        <input id="songName" placeholder="Şarkı Adı" class="w-full bg-zinc-900 p-2 text-xs rounded border border-zinc-800">
-        <button onclick="uploadSong()" class="w-full bg-cyan-400 text-black text-xs font-bold py-2 rounded">Yayınla</button>
+        <input id="songName" placeholder="Şarkı Adı" class="w-full bg-zinc-900 p-2 text-xs rounded border border-zinc-800 text-white">
+        <button onclick="uploadSong()" class="w-full bg-cyan-400 text-black text-xs font-bold py-2 rounded cursor-pointer">Yayınla</button>
       </div>
       <div id="tab-profile" class="page hidden space-y-3">
         <h2 class="text-sm font-bold text-cyan-400">Profil</h2>
@@ -37,10 +35,10 @@
     </main>
 
     <nav class="absolute bottom-0 w-full bg-zinc-900 border-t border-zinc-800 flex justify-around py-3">
-      <button onclick="goTab('home')" class="text-cyan-400 text-xs">Ana Sayfa</button>
-      <button onclick="goTab('artists')" class="text-zinc-400 text-xs">Sanatçılar</button>
-      <button onclick="goTab('upload')" class="text-zinc-400 text-xs">Yükle</button>
-      <button onclick="goTab('profile')" class="text-zinc-400 text-xs">Profilim</button>
+      <button onclick="goTab('home')" class="text-cyan-400 text-xs cursor-pointer">Ana Sayfa</button>
+      <button onclick="goTab('artists')" class="text-zinc-400 text-xs cursor-pointer">Sanatçılar</button>
+      <button onclick="goTab('upload')" class="text-zinc-400 text-xs cursor-pointer">Yükle</button>
+      <button onclick="goTab('profile')" class="text-zinc-400 text-xs cursor-pointer">Profilim</button>
     </nav>
 
   </div>
@@ -48,15 +46,29 @@
   <script>
     function goTab(name) {
       var pages = document.querySelectorAll('.page');
-      for (var i = 0; i < pages.length; i++) { pages[i].classList.add('hidden'); }
-      document.getElementById('tab-' + name).classList.remove('hidden');
+      for (var i = 0; i < pages.length; i++) {
+        pages[i].classList.add('hidden');
+      }
+      var target = document.getElementById('tab-' + name);
+      if (target) {
+        target.classList.remove('hidden');
+      }
     }
-    function toggleTheme() { document.documentElement.classList.toggle('dark'); }
-    function playSong() { alert('Şarkı çalınıyor...'); }
+
+    function toggleTheme() {
+      document.body.classList.toggle('bg-white');
+      document.body.classList.toggle('text-black');
+    }
+
     function uploadSong() {
-      var val = document.getElementById('songName').value;
-      if(val) { alert('Yayınlandı: ' + val); document.getElementById('songName').value=''; goTab('home'); }
-      else { alert('Şarkı adı yazın!'); }
+      var input = document.getElementById('songName');
+      if (input && input.value.trim() !== '') {
+        alert('Yayınlandı: ' + input.value);
+        input.value = '';
+        goTab('home');
+      } else {
+        alert('Şarkı adı yazın!');
+      }
     }
   </script>
 </body>
