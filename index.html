@@ -62,10 +62,8 @@
 </head>
 <body class="font-sans antialiased h-screen overflow-hidden flex justify-center bg-black">
 
-  <!-- Gizli Gerçek Medya Oynatıcı Elementi -->
   <audio id="audioPlayer" preload="auto"></audio>
 
-  <!-- Mobile Simulator Container -->
   <div class="w-full max-w-md h-full bg-brand-black flex flex-col relative overflow-hidden shadow-2xl border-x border-gray-800">
 
     <!-- TOP HEADER -->
@@ -103,10 +101,9 @@
       </div>
     </div>
 
-    <!-- MAIN SCROLLABLE CONTENT AREA -->
+    <!-- MAIN CONTENT -->
     <main id="mainContent" class="flex-1 overflow-y-auto pb-36 p-4 space-y-6">
 
-      <!-- SEARCH RESULTS OVERLAY -->
       <section id="searchResultsSection" class="hidden space-y-4">
         <h2 class="text-xs font-bold uppercase tracking-wider text-brand-accent">Arama Sonuçları</h2>
         <div id="searchResultsList" class="space-y-2"></div>
@@ -156,7 +153,6 @@
             <input type="file" id="uploadCoverFile" accept="image/*" class="w-full text-xs text-gray-400 bg-brand-card p-2 rounded-xl border border-gray-800 file:mr-3 file:py-1 file:px-2 file:rounded-lg file:border-0 file:text-xs file:bg-brand-accent file:text-black file:font-semibold">
           </div>
 
-          <!-- MANUEL KÜNYE GİRDİLERİ -->
           <div class="p-3 bg-brand-dark/70 rounded-xl border border-gray-800 space-y-2">
             <span class="text-xs font-bold text-brand-accent flex items-center gap-1"><i class="fa-solid fa-file-signature"></i> Eser Künye Bilgileri (Manuel)</span>
             <div class="grid grid-cols-2 gap-2">
@@ -175,7 +171,6 @@
             </div>
           </div>
 
-          <!-- TEKLI FIELDS -->
           <div id="singleFields" class="space-y-3">
             <div>
               <label class="text-xs font-medium text-gray-300">Şarkı Adı</label>
@@ -191,7 +186,6 @@
             </div>
           </div>
 
-          <!-- ALBUM FIELDS -->
           <div id="albumFields" class="hidden space-y-3">
             <div>
               <label class="text-xs font-medium text-gray-300">Albüm Adı</label>
@@ -203,7 +197,6 @@
             </div>
           </div>
 
-          <!-- VIDEO FIELDS -->
           <div id="videoFields" class="hidden space-y-3">
             <div>
               <label class="text-xs font-medium text-gray-300">Albüm / Klip Adı</label>
@@ -245,7 +238,6 @@
           </div>
         </div>
 
-        <!-- 📊 GELİŞMİŞ İSTATİSTİK / DİNLENME SAYACI -->
         <div class="bg-gradient-to-br from-brand-card to-brand-dark p-3.5 rounded-2xl border border-gray-800 space-y-3 shadow-xl">
           <div class="flex items-center justify-between">
             <span class="text-xs font-bold text-brand-accent flex items-center gap-1.5"><i class="fa-solid fa-chart-line"></i> Performans & İstatistikler</span>
@@ -267,7 +259,6 @@
           </div>
         </div>
 
-        <!-- BİYOGRAFİ & SOSYAL MEDYA -->
         <div class="bg-brand-card p-3 rounded-xl border border-gray-800 space-y-2">
           <span class="text-xs font-bold text-brand-accent block">✍️ Hakkında / Biyografi</span>
           <p id="profileBioDisplay" class="text-xs text-gray-300">Zaman Perdesi Music Kurucusu & Söz Yazarı.</p>
@@ -282,7 +273,6 @@
           </div>
         </div>
 
-        <!-- PROFİL SEKMELERİ -->
         <div class="space-y-3">
           <div class="flex border-b border-gray-800 text-xs justify-between">
             <button onclick="toggleProfileSubTab('myTracks')" id="subTabMyTracks" class="pb-2 px-2 font-semibold text-brand-accent border-b-2 border-brand-accent">🎵 İçeriklerim</button>
@@ -300,7 +290,6 @@
             </div>
           </div>
 
-          <!-- 📂 ÇALMA LİSTELERİ GÖRÜNÜMÜ -->
           <div id="playlistsView" class="hidden space-y-3">
             <div class="flex items-center justify-between">
               <span class="text-xs font-bold text-white">Özel Çalma Listelerin</span>
@@ -329,7 +318,7 @@
 
     </main>
 
-    <!-- STICKY MINI PLAYER -->
+    <!-- MINI PLAYER -->
     <div id="miniPlayer" class="absolute bottom-[58px] left-0 right-0 bg-brand-dark/95 backdrop-blur-md border-t border-cyan-500/30 p-2.5 px-3 flex items-center justify-between z-30 cursor-pointer shadow-2xl">
       <div onclick="openFullPlayer()" class="flex items-center gap-2.5 min-w-0 flex-1">
         <img id="playerCover" src="" class="w-10 h-10 rounded-lg object-cover shadow border border-gray-700">
@@ -368,7 +357,6 @@
         <p id="fullPlayerArtist" class="text-xs text-brand-accent font-semibold">Kuzeyfe Kalafat</p>
       </div>
 
-      <!-- MÜZİK ÇALAR KONTROLLERİ VE SÜRE ÇUBUĞU -->
       <div id="visualPlayerControls" class="bg-brand-card p-3 rounded-2xl border border-gray-800/80 space-y-2">
         <div class="space-y-1">
           <input type="range" id="seekSlider" value="0" max="100" oninput="seekTrack(this.value)" class="w-full h-1.5 bg-gray-800 rounded-lg appearance-none cursor-pointer">
@@ -385,7 +373,6 @@
         </div>
       </div>
 
-      <!-- SÖZLER - KÜNYE - YORUMLAR SEKMELERİ -->
       <div class="bg-brand-card rounded-2xl p-3 border border-gray-800 space-y-2 flex-1 flex flex-col justify-between">
         <div class="flex border-b border-gray-800 text-xs">
           <button onclick="switchPlayerSubTab('lyrics')" id="playerTabLyrics" class="flex-1 pb-2 font-semibold text-brand-accent border-b-2 border-brand-accent">📜 Sözler</button>
@@ -393,19 +380,16 @@
           <button onclick="switchPlayerSubTab('comments')" id="playerTabComments" class="flex-1 pb-2 font-semibold text-gray-400">💬 Yorumlar</button>
         </div>
 
-        <!-- TAB 1: SÖZLER -->
         <div id="playerLyricsContent" class="text-xs text-gray-300 space-y-2 leading-relaxed max-h-36 overflow-y-auto p-1">
           <p id="lyricsText">Yine toplandık sahilde akşam vaktinde,<br>Gelişin tüm yükü kaldı o eski şehirde...</p>
         </div>
 
-        <!-- TAB 2: KÜNYE -->
         <div id="playerCreditsContent" class="hidden text-xs space-y-2 text-gray-300 max-h-36 overflow-y-auto p-1">
           <div class="flex justify-between border-b border-gray-800/80 pb-1.5"><span class="text-gray-500">Söz & Müzik:</span><span id="creditWriter" class="font-semibold text-white">Kuzeyfe Kalafat</span></div>
           <div class="flex justify-between border-b border-gray-800/80 pb-1.5"><span class="text-gray-500">Aranje / Düzenleme:</span><span id="creditArranger" class="font-semibold text-white">Zaman Perdesi</span></div>
           <div class="flex justify-between border-b border-gray-800/80 pb-1.5"><span class="text-gray-500">Yapım Şirketi:</span><span id="creditLabel" class="font-semibold text-brand-accent">Zaman Perdesi Music</span></div>
         </div>
 
-        <!-- TAB 3: YORUMLAR -->
         <div id="playerCommentsContent" class="hidden space-y-2">
           <div id="commentsList" class="space-y-1.5 max-h-28 overflow-y-auto pr-1"></div>
           <form onsubmit="addComment(event)" class="flex gap-2 pt-2 border-t border-gray-800">
@@ -436,14 +420,12 @@
           <button id="authTabAdmin" onclick="switchAuthMode('admin')" class="text-red-400 pb-1 truncate">🛡️ Admin</button>
         </div>
 
-        <!-- GİRİŞ FORMU -->
         <form id="loginForm" onsubmit="handleLogin(event)" class="space-y-3">
           <div><label class="text-xs text-gray-300">E-posta</label><input type="email" id="loginEmail" required class="w-full bg-brand-dark text-xs text-white p-2.5 rounded-xl border border-gray-800 mt-1"></div>
           <div><label class="text-xs text-gray-300">Şifre</label><input type="password" required class="w-full bg-brand-dark text-xs text-white p-2.5 rounded-xl border border-gray-800 mt-1"></div>
           <button type="submit" class="w-full bg-brand-accent text-black font-bold text-xs py-2.5 rounded-xl">Giriş Yap</button>
         </form>
 
-        <!-- KAYIT FORMU -->
         <form id="registerForm" onsubmit="handleRegister(event)" class="hidden space-y-3">
           <div><label class="text-xs text-gray-300">Ad Soyad / Sanatçı Adı</label><input type="text" id="regName" required class="w-full bg-brand-dark text-xs text-white p-2.5 rounded-xl border border-gray-800 mt-1"></div>
           <div><label class="text-xs text-gray-300">E-posta</label><input type="email" id="regEmail" required class="w-full bg-brand-dark text-xs text-white p-2.5 rounded-xl border border-gray-800 mt-1"></div>
@@ -451,7 +433,6 @@
           <button type="submit" class="w-full bg-brand-accent text-black font-bold text-xs py-2.5 rounded-xl">Kayıt Ol & Mavi Tik Al</button>
         </form>
 
-        <!-- ŞİFREMİ UNUTTUM FORMU -->
         <form id="forgotForm" onsubmit="handleForgot(event)" class="hidden space-y-3">
           <div class="p-2 bg-brand-dark rounded-xl border border-gray-800 text-[11px] text-gray-300">🔑 Kayıtlı e-postanızı girerek yeni şifre belirleyebilirsiniz.</div>
           <div><label class="text-xs text-gray-300">Kayıtlı E-posta</label><input type="email" id="forgotEmail" required class="w-full bg-brand-dark text-xs text-white p-2.5 rounded-xl border border-gray-800 mt-1"></div>
@@ -459,7 +440,6 @@
           <button type="submit" class="w-full bg-brand-accent text-black font-bold text-xs py-2.5 rounded-xl">Şifreyi Güncelle</button>
         </form>
 
-        <!-- ADMIN FORMU -->
         <form id="adminForm" onsubmit="handleAdminLogin(event)" class="hidden space-y-3">
           <div class="p-2 bg-red-950/40 border border-red-800/50 rounded-xl text-[11px] text-red-300">🛡️ Admin / Kurucu Girişi</div>
           <div><label class="text-xs text-gray-300">Admin E-posta</label><input type="email" id="adminEmail" placeholder="kuzeyfe@zamanperdesi.com" required class="w-full bg-brand-dark text-xs text-white p-2.5 rounded-xl border border-gray-800 mt-1"></div>
@@ -494,7 +474,7 @@
       </div>
     </div>
 
-    <!-- 📂 YENİ ÇALMA LİSTESİ OLUŞTURMA MODALI -->
+    <!-- CREATE PLAYLIST MODAL -->
     <div id="createPlaylistModal" class="hidden absolute inset-0 bg-black/85 backdrop-blur-md z-50 flex items-center justify-center p-4">
       <div class="w-full max-w-sm bg-brand-card p-5 rounded-2xl border border-gray-800 space-y-4 shadow-2xl relative">
         <button onclick="closeCreatePlaylistModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
@@ -516,33 +496,27 @@
     const DEFAULT_AVATAR = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200"><rect width="200" height="200" fill="%231a1c23"/><circle cx="100" cy="80" r="40" fill="%2300d2ff"/><path d="M40 170c0-33 27-60 60-60s60 27 60 60z" fill="%2300d2ff"/></svg>';
     const DEFAULT_AUDIO = 'https://actions.google.com/sounds/v1/ambiences/outdoor_synth.ogg'; 
 
-    let usersDB = JSON.parse(localStorage.getItem('zaman_users')) || {};
-
-    usersDB['kuzeyfe@zamanperdesi.com'] = {
-      name: 'Kuzeyfe Kalafat',
-      email: 'kuzeyfe@zamanperdesi.com',
-      bio: 'Zaman Perdesi Music Kurucusu & Söz Yazarı.',
-      avatar: DEFAULT_AVATAR,
-      role: 'admin',
-      title: 'Platform Kurucusu',
-      youtube: 'https://www.youtube.com/@kuzeyfe.kalafat', 
-      instagram: 'https://www.instagram.com/kuzeyfekalafat', 
-      spotify: 'https://open.spotify.com/artist/kuzeyfekalafat', 
-      tiktok: 'https://www.tiktok.com/@kuzeyfe.kalafat', 
-      facebook: 'https://www.facebook.com/kuzeyfekalafat.1', 
-      twitter: 'https://www.twitter.com/kuzeyfe_kalafat'
-    };
-
-    Object.keys(usersDB).forEach(key => {
-      if(key !== 'kuzeyfe@zamanperdesi.com' && (usersDB[key].name === 'Admin' || !usersDB[key].name)) {
-        delete usersDB[key];
+    // 🔥 KESİN SIFIRLAMA: Bozuk verileri yok edip veritabanını tertemiz yeniden kuruyoruz
+    let usersDB = {
+      'kuzeyfe@zamanperdesi.com': {
+        name: 'Kuzeyfe Kalafat',
+        email: 'kuzeyfe@zamanperdesi.com',
+        bio: 'Zaman Perdesi Music Kurucusu & Söz Yazarı.',
+        avatar: DEFAULT_AVATAR,
+        role: 'admin',
+        title: 'Platform Kurucusu',
+        youtube: 'https://www.youtube.com/@kuzeyfe.kalafat', 
+        instagram: 'https://www.instagram.com/kuzeyfekalafat', 
+        spotify: 'https://open.spotify.com/artist/kuzeyfekalafat', 
+        tiktok: 'https://www.tiktok.com/@kuzeyfe.kalafat', 
+        facebook: 'https://www.facebook.com/kuzeyfekalafat.1', 
+        twitter: 'https://www.twitter.com/kuzeyfe_kalafat'
       }
-    });
+    };
+    localStorage.setItem('zaman_users', JSON.stringify(usersDB));
 
-    let currentUserEmail = localStorage.getItem('zaman_current_user');
-    if(!currentUserEmail || !usersDB[currentUserEmail]) {
-      currentUserEmail = 'kuzeyfe@zamanperdesi.com';
-    }
+    let currentUserEmail = 'kuzeyfe@zamanperdesi.com';
+    localStorage.setItem('zaman_current_user', currentUserEmail);
 
     let initialTracks = [
       {
@@ -699,7 +673,7 @@
       container.innerHTML = html;
     }
 
-    // 🔥 HATANIN DÜZELTİLDİĞİ YER (GÜVENLİ HTML KATALOĞU)
+    // 🔥 GÜVENLİ KATALOG RENDER (KESİN ÇÖZÜM)
     function renderArtists() {
       const grid = document.getElementById('artistsGrid');
       const allUsers = Object.values(usersDB);
@@ -1186,7 +1160,6 @@
       e.preventDefault(); 
       currentUserEmail = 'kuzeyfe@zamanperdesi.com';
       usersDB['kuzeyfe@zamanperdesi.com'].role = 'admin';
-
       saveAppData();
       checkAuthSession();
       renderArtists();
@@ -1334,7 +1307,7 @@
             <img src="${t.cover || DEFAULT_COVER}" class="w-9 h-9 rounded object-cover">
             <div><h4 class="text-xs font-bold text-white">${t.title}</h4><p class="text-[10px] text-gray-400">${t.artist}</p></div>
           </div>
-          <i class="fa-solid fa-play text-brand-accent text-xs"></i>
+          <i class="fa-solid fa-play text-xs text-brand-accent"></i>
         </div>
       `).join('') : '<p class="text-xs text-gray-500 italic text-center">Bu sanatçının eseri yok.</p>';
 
