@@ -496,8 +496,7 @@
     const DEFAULT_AVATAR = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200"><rect width="200" height="200" fill="%231a1c23"/><circle cx="100" cy="80" r="40" fill="%2300d2ff"/><path d="M40 170c0-33 27-60 60-60s60 27 60 60z" fill="%2300d2ff"/></svg>';
     const DEFAULT_AUDIO = 'https://actions.google.com/sounds/v1/ambiences/outdoor_synth.ogg'; 
 
-    // 🔥 KESİN TEMİZLİK: LocalStorage'ı komple sıfırlayıp bozuk veriyi kökünden siliyoruz
-    let usersDB = {
+    let usersDB = JSON.parse(localStorage.getItem('zaman_users')) || {
       'kuzeyfe@zamanperdesi.com': {
         name: 'Kuzeyfe Kalafat',
         email: 'kuzeyfe@zamanperdesi.com',
@@ -513,8 +512,19 @@
         twitter: 'https://www.twitter.com/kuzeyfe_kalafat'
       }
     };
+
+    // Eğer kurucu hesapta sosyal medya linkleri eksikse otomatik ekle
+    if(usersDB['kuzeyfe@zamanperdesi.com'] && !usersDB['kuzeyfe@zamanperdesi.com'].youtube) {
+      usersDB['kuzeyfe@zamanperdesi.com'].youtube = 'https://www.youtube.com/@kuzeyfe.kalafat';
+      usersDB['kuzeyfe@zamanperdesi.com'].instagram = 'https://www.instagram.com/kuzeyfekalafat';
+      usersDB['kuzeyfe@zamanperdesi.com'].spotify = 'https://open.spotify.com/artist/kuzeyfekalafat';
+      usersDB['kuzeyfe@zamanperdesi.com'].tiktok = 'https://www.tiktok.com/@kuzeyfe.kalafat';
+      usersDB['kuzeyfe@zamanperdesi.com'].facebook = 'https://www.facebook.com/kuzeyfekalafat.1';
+      usersDB['kuzeyfe@zamanperdesi.com'].twitter = 'https://www.twitter.com/kuzeyfe_kalafat';
+    }
     localStorage.setItem('zaman_users', JSON.stringify(usersDB));
-    let currentUserEmail = 'kuzeyfe@zamanperdesi.com';
+
+    let currentUserEmail = localStorage.getItem('zaman_current_user') || 'kuzeyfe@zamanperdesi.com';
     localStorage.setItem('zaman_current_user', currentUserEmail);
 
     let initialTracks = [
@@ -593,7 +603,7 @@
         document.getElementById('profileNameDisplay').innerText = u.name;
         document.getElementById('profileEmailDisplay').innerText = currentUserEmail;
         document.getElementById('profileBioDisplay').innerText = u.bio || "Henüz biyografi eklenmedi.";
-        document.getElementById('userAvatar').src = u.avatar || DEFAULT_AVATAR;
+        document.getElementById('userAvatar').src = (u.avatar && !u.avatar.includes('class=')) ? u.avatar : DEFAULT_AVATAR;
 
         const roleTag = document.getElementById('profileRoleTag');
         if(u.role === 'admin') {
@@ -672,7 +682,6 @@
       container.innerHTML = html;
     }
 
-    // 🛡️ KESİN GÜVENLİ KATALOG RENDER (DOĞRUDAN DOM ELEMENT OLUŞTURMA)
     function renderArtists() {
       const grid = document.getElementById('artistsGrid');
       if (!grid) return;
@@ -689,18 +698,15 @@
         const titleText = isAdmin ? 'Platform Kurucusu' : (a.title || 'Zaman Perdesi Sanatçısı');
         const avatarSrc = (a.avatar && !a.avatar.includes('class=')) ? a.avatar : DEFAULT_AVATAR;
 
-        // Kart Kapsayıcısı
         const card = document.createElement('div');
         card.className = "bg-brand-card p-3 rounded-xl border border-gray-800 text-center cursor-pointer space-y-2 hover:border-brand-accent transition";
         card.onclick = () => openArtistDetail(a.email);
 
-        // Avatar Resmi
         const img = document.createElement('img');
         img.src = avatarSrc;
         img.className = "w-16 h-16 rounded-full mx-auto object-cover border border-brand-accent";
         img.onerror = function() { this.src = DEFAULT_AVATAR; };
 
-        // İçerik Divi
         const infoDiv = document.createElement('div');
         
         const nameRow = document.createElement('div');
