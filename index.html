@@ -477,7 +477,7 @@
 
     <!-- AUTH MODAL -->
     <div id="authModal" class="hidden absolute inset-0 bg-black/85 backdrop-blur-md z-[9999] flex items-center justify-center p-4">
-      <div class="w-full max-w-sm bg-white dark:bg-brand-card p-5 rounded-2xl border border-gray-200 dark:border-gray-800 space-y-4 shadow-2xl relative pointer-events-auto">
+      <div class="w-full max-w-sm bg-white dark:bg-brand-card p-5 rounded-2xl border border-gray-200 dark:border-gray-800 space-y-4 shadow-2xl relative pointer-events-auto max-h-[90vh] overflow-y-auto">
         <button type="button" onclick="closeAuthModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white p-2 z-10"><i class="fa-solid fa-xmark text-lg"></i></button>
         
         <div class="grid grid-cols-4 gap-1 border-b border-gray-200 dark:border-gray-800 pb-2 text-[10px] font-bold text-center relative z-10">
@@ -493,12 +493,12 @@
           <button type="submit" class="w-full bg-brand-accent text-black font-bold text-xs py-2.5 rounded-xl">Giriş Yap</button>
         </form>
 
-        <form id="registerForm" onsubmit="handleRegister(event)" class="space-y-3">
+        <div id="registerForm" class="space-y-3">
           <div><label class="text-xs text-gray-700 dark:text-gray-300">Ad Soyad / Sanatçı Adı</label><input type="text" id="regName" required class="w-full bg-gray-100 dark:bg-brand-dark text-xs text-gray-900 dark:text-white p-2.5 rounded-xl border border-gray-200 dark:border-gray-800 mt-1"></div>
           <div><label class="text-xs text-gray-700 dark:text-gray-300">E-posta</label><input type="email" id="regEmail" required class="w-full bg-gray-100 dark:bg-brand-dark text-xs text-gray-900 dark:text-white p-2.5 rounded-xl border border-gray-200 dark:border-gray-800 mt-1"></div>
           <div><label class="text-xs text-gray-700 dark:text-gray-300">Şifre</label><input type="password" id="regPassword" required class="w-full bg-gray-100 dark:bg-brand-dark text-xs text-gray-900 dark:text-white p-2.5 rounded-xl border border-gray-200 dark:border-gray-800 mt-1"></div>
-          <button type="button" onclick="handleRegisterDirect(event)" ontouchend="handleRegisterDirect(event)" class="w-full bg-brand-accent text-black font-bold text-xs py-3 rounded-xl shadow-xl cursor-pointer relative z-20 active:scale-95 transition">Kayıt Ol & Mavi Tik Al</button>
-        </form>
+          <button type="button" onclick="executeRegister()" ontouchend="executeRegister()" class="w-full bg-brand-accent text-black font-bold text-xs py-3.5 rounded-xl shadow-2xl cursor-pointer relative z-30 active:scale-95 transition block text-center">Kayıt Ol & Mavi Tik Al</button>
+        </div>
 
         <form id="forgotForm" onsubmit="handleForgot(event)" class="hidden space-y-3">
           <div class="p-2 bg-gray-100 dark:bg-brand-dark rounded-xl border border-gray-200 dark:border-gray-800 text-[11px] text-gray-700 dark:text-gray-300">🔑 E-posta adresinizi giriniz.</div>
@@ -981,7 +981,7 @@
       alert('Giriş yapıldı!');
     }
 
-    async function handleRegisterDirect(e) {
+    async function executeRegister(e) {
       if(e) e.preventDefault();
       const nameInput = document.getElementById('regName');
       const emailInput = document.getElementById('regEmail');
@@ -1014,7 +1014,7 @@
       alert('Kayıt oluşturuldu ve buluta kaydedildi!');
     }
 
-    function handleRegister(e) { handleRegisterDirect(e); }
+    function handleRegister(e) { executeRegister(e); }
 
     function handleForgot(e) {
       if(e) e.preventDefault();
