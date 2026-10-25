@@ -569,7 +569,23 @@
       initTheme();
       initFirebaseCloudSync();
       initAudioEvents();
+      initAlbumTrackInputs();
     };
+
+    function initAlbumTrackInputs() {
+      const container = document.getElementById('albumTracksContainer');
+      if(!container) return;
+      container.innerHTML = '';
+      for(let i = 1; i <= 15; i++) {
+        const div = document.createElement('div');
+        div.className = "flex items-center gap-2";
+        div.innerHTML = `
+          <span class="text-[10px] text-gray-400 font-mono w-5">${i}.</span>
+          <input type="text" placeholder="${i}. Şarkı Adı" class="flex-1 bg-white dark:bg-brand-card text-xs text-gray-900 dark:text-white p-2 rounded-lg border border-gray-200 dark:border-gray-700">
+        `;
+        container.appendChild(div);
+      }
+    }
 
     function initFirebaseCloudSync() {
       const { collection, onSnapshot, setDoc, doc } = window.firestoreFns;
