@@ -710,12 +710,12 @@
       allUsers.forEach(a => {
         const isAdmin = a.role === 'admin';
         const titleText = isAdmin ? 'Platform Kurucusu' : (a.title || 'Zaman Perdesi Sanatçısı');
+        const avatarSrc = (a.avatar && a.avatar.trim() !== "") ? a.avatar : DEFAULT_AVATAR;
 
         const card = document.createElement('div');
         card.className = "bg-gray-100 dark:bg-brand-card p-3 rounded-xl border border-gray-200 dark:border-gray-800 text-center cursor-pointer space-y-2 hover:border-brand-accent transition";
         card.onclick = () => openArtistDetail(a.email);
 
-        const avatarSrc = a.avatar || DEFAULT_AVATAR;
         card.innerHTML = `
           <img src="${avatarSrc}" class="w-16 h-16 rounded-full mx-auto object-cover border border-brand-accent">
           <div>
