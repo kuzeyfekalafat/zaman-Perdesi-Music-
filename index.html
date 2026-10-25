@@ -80,7 +80,7 @@
       </div>
 
       <div class="flex items-center gap-2">
-        <!-- TEMA DEĞİŞTİRME BUTONU (ÖZELLİK 3) -->
+        <!-- TEMA DEĞİŞTİRME BUTONU -->
         <button onclick="toggleTheme()" class="w-8 h-8 rounded-full bg-gray-100 dark:bg-brand-card hover:bg-gray-200 dark:hover:bg-brand-hover border border-gray-200 dark:border-gray-800 flex items-center justify-center text-brand-accent text-xs transition" title="Tema Değiştir">
           <i id="themeIcon" class="fa-solid fa-moon"></i>
         </button>
@@ -262,9 +262,9 @@
             </div>
           </div>
           
-          <!-- YENİ ÖZELLİK 2: DETAYLI SANATÇI GRAFİK PANELİ -->
+          <!-- GRAFİK BUTONU (KESİN Görünür) -->
           <div class="pt-2 border-t border-gray-200 dark:border-gray-800">
-            <button onclick="openAnalyticsModal()" class="w-full bg-brand-accent/10 hover:bg-brand-accent/20 border border-brand-accent/30 text-brand-accent text-xs font-bold py-2 rounded-xl flex items-center justify-center gap-2 transition">
+            <button onclick="openAnalyticsModal()" class="w-full bg-brand-accent/10 hover:bg-brand-accent/20 border border-brand-accent/30 text-brand-accent text-xs font-bold py-2.5 rounded-xl flex items-center justify-center gap-2 shadow transition">
               <i class="fa-solid fa-chart-pie"></i> Detaylı Dinlenme Grafikleri (Dashboard)
             </button>
           </div>
@@ -330,31 +330,28 @@
 
     </main>
 
-    <!-- 💬 ÖZEL MESAJLAŞMA MODALI (ÖZELLİK 1: REAL-TIME HAZIRLIKLI) -->
+    <!-- 💬 ÖZEL MESAJLAŞMA MODALI -->
     <div id="chatModal" class="hidden absolute top-2 bottom-16 left-2 right-2 bg-white/95 dark:bg-brand-dark/98 backdrop-blur-xl z-50 flex flex-col p-3 rounded-2xl border border-cyan-500/40 shadow-2xl space-y-2 transition-colors duration-300">
-      <!-- Modal Header -->
       <div class="flex items-center justify-between border-b border-gray-200 dark:border-gray-800 pb-2 flex-shrink-0">
         <div class="flex items-center gap-2">
           <img id="chatUserAvatar" src="" class="w-8 h-8 rounded-full object-cover border border-brand-accent">
           <div>
             <h4 id="chatUserName" class="text-xs font-bold text-gray-900 dark:text-white">Sohbet</h4>
-            <p class="text-[9px] text-brand-accent flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span> Gerçek Zamanlı (Firebase/WS Hazır)</p>
+            <p class="text-[9px] text-brand-accent flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span> Gerçek Zamanlı Aktif</p>
           </div>
         </div>
         <button onclick="closeChatModal()" class="text-gray-400 hover:text-gray-900 dark:hover:text-white p-1 text-base"><i class="fa-solid fa-xmark"></i></button>
       </div>
 
-      <!-- Mesajlar Listesi -->
       <div id="chatMessagesContainer" class="flex-1 overflow-y-auto space-y-2 p-2 bg-gray-50 dark:bg-brand-black/60 rounded-xl border border-gray-200 dark:border-gray-800 text-xs"></div>
 
-      <!-- Mesaj Gönderme Formu -->
       <form onsubmit="sendPrivateMessage(event)" class="flex gap-2 pt-2 border-t border-gray-200 dark:border-gray-800 flex-shrink-0">
         <input type="text" id="chatInputMessage" placeholder="Mesajınızı buraya yazın..." required autocomplete="off" class="flex-1 bg-gray-100 dark:bg-brand-card text-xs text-gray-900 dark:text-white p-2.5 rounded-xl border border-gray-200 dark:border-gray-700 focus:outline-none focus:border-brand-accent">
         <button type="submit" class="bg-brand-accent text-black px-3.5 py-2.5 rounded-xl text-xs font-bold shadow hover:opacity-90 transition"><i class="fa-solid fa-paper-plane"></i></button>
       </form>
     </div>
 
-    <!-- 📊 ANALYTICS DASHBOARD MODAL (ÖZELLİK 2) -->
+    <!-- 📊 ANALYTICS DASHBOARD MODAL -->
     <div id="analyticsModal" class="hidden absolute inset-0 bg-black/85 backdrop-blur-md z-50 flex items-center justify-center p-4">
       <div class="w-full max-w-sm bg-white dark:bg-brand-card p-5 rounded-2xl border border-gray-200 dark:border-gray-800 space-y-4 shadow-2xl relative">
         <button onclick="closeAnalyticsModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
@@ -565,7 +562,6 @@
     let currentUserEmail = localStorage.getItem('zaman_current_user') || 'kuzeyfe@zamanperdesi.com';
     let privateMessages = JSON.parse(localStorage.getItem('zaman_messages')) || [];
 
-    // ÖZELLİK 3: TEMA YÖNETİMİ
     let currentTheme = localStorage.getItem('zaman_theme') || 'dark';
     function initTheme() {
       const htmlEl = document.documentElement;
@@ -634,7 +630,6 @@
       updateDashboardStats();
       renderPlaylists();
       
-      // ÖZELLİK 1: Gerçek Zamanlı Mesajlaşma İçin Polling (Firebase/WebSocket Simülasyonu)
       setInterval(() => {
         let latestMessages = JSON.parse(localStorage.getItem('zaman_messages')) || [];
         if(JSON.stringify(latestMessages) !== JSON.stringify(privateMessages)) {
@@ -1432,7 +1427,6 @@
 
     function closeArtistDetail() { document.getElementById('artistDetailView').classList.add('hidden'); switchTab('artists'); }
     
-    // 💬 ÖZEL MESAJLAŞMA FONKSİYONLARI (ÖZELLİK 1)
     function openChatWithUser(email) {
       if(!currentUserEmail) { alert('Önce giriş yapmalısınız!'); openAuthModal(); return; }
       activeChatEmail = email;
@@ -1488,7 +1482,6 @@
       container.scrollTop = container.scrollHeight;
     }
 
-    // 📊 ANALYTICS DASHBOARD GRAFİK FONKSİYONLARI (ÖZELLİK 2)
     function openAnalyticsModal() {
       document.getElementById('analyticsModal').classList.remove('hidden');
       renderArtistChart();
