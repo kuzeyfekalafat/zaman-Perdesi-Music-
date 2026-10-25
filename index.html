@@ -13,6 +13,13 @@
   <!-- Google Font - Inter -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
+  <!-- SABİTLER EN BAŞTA TANIMLANDI (HATA ÇÖZÜMÜ) -->
+  <script>
+    const DEFAULT_COVER = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300" viewBox="0 0 300 300"><defs><linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="%230072ff"/><stop offset="100%" stop-color="%2300d2ff"/></linearGradient></defs><rect width="300" height="300" fill="%231a1c23"/><circle cx="150" cy="150" r="90" fill="url(%23g)" opacity="0.25"/><path d="M135 110v80l60-40z" fill="%2300d2ff"/><text x="50%" y="82%" text-anchor="middle" fill="%2300d2ff" font-family="sans-serif" font-size="14" font-weight="bold">ZAMAN PERDESİ</text></svg>';
+    const DEFAULT_AVATAR = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200"><rect width="200" height="200" fill="%231a1c23"/><circle cx="100" cy="80" r="40" fill="%2300d2ff"/><path d="M40 170c0-33 27-60 60-60s60 27 60 60z" fill="%2300d2ff"/></svg>';
+    const DEFAULT_AUDIO = 'https://actions.google.com/sounds/v1/ambiences/outdoor_synth.ogg'; 
+  </script>
+
   <!-- Firebase SDK (Modular v9) -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
@@ -352,7 +359,7 @@
 
     </main>
 
-    <!-- MINI PLAYER (NORMAL AKIŞTA - EN ÜSTTE TIKLANABİLİR) -->
+    <!-- MINI PLAYER -->
     <div id="miniPlayer" class="bg-white/95 dark:bg-brand-dark/95 backdrop-blur-md border-t border-cyan-500/30 p-2.5 px-3 flex items-center justify-between z-30 cursor-pointer shadow-2xl flex-shrink-0 transition-colors duration-300">
       <div onclick="openFullPlayer()" class="flex items-center gap-2.5 min-w-0 flex-1">
         <img id="playerCover" src="" class="w-10 h-10 rounded-lg object-cover shadow border border-gray-200 dark:border-gray-700">
@@ -369,7 +376,7 @@
       </div>
     </div>
 
-    <!-- BOTTOM NAVIGATION (NORMAL AKIŞTA - KESİNLİKLE TIKLANABİLİR) -->
+    <!-- BOTTOM NAVIGATION -->
     <nav class="bg-white dark:bg-brand-dark border-t border-gray-200 dark:border-gray-800 flex justify-around py-3 z-40 shadow-2xl flex-shrink-0">
       <button type="button" onclick="switchTab('home')" id="nav-home" class="flex flex-col items-center gap-1 text-brand-accent cursor-pointer p-1"><i class="fa-solid fa-house text-base"></i><span class="text-[10px] font-semibold">Ana Sayfa</span></button>
       <button type="button" onclick="switchTab('artists')" id="nav-artists" class="flex flex-col items-center gap-1 text-gray-400 hover:text-gray-900 dark:hover:text-white cursor-pointer p-1"><i class="fa-solid fa-users text-base"></i><span class="text-[10px] font-semibold">Sanatçılar</span></button>
@@ -490,10 +497,6 @@
   </div>
 
   <script>
-    const DEFAULT_COVER = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300" viewBox="0 0 300 300"><defs><linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="%230072ff"/><stop offset="100%" stop-color="%2300d2ff"/></linearGradient></defs><rect width="300" height="300" fill="%231a1c23"/><circle cx="150" cy="150" r="90" fill="url(%23g)" opacity="0.25"/><path d="M135 110v80l60-40z" fill="%2300d2ff"/><text x="50%" y="82%" text-anchor="middle" fill="%2300d2ff" font-family="sans-serif" font-size="14" font-weight="bold">ZAMAN PERDESİ</text></svg>';
-    const DEFAULT_AVATAR = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200"><rect width="200" height="200" fill="%231a1c23"/><circle cx="100" cy="80" r="40" fill="%2300d2ff"/><path d="M40 170c0-33 27-60 60-60s60 27 60 60z" fill="%2300d2ff"/></svg>';
-    const DEFAULT_AUDIO = 'https://actions.google.com/sounds/v1/ambiences/outdoor_synth.ogg'; 
-
     let usersDB = {};
     let demoTracks = [];
     let privateMessages = [];
@@ -1116,7 +1119,7 @@
       document.getElementById('artistDetailView').classList.remove('hidden');
     }
 
-    function closeArtistDetail() { document.getElementById('artistDetailView'].classList.add('hidden'); switchTab('artists'); }
+    function closeArtistDetail() { document.getElementById('artistDetailView').classList.add('hidden'); switchTab('artists'); }
 
     function openChatWithUser(email) {
       if(!currentUserEmail) { alert('Önce giriş yapmalısınız!'); openAuthModal(); return; }
