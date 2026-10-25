@@ -311,12 +311,34 @@
           <img id="artistDetailImg" src="" class="w-20 h-20 rounded-full mx-auto object-cover border-2 border-brand-accent shadow-lg">
           <h2 id="artistDetailName" class="text-base font-bold text-white"></h2>
           <p id="artistDetailBio" class="text-xs text-gray-400"></p>
+          <div id="artistMessageAction" class="pt-2"></div>
           <div id="artistAdminControls" class="pt-2"></div>
         </div>
         <div id="artistTracksList" class="space-y-2"></div>
       </section>
 
     </main>
+
+    <!-- 💬 ÖZEL MESAJLAŞMA MODALI -->
+    <div id="chatModal" class="hidden absolute inset-0 bg-brand-black/95 backdrop-blur-md z-50 flex flex-col p-4 space-y-3">
+      <div class="flex items-center justify-between border-b border-gray-800 pb-2">
+        <div class="flex items-center gap-2">
+          <img id="chatUserAvatar" src="" class="w-8 h-8 rounded-full object-cover border border-brand-accent">
+          <div>
+            <h4 id="chatUserName" class="text-xs font-bold text-white">Sohbet</h4>
+            <p class="text-[9px] text-brand-accent">Özel Mesaj</p>
+          </div>
+        </div>
+        <button onclick="closeChatModal()" class="text-gray-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+      </div>
+
+      <div id="chatMessagesContainer" class="flex-1 overflow-y-auto space-y-2 p-2 bg-brand-card rounded-2xl border border-gray-800 text-xs"></div>
+
+      <form onsubmit="sendPrivateMessage(event)" class="flex gap-2 pt-1">
+        <input type="text" id="chatInputMessage" placeholder="Mesajınızı yazın..." required class="flex-1 bg-brand-dark text-xs text-white p-2.5 rounded-xl border border-gray-700 focus:outline-none focus:border-brand-accent">
+        <button type="submit" class="bg-brand-accent text-black px-4 py-2.5 rounded-xl text-xs font-bold shadow"><i class="fa-solid fa-paper-plane"></i></button>
+      </form>
+    </div>
 
     <!-- MINI PLAYER -->
     <div id="miniPlayer" class="absolute bottom-[58px] left-0 right-0 bg-brand-dark/95 backdrop-blur-md border-t border-cyan-500/30 p-2.5 px-3 flex items-center justify-between z-30 cursor-pointer shadow-2xl">
@@ -512,20 +534,10 @@
         twitter: 'https://www.twitter.com/kuzeyfe_kalafat'
       }
     };
-
-    // Eğer kurucu hesapta sosyal medya linkleri eksikse otomatik ekle
-    if(usersDB['kuzeyfe@zamanperdesi.com'] && !usersDB['kuzeyfe@zamanperdesi.com'].youtube) {
-      usersDB['kuzeyfe@zamanperdesi.com'].youtube = 'https://www.youtube.com/@kuzeyfe.kalafat';
-      usersDB['kuzeyfe@zamanperdesi.com'].instagram = 'https://www.instagram.com/kuzeyfekalafat';
-      usersDB['kuzeyfe@zamanperdesi.com'].spotify = 'https://open.spotify.com/artist/kuzeyfekalafat';
-      usersDB['kuzeyfe@zamanperdesi.com'].tiktok = 'https://www.tiktok.com/@kuzeyfe.kalafat';
-      usersDB['kuzeyfe@zamanperdesi.com'].facebook = 'https://www.facebook.com/kuzeyfekalafat.1';
-      usersDB['kuzeyfe@zamanperdesi.com'].twitter = 'https://www.twitter.com/kuzeyfe_kalafat';
-    }
     localStorage.setItem('zaman_users', JSON.stringify(usersDB));
 
     let currentUserEmail = localStorage.getItem('zaman_current_user') || 'kuzeyfe@zamanperdesi.com';
-    localStorage.setItem('zaman_current_user', currentUserEmail);
+    let privateMessages = JSON.parse(localStorage.getItem('zaman_messages')) || [];
 
     let initialTracks = [
       {
@@ -552,6 +564,7 @@
     let currentTrackIndex = 0;
     let isPlaying = false;
     let favorites = [];
+    let activeChatEmail = null;
     const audioEl = document.getElementById('audioPlayer');
 
     function setupImageErrorHandlers() {
@@ -589,6 +602,7 @@
       localStorage.setItem('zaman_users', JSON.stringify(usersDB));
       localStorage.setItem('zaman_tracks', JSON.stringify(demoTracks));
       localStorage.setItem('zaman_playlists', JSON.stringify(userPlaylists));
+      localStorage.setItem('zaman_messages', JSON.stringify(privateMessages));
       if(currentUserEmail) {
         localStorage.setItem('zaman_current_user', currentUserEmail);
       } else {
@@ -1317,6 +1331,17 @@
       document.getElementById('artistDetailName').innerText = a.name;
       document.getElementById('artistDetailBio').innerText = a.bio || 'Açıklama yok.';
       
+      const messageAction = document.getElementById('artistMessageAction');
+      if(currentUserEmail && currentUserEmail !== email) {
+        messageAction.innerHTML = `
+          <button onclick="openChatWithUser('${email}')" class="bg-brand-accent hover:opacity-90 text-black text-xs px-4 py-2 rounded-xl font-bold flex items-center justify-center gap-1.5 mx-auto shadow transition">
+            <i class="fa-solid fa-comment-dots"></i> Özel Mesaj Gönder
+          </button>
+        `;
+      } else {
+        messageAction.innerHTML = '';
+      }
+
       const isCurAdmin = currentUserEmail && usersDB[currentUserEmail] && usersDB[currentUserEmail].role === 'admin';
       const adminControls = document.getElementById('artistAdminControls');
       
@@ -1349,6 +1374,62 @@
 
     function closeArtistDetail() { document.getElementById('artistDetailView').classList.add('hidden'); switchTab('artists'); }
     
+    // 💬 ÖZEL MESAJLAŞMA FONKSİYONLARI
+    function openChatWithUser(email) {
+      if(!currentUserEmail) { alert('Önce giriş yapmalısınız!'); openAuthModal(); return; }
+      activeChatEmail = email;
+      const targetUser = usersDB[email];
+      document.getElementById('chatUserName').innerText = targetUser.name;
+      document.getElementById('chatUserAvatar').src = (targetUser.avatar && !targetUser.avatar.includes('class=')) ? targetUser.avatar : DEFAULT_AVATAR;
+      renderChatMessages();
+      document.getElementById('chatModal').classList.remove('hidden');
+    }
+
+    function closeChatModal() { document.getElementById('chatModal').classList.add('hidden'); }
+
+    function sendPrivateMessage(e) {
+      e.preventDefault();
+      const input = document.getElementById('chatInputMessage');
+      const text = input.value.trim();
+      if(!text || !activeChatEmail) return;
+
+      privateMessages.push({
+        sender: currentUserEmail,
+        receiver: activeChatEmail,
+        text: text,
+        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      });
+      saveAppData();
+      renderChatMessages();
+      input.value = '';
+    }
+
+    function renderChatMessages() {
+      const container = document.getElementById('chatMessagesContainer');
+      const filtered = privateMessages.filter(m => 
+        (m.sender === currentUserEmail && m.receiver === activeChatEmail) ||
+        (m.sender === activeChatEmail && m.receiver === currentUserEmail)
+      );
+
+      if(filtered.length === 0) {
+        container.innerHTML = '<p class="text-xs text-gray-500 text-center italic my-4">Henüz mesajlaşma yok. İlk mesajı gönder!</p>';
+        return;
+      }
+
+      container.innerHTML = filtered.map(m => {
+        const isMe = m.sender === currentUserEmail;
+        return `
+          <div class="flex flex-col ${isMe ? 'items-end' : 'items-start'} space-y-0.5">
+            <div class="max-w-[75%] p-2.5 rounded-2xl text-xs ${isMe ? 'bg-brand-accent text-black rounded-br-none font-medium' : 'bg-brand-dark text-white rounded-bl-none border border-gray-700'}">
+              <p>${m.text}</p>
+            </div>
+            <span class="text-[9px] text-gray-500 px-1">${m.time}</span>
+          </div>
+        `;
+      }).join('');
+      container.scrollTop = container.scrollHeight;
+    }
+
     function handleSearch(val) {
       const resultsSection = document.getElementById('searchResultsSection');
       const resultsList = document.getElementById('searchResultsList');
