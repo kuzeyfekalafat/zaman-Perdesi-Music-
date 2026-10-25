@@ -40,7 +40,6 @@
         const permission = await Notification.requestPermission();
         if (permission === 'granted') {
           const token = await getToken(messaging, { vapidKey: 'SENIN_VAPID_KEY_BURAYA' });
-          console.log('FCM Token alındı:', token);
           alert('Bildirimler başarıyla aktif edildi!');
         } else {
           alert('Bildirim izni reddedildi.');
@@ -51,7 +50,6 @@
     };
 
     onMessage(messaging, (payload) => {
-      console.log('Yeni Firebase Bildirimi:', payload);
       if("Notification" in window && Notification.permission === "granted") {
         new Notification(payload.notification.title, {
           body: payload.notification.body,
@@ -90,7 +88,6 @@
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: #242731; border-radius: 4px; }
     body { user-select: none; -webkit-tap-highlight-color: transparent; }
-    nav { position: fixed !important; bottom: 0 !important; left: 0 !important; right: 0 !important; width: 100% !important; max-width: 28rem; margin: 0 auto; }
     input[type="range"] { accent-color: #00d2ff; }
   </style>
 </head>
@@ -140,7 +137,7 @@
     </div>
 
     <!-- MAIN CONTENT -->
-    <main id="mainContent" class="flex-1 overflow-y-auto pb-36 p-4 space-y-6">
+    <main id="mainContent" class="flex-1 overflow-y-auto pb-40 p-4 space-y-6">
 
       <section id="searchResultsSection" class="hidden space-y-4">
         <h2 class="text-xs font-bold uppercase tracking-wider text-brand-accent">Arama Sonuçları</h2>
@@ -267,7 +264,6 @@
             </span>
           </div>
           <div class="flex flex-col gap-1.5">
-            <!-- DÜZENLE BUTONUNA ONCLICK EKLENDİ -->
             <button type="button" onclick="openEditProfileModal()" class="bg-white dark:bg-brand-dark hover:bg-gray-200 dark:hover:bg-brand-hover border border-gray-200 dark:border-gray-700 text-brand-accent px-2.5 py-1.5 rounded-xl text-xs font-semibold flex items-center justify-center gap-1 transition">
               <i class="fa-solid fa-pen-to-square"></i> Düzenle
             </button>
@@ -307,8 +303,6 @@
         <div class="bg-gray-100 dark:bg-brand-card p-3 rounded-xl border border-gray-200 dark:border-gray-800 space-y-2">
           <span class="text-xs font-bold text-brand-accent block">✍️ Hakkında / Biyografi</span>
           <p id="profileBioDisplay" class="text-xs text-gray-600 dark:text-gray-300">Zaman Perdesi Sanatçısı.</p>
-          
-          <!-- KULLANICIYA ÖZEL DİNAMİK SOSYAL MEDYA LİNKLERİ -->
           <div id="profileSocialLinks" class="pt-2 border-t border-gray-200 dark:border-gray-800 flex items-center gap-3.5 text-base flex-wrap"></div>
         </div>
 
@@ -391,7 +385,7 @@
     </div>
 
     <!-- MINI PLAYER -->
-    <div id="miniPlayer" class="absolute bottom-[58px] left-0 right-0 bg-white/95 dark:bg-brand-dark/95 backdrop-blur-md border-t border-cyan-500/30 p-2.5 px-3 flex items-center justify-between z-30 cursor-pointer shadow-2xl transition-colors duration-300">
+    <div id="miniPlayer" class="absolute bottom-[52px] left-0 right-0 bg-white/95 dark:bg-brand-dark/95 backdrop-blur-md border-t border-cyan-500/30 p-2.5 px-3 flex items-center justify-between z-35 cursor-pointer shadow-2xl transition-colors duration-300">
       <div onclick="openFullPlayer()" class="flex items-center gap-2.5 min-w-0 flex-1">
         <img id="playerCover" src="" class="w-10 h-10 rounded-lg object-cover shadow border border-gray-200 dark:border-gray-700">
         <div class="min-w-0 flex-1">
@@ -462,12 +456,12 @@
       </div>
     </div>
 
-    <!-- BOTTOM NAVIGATION -->
-    <nav class="absolute bottom-0 left-0 right-0 bg-white/95 dark:bg-brand-dark/95 backdrop-blur-lg border-t border-gray-200 dark:border-gray-800 flex justify-around py-2.5 z-40 transition-colors duration-300">
-      <button type="button" onclick="switchTab('home')" id="nav-home" class="flex flex-col items-center gap-1 text-brand-accent"><i class="fa-solid fa-house text-base"></i><span class="text-[10px] font-semibold">Ana Sayfa</span></button>
-      <button type="button" onclick="switchTab('artists')" id="nav-artists" class="flex flex-col items-center gap-1 text-gray-400 hover:text-gray-900 dark:hover:text-white"><i class="fa-solid fa-users text-base"></i><span class="text-[10px] font-semibold">Sanatçılar</span></button>
-      <button type="button" onclick="switchTab('upload')" id="nav-upload" class="flex flex-col items-center gap-1 text-gray-400 hover:text-gray-900 dark:hover:text-white"><i class="fa-solid fa-circle-plus text-base"></i><span class="text-[10px] font-semibold">Yükle</span></button>
-      <button type="button" onclick="switchTab('profile')" id="nav-profile" class="flex flex-col items-center gap-1 text-gray-400 hover:text-gray-900 dark:hover:text-white"><i class="fa-solid fa-user text-base"></i><span class="text-[10px] font-semibold">Profilim</span></button>
+    <!-- BOTTOM NAVIGATION (Z-INDEX VE TIKLANABİLİRLİK DÜZELTİLDİ) -->
+    <nav class="absolute bottom-0 left-0 right-0 bg-white dark:bg-brand-dark border-t border-gray-200 dark:border-gray-800 flex justify-around py-2.5 z-40 shadow-2xl">
+      <button type="button" onclick="switchTab('home')" id="nav-home" class="flex flex-col items-center gap-1 text-brand-accent cursor-pointer p-1"><i class="fa-solid fa-house text-base"></i><span class="text-[10px] font-semibold">Ana Sayfa</span></button>
+      <button type="button" onclick="switchTab('artists')" id="nav-artists" class="flex flex-col items-center gap-1 text-gray-400 hover:text-gray-900 dark:hover:text-white cursor-pointer p-1"><i class="fa-solid fa-users text-base"></i><span class="text-[10px] font-semibold">Sanatçılar</span></button>
+      <button type="button" onclick="switchTab('upload')" id="nav-upload" class="flex flex-col items-center gap-1 text-gray-400 hover:text-gray-900 dark:hover:text-white cursor-pointer p-1"><i class="fa-solid fa-circle-plus text-base"></i><span class="text-[10px] font-semibold">Yükle</span></button>
+      <button type="button" onclick="switchTab('profile')" id="nav-profile" class="flex flex-col items-center gap-1 text-gray-400 hover:text-gray-900 dark:hover:text-white cursor-pointer p-1"><i class="fa-solid fa-user text-base"></i><span class="text-[10px] font-semibold">Profilim</span></button>
     </nav>
 
     <!-- AUTH MODAL -->
@@ -758,7 +752,6 @@
         document.getElementById('profileBioDisplay').innerText = u.bio || "Biyografi eklenmedi.";
         document.getElementById('userAvatar').src = u.avatar || DEFAULT_AVATAR;
 
-        // Dinamik Sosyal Medya Linkleri
         const socialContainer = document.getElementById('profileSocialLinks');
         if(socialContainer) {
           let socialHTML = '';
@@ -795,7 +788,6 @@
       document.getElementById('statTotalFavs').innerText = favorites.length;
     }
 
-    // SANATÇI KATALOĞU (HTML BOZUKLUĞU GİDERİLDİ)
     function renderArtists() {
       const grid = document.getElementById('artistsGrid');
       if (!grid) return;
@@ -1156,7 +1148,7 @@
       document.getElementById('artistDetailView').classList.remove('hidden');
     }
 
-    function closeArtistDetail() { document.getElementById('artistDetailView'].classList.add('hidden'); switchTab('artists'); }
+    function closeArtistDetail() { document.getElementById('artistDetailView').classList.add('hidden'); switchTab('artists'); }
 
     function openChatWithUser(email) {
       if(!currentUserEmail) { alert('Önce giriş yapmalısınız!'); openAuthModal(); return; }
