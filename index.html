@@ -16,9 +16,9 @@
   <!-- Firebase SDK (Modular v9) -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
+    import { getFirestore, collection, getDocs, setDoc, doc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
     import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-messaging.js";
 
-    // Kendi Firebase yapılandırma bilgilerin (Eklendi!)
     const firebaseConfig = {
       apiKey: "AIzaSyAnmVE-9T0T6lDhQeafto4V-p0R6ZexGSA",
       authDomain: "zamanperdesimusic-c3150.firebaseapp.com",
@@ -29,9 +29,13 @@
     };
 
     const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
     const messaging = getMessaging(app);
 
-    // Bildirim İzni İsteme ve Token Alma
+    window.db = db;
+    window.firestoreFns = { collection, getDocs, setDoc, doc, deleteDoc, onSnapshot };
+
+    // Bildirim İzni İsteme
     window.requestNotificationPermission = async function() {
       try {
         const permission = await Notification.requestPermission();
@@ -47,7 +51,6 @@
       }
     };
 
-    // Ön plandayken gelen mesaj bildirimlerini yakalama
     onMessage(messaging, (payload) => {
       console.log('Yeni Firebase Bildirimi:', payload);
       if("Notification" in window && Notification.permission === "granted") {
@@ -109,12 +112,10 @@
       </div>
 
       <div class="flex items-center gap-2">
-        <!-- BİLDİRİM İZİN BUTONU -->
         <button onclick="requestNotificationPermission()" class="w-8 h-8 rounded-full bg-gray-100 dark:bg-brand-card hover:bg-gray-200 dark:hover:bg-brand-hover border border-gray-200 dark:border-gray-800 flex items-center justify-center text-brand-accent text-xs transition" title="Bildirimleri Aç">
           <i class="fa-solid fa-bell"></i>
         </button>
 
-        <!-- TEMA DEĞİŞTİRME BUTONU -->
         <button onclick="toggleTheme()" class="w-8 h-8 rounded-full bg-gray-100 dark:bg-brand-card hover:bg-gray-200 dark:hover:bg-brand-hover border border-gray-200 dark:border-gray-800 flex items-center justify-center text-brand-accent text-xs transition" title="Tema Değiştir">
           <i id="themeIcon" class="fa-solid fa-moon"></i>
         </button>
@@ -229,10 +230,6 @@
               <label class="text-xs font-medium text-gray-700 dark:text-gray-300">Albüm Adı</label>
               <input type="text" id="uploadAlbumTitle" placeholder="Örn: Zirve Yolu Albümü" class="w-full bg-gray-100 dark:bg-brand-card text-xs text-gray-900 dark:text-white p-2.5 rounded-xl border border-gray-200 dark:border-gray-800 focus:outline-none focus:border-brand-accent mt-1">
             </div>
-            <div class="space-y-2 max-h-60 overflow-y-auto pr-1">
-              <label class="text-xs font-bold text-brand-accent block">Albüm Parçaları (15 Şarkı)</label>
-              <div id="albumTracksContainer" class="space-y-2"></div>
-            </div>
           </div>
 
           <div id="videoFields" class="hidden space-y-3">
@@ -247,7 +244,7 @@
           </div>
 
           <button type="submit" class="w-full bg-gradient-to-r from-brand-accent to-brand-blue text-black font-bold text-xs py-3 rounded-xl shadow-lg hover:opacity-95 transition">
-            🚀 Platforma Yayınla (Mavi Tikli)
+            🚀 Platforma Yayınla (Bulut Senkronize)
           </button>
         </form>
       </section>
@@ -279,7 +276,7 @@
         <div class="bg-gradient-to-br from-gray-100 dark:from-brand-card to-gray-50 dark:to-brand-dark p-3.5 rounded-2xl border border-gray-200 dark:border-gray-800 space-y-3 shadow-xl">
           <div class="flex items-center justify-between">
             <span class="text-xs font-bold text-brand-accent flex items-center gap-1.5"><i class="fa-solid fa-chart-line"></i> Performans & İstatistikler</span>
-            <span class="text-[10px] bg-cyan-500/10 text-cyan-400 px-2 py-0.5 rounded-full border border-cyan-500/20 font-semibold">Canlı Veri</span>
+            <span class="text-[10px] bg-cyan-500/10 text-cyan-400 px-2 py-0.5 rounded-full border border-cyan-500/20 font-semibold">Bulut Verisi</span>
           </div>
           <div class="grid grid-cols-3 gap-2 text-center">
             <div class="bg-white dark:bg-brand-black/60 p-2.5 rounded-xl border border-gray-200 dark:border-gray-800/80">
@@ -296,7 +293,6 @@
             </div>
           </div>
           
-          <!-- GRAFİK BUTONU -->
           <div class="pt-2 border-t border-gray-200 dark:border-gray-800">
             <button onclick="openAnalyticsModal()" class="w-full bg-brand-accent/10 hover:bg-brand-accent/20 border border-brand-accent/30 text-brand-accent text-xs font-bold py-2.5 rounded-xl flex items-center justify-center gap-2 shadow transition">
               <i class="fa-solid fa-chart-pie"></i> Detaylı Dinlenme Grafikleri (Dashboard)
@@ -322,26 +318,13 @@
           <div class="flex border-b border-gray-200 dark:border-gray-800 text-xs justify-between">
             <button onclick="toggleProfileSubTab('myTracks')" id="subTabMyTracks" class="pb-2 px-2 font-semibold text-brand-accent border-b-2 border-brand-accent">🎵 İçeriklerim</button>
             <button onclick="toggleProfileSubTab('favorites')" id="subTabFavs" class="pb-2 px-2 font-semibold text-gray-500 dark:text-gray-400">❤️ Favoriler</button>
-            <button onclick="toggleProfileSubTab('playlists')" id="subTabPlaylists" class="pb-2 px-2 font-semibold text-gray-500 dark:text-gray-400">📂 Çalma Listeleri</button>
           </div>
-
           <div id="myTracksView" class="space-y-2">
             <div id="myUploadedTracksList" class="space-y-2"></div>
           </div>
-
           <div id="favoritesView" class="hidden space-y-2">
             <div id="favoritesListContainer" class="space-y-2">
               <p class="text-xs text-gray-500">Henüz favori eklenmedi.</p>
-            </div>
-          </div>
-
-          <div id="playlistsView" class="hidden space-y-3">
-            <div class="flex items-center justify-between">
-              <span class="text-xs font-bold text-gray-900 dark:text-white">Özel Çalma Listelerin</span>
-              <button onclick="openCreatePlaylistModal()" class="bg-brand-accent text-black text-[10px] font-bold px-2.5 py-1 rounded-lg shadow"><i class="fa-solid fa-plus"></i> Yeni Liste</button>
-            </div>
-            <div id="playlistsContainer" class="space-y-2">
-              <p class="text-xs text-gray-500 italic">Henüz çalma listesi oluşturulmadı.</p>
             </div>
           </div>
         </div>
@@ -371,7 +354,7 @@
           <img id="chatUserAvatar" src="" class="w-8 h-8 rounded-full object-cover border border-brand-accent">
           <div>
             <h4 id="chatUserName" class="text-xs font-bold text-gray-900 dark:text-white">Sohbet</h4>
-            <p class="text-[9px] text-brand-accent flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span> Gerçek Zamanlı Aktif</p>
+            <p class="text-[9px] text-brand-accent flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span> Gerçek Zamanlı Bulut</p>
           </div>
         </div>
         <button onclick="closeChatModal()" class="text-gray-400 hover:text-gray-900 dark:hover:text-white p-1 text-base"><i class="fa-solid fa-xmark"></i></button>
@@ -380,7 +363,7 @@
       <div id="chatMessagesContainer" class="flex-1 overflow-y-auto space-y-2 p-2 bg-gray-50 dark:bg-brand-black/60 rounded-xl border border-gray-200 dark:border-gray-800 text-xs"></div>
 
       <form onsubmit="sendPrivateMessage(event)" class="flex gap-2 pt-2 border-t border-gray-200 dark:border-gray-800 flex-shrink-0">
-        <input type="text" id="chatInputMessage" placeholder="Mesajınızı buraya yazın..." required autocomplete="off" class="flex-1 bg-gray-100 dark:bg-brand-card text-xs text-gray-900 dark:text-white p-2.5 rounded-xl border border-gray-200 dark:border-gray-700 focus:outline-none focus:border-brand-accent">
+        <input type="text" id="chatInputMessage" placeholder="Mesajınızı yazın..." required autocomplete="off" class="flex-1 bg-gray-100 dark:bg-brand-card text-xs text-gray-900 dark:text-white p-2.5 rounded-xl border border-gray-200 dark:border-gray-700 focus:outline-none focus:border-brand-accent">
         <button type="submit" class="bg-brand-accent text-black px-3.5 py-2.5 rounded-xl text-xs font-bold shadow hover:opacity-90 transition"><i class="fa-solid fa-paper-plane"></i></button>
       </form>
     </div>
@@ -393,7 +376,7 @@
         <div class="h-56 relative">
           <canvas id="artistChart"></canvas>
         </div>
-        <p class="text-[10px] text-gray-500 text-center italic">Son 7 günlük dinlenme ve etkileşim analiz verileri.</p>
+        <p class="text-[10px] text-gray-500 text-center italic">Bulut tabanlı son 7 günlük dinlenme verileri.</p>
       </div>
     </div>
 
@@ -407,7 +390,7 @@
         </div>
       </div>
       <div class="flex items-center gap-2.5">
-        <button onclick="downloadCurrentTrack(event)" title="Şarkıyı İndir" class="text-gray-400 hover:text-brand-accent transition p-1"><i class="fa-solid fa-download text-xs"></i></button>
+        <button onclick="downloadCurrentTrack(event)" title="İndir" class="text-gray-400 hover:text-brand-accent transition p-1"><i class="fa-solid fa-download text-xs"></i></button>
         <button onclick="toggleLikeCurrent()" id="likeBtn" class="text-gray-400 hover:text-red-500 transition p-1"><i class="fa-regular fa-heart text-xs"></i></button>
         <button onclick="togglePlayPause(event)" id="playPauseBtn" class="w-8 h-8 rounded-full bg-brand-accent text-black flex items-center justify-center font-bold shadow-md"><i class="fa-solid fa-play text-xs"></i></button>
         <button onclick="openFullPlayer()" class="text-gray-400 hover:text-gray-900 dark:hover:text-white p-1"><i class="fa-solid fa-chevron-up text-xs"></i></button>
@@ -428,7 +411,6 @@
 
       <div class="text-center pt-1 relative">
         <img id="fullPlayerCover" src="" class="w-48 h-48 rounded-2xl mx-auto object-cover shadow-2xl border border-gray-200 dark:border-gray-800">
-        <video id="fullPlayerVideo" class="hidden w-48 h-48 rounded-2xl mx-auto object-cover shadow-2xl border border-gray-200 dark:border-gray-800" controls></video>
       </div>
 
       <div class="text-center space-y-0.5">
@@ -456,25 +438,16 @@
         <div class="flex border-b border-gray-200 dark:border-gray-800 text-xs">
           <button onclick="switchPlayerSubTab('lyrics')" id="playerTabLyrics" class="flex-1 pb-2 font-semibold text-brand-accent border-b-2 border-brand-accent">📜 Sözler</button>
           <button onclick="switchPlayerSubTab('credits')" id="playerTabCredits" class="flex-1 pb-2 font-semibold text-gray-500 dark:text-gray-400">📜 Künye</button>
-          <button onclick="switchPlayerSubTab('comments')" id="playerTabComments" class="flex-1 pb-2 font-semibold text-gray-500 dark:text-gray-400">💬 Yorumlar</button>
         </div>
 
         <div id="playerLyricsContent" class="text-xs text-gray-700 dark:text-gray-300 space-y-2 leading-relaxed max-h-36 overflow-y-auto p-1">
-          <p id="lyricsText">Yine toplandık sahilde akşam vaktinde,<br>Gelişin tüm yükü kaldı o eski şehirde...</p>
+          <p id="lyricsText">Yine toplandık sahilde akşam vaktinde...</p>
         </div>
 
         <div id="playerCreditsContent" class="hidden text-xs space-y-2 text-gray-700 dark:text-gray-300 max-h-36 overflow-y-auto p-1">
           <div class="flex justify-between border-b border-gray-200 dark:border-gray-800/80 pb-1.5"><span class="text-gray-500">Söz & Müzik:</span><span id="creditWriter" class="font-semibold text-gray-900 dark:text-white">Kuzeyfe Kalafat</span></div>
           <div class="flex justify-between border-b border-gray-200 dark:border-gray-800/80 pb-1.5"><span class="text-gray-500">Aranje / Düzenleme:</span><span id="creditArranger" class="font-semibold text-gray-900 dark:text-white">Zaman Perdesi</span></div>
           <div class="flex justify-between border-b border-gray-200 dark:border-gray-800/80 pb-1.5"><span class="text-gray-500">Yapım Şirketi:</span><span id="creditLabel" class="font-semibold text-brand-accent">Zaman Perdesi Music</span></div>
-        </div>
-
-        <div id="playerCommentsContent" class="hidden space-y-2">
-          <div id="commentsList" class="space-y-1.5 max-h-28 overflow-y-auto pr-1"></div>
-          <form onsubmit="addComment(event)" class="flex gap-2 pt-2 border-t border-gray-200 dark:border-gray-800">
-            <input type="text" id="commentInput" placeholder="Yorumunuzu yazın..." required class="flex-1 bg-white dark:bg-brand-dark text-xs text-gray-900 dark:text-white p-2 rounded-xl border border-gray-200 dark:border-gray-700 focus:outline-none focus:border-brand-accent">
-            <button type="submit" class="bg-brand-accent text-black px-3 py-2 rounded-xl text-xs font-bold"><i class="fa-solid fa-paper-plane"></i></button>
-          </form>
         </div>
       </div>
     </div>
@@ -495,7 +468,7 @@
         <div class="grid grid-cols-4 gap-1 border-b border-gray-200 dark:border-gray-800 pb-2 text-[10px] font-bold text-center">
           <button id="authTabLogin" onclick="switchAuthMode('login')" class="text-brand-accent border-b-2 border-brand-accent pb-1 truncate">Giriş Yap</button>
           <button id="authTabRegister" onclick="switchAuthMode('register')" class="text-gray-400 pb-1 truncate">Kayıt Ol</button>
-          <button id="authTabForgot" onclick="switchAuthMode('forgot')" class="text-gray-400 pb-1 truncate">🔑 Şifre Unuttum</button>
+          <button id="authTabForgot" onclick="switchAuthMode('forgot')" class="text-gray-400 pb-1 truncate">🔑 Şifre</button>
           <button id="authTabAdmin" onclick="switchAuthMode('admin')" class="text-red-400 pb-1 truncate">🛡️ Admin</button>
         </div>
 
@@ -513,17 +486,16 @@
         </form>
 
         <form id="forgotForm" onsubmit="handleForgot(event)" class="hidden space-y-3">
-          <div class="p-2 bg-gray-100 dark:bg-brand-dark rounded-xl border border-gray-200 dark:border-gray-800 text-[11px] text-gray-700 dark:text-gray-300">🔑 Kayıtlı e-postanızı girerek yeni şifre belirleyebilirsiniz.</div>
+          <div class="p-2 bg-gray-100 dark:bg-brand-dark rounded-xl border border-gray-200 dark:border-gray-800 text-[11px] text-gray-700 dark:text-gray-300">🔑 E-posta adresinizi giriniz.</div>
           <div><label class="text-xs text-gray-700 dark:text-gray-300">Kayıtlı E-posta</label><input type="email" id="forgotEmail" required class="w-full bg-gray-100 dark:bg-brand-dark text-xs text-gray-900 dark:text-white p-2.5 rounded-xl border border-gray-200 dark:border-gray-800 mt-1"></div>
-          <div><label class="text-xs text-gray-700 dark:text-gray-300">Yeni Şifre</label><input type="password" id="forgotNewPass" required class="w-full bg-gray-100 dark:bg-brand-dark text-xs text-gray-900 dark:text-white p-2.5 rounded-xl border border-gray-200 dark:border-gray-800 mt-1"></div>
-          <button type="submit" class="w-full bg-brand-accent text-black font-bold text-xs py-2.5 rounded-xl">Şifreyi Güncelle</button>
+          <button type="submit" class="w-full bg-brand-accent text-black font-bold text-xs py-2.5 rounded-xl">Şifre Sıfırla</button>
         </form>
 
         <form id="adminForm" onsubmit="handleAdminLogin(event)" class="hidden space-y-3">
-          <div class="p-2 bg-red-950/40 border border-red-800/50 rounded-xl text-[11px] text-red-300">🛡️ Admin / Kurucu Girişi</div>
-          <div><label class="text-xs text-gray-700 dark:text-gray-300">Admin E-posta</label><input type="email" id="adminEmail" placeholder="kuzeyfe@zamanperdesi.com" required class="w-full bg-gray-100 dark:bg-brand-dark text-xs text-gray-900 dark:text-white p-2.5 rounded-xl border border-gray-200 dark:border-gray-800 mt-1"></div>
+          <div class="p-2 bg-red-950/40 border border-red-800/50 rounded-xl text-[11px] text-red-300">🛡️ Admin Girişi</div>
+          <div><label class="text-xs text-gray-700 dark:text-gray-300">E-posta</label><input type="email" id="adminEmail" value="kuzeyfe@zamanperdesi.com" required class="w-full bg-gray-100 dark:bg-brand-dark text-xs text-gray-900 dark:text-white p-2.5 rounded-xl border border-gray-200 dark:border-gray-800 mt-1"></div>
           <div><label class="text-xs text-gray-700 dark:text-gray-300">Şifre</label><input type="password" required class="w-full bg-gray-100 dark:bg-brand-dark text-xs text-gray-900 dark:text-white p-2.5 rounded-xl border border-gray-200 dark:border-gray-800 mt-1"></div>
-          <button type="submit" class="w-full bg-red-600 text-white font-bold text-xs py-2.5 rounded-xl">Admin Giriş Yap</button>
+          <button type="submit" class="w-full bg-red-600 text-white font-bold text-xs py-2.5 rounded-xl">Admin Giriş</button>
         </form>
       </div>
     </div>
@@ -536,34 +508,7 @@
         <form onsubmit="handleProfileUpdate(event)" class="space-y-3">
           <div><label class="text-xs text-gray-700 dark:text-gray-300">Ad Soyad</label><input type="text" id="editNameInput" required class="w-full bg-gray-100 dark:bg-brand-dark text-xs text-gray-900 dark:text-white p-2.5 rounded-xl border border-gray-200 dark:border-gray-800 mt-1"></div>
           <div><label class="text-xs text-gray-700 dark:text-gray-300">Biyografi</label><textarea id="editBioInput" rows="2" class="w-full bg-gray-100 dark:bg-brand-dark text-xs text-gray-900 dark:text-white p-2.5 rounded-xl border border-gray-200 dark:border-gray-800 mt-1"></textarea></div>
-          <div><label class="text-xs text-gray-700 dark:text-gray-300">Fotoğraf Dosyası Seç</label><input type="file" id="editAvatarFile" accept="image/*" class="w-full text-xs text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-brand-dark p-2 rounded-xl border border-gray-200 dark:border-gray-800 mt-1 file:mr-3 file:py-1 file:px-2 file:rounded-lg file:border-0 file:text-xs file:bg-brand-accent file:text-black file:font-semibold"></div>
-          
-          <div class="space-y-2 pt-2 border-t border-gray-200 dark:border-gray-800">
-            <span class="text-xs font-bold text-brand-accent block">🔗 Sosyal Medya Bağlantıları</span>
-            <div><label class="text-[10px] text-gray-500 dark:text-gray-400 mb-0.5 block">YouTube Kanal Linki</label><input type="url" id="editYoutubeInput" class="w-full bg-gray-100 dark:bg-brand-dark text-xs text-gray-900 dark:text-white p-2 rounded-lg border border-gray-200 dark:border-gray-800"></div>
-            <div><label class="text-[10px] text-gray-500 dark:text-gray-400 mb-0.5 block">Instagram Profil Linki</label><input type="url" id="editInstagramInput" class="w-full bg-gray-100 dark:bg-brand-dark text-xs text-gray-900 dark:text-white p-2 rounded-lg border border-gray-200 dark:border-gray-800"></div>
-            <div><label class="text-[10px] text-gray-500 dark:text-gray-400 mb-0.5 block">Spotify Profil Linki</label><input type="url" id="editSpotifyInput" class="w-full bg-gray-100 dark:bg-brand-dark text-xs text-gray-900 dark:text-white p-2 rounded-lg border border-gray-200 dark:border-gray-800"></div>
-            <div><label class="text-[10px] text-gray-500 dark:text-gray-400 mb-0.5 block">TikTok Profil Linki</label><input type="url" id="editTiktokInput" class="w-full bg-gray-100 dark:bg-brand-dark text-xs text-gray-900 dark:text-white p-2 rounded-lg border border-gray-200 dark:border-gray-800"></div>
-            <div><label class="text-[10px] text-gray-500 dark:text-gray-400 mb-0.5 block">Facebook Profil Linki</label><input type="url" id="editFacebookInput" class="w-full bg-gray-100 dark:bg-brand-dark text-xs text-gray-900 dark:text-white p-2 rounded-lg border border-gray-200 dark:border-gray-800"></div>
-            <div><label class="text-[10px] text-gray-500 dark:text-gray-400 mb-0.5 block">Twitter Profil Linki</label><input type="url" id="editTwitterInput" class="w-full bg-gray-100 dark:bg-brand-dark text-xs text-gray-900 dark:text-white p-2 rounded-lg border border-gray-200 dark:border-gray-800"></div>
-          </div>
-
           <button type="submit" class="w-full bg-brand-accent text-black font-bold text-xs py-2.5 rounded-xl shadow-lg">Kaydet & Güncelle</button>
-        </form>
-      </div>
-    </div>
-
-    <!-- CREATE PLAYLIST MODAL -->
-    <div id="createPlaylistModal" class="hidden absolute inset-0 bg-black/85 backdrop-blur-md z-50 flex items-center justify-center p-4">
-      <div class="w-full max-w-sm bg-white dark:bg-brand-card p-5 rounded-2xl border border-gray-200 dark:border-gray-800 space-y-4 shadow-2xl relative">
-        <button onclick="closeCreatePlaylistModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
-        <h3 class="text-sm font-bold text-gray-900 dark:text-white flex items-center gap-2"><i class="fa-solid fa-folder-plus text-brand-accent"></i> Yeni Çalma Listesi Kur</h3>
-        <form onsubmit="handleCreatePlaylist(event)" class="space-y-3">
-          <div>
-            <label class="text-xs text-gray-700 dark:text-gray-300">Liste Adı</label>
-            <input type="text" id="playlistNameInput" placeholder="Örn: Favori Pop Şarkılarım" required class="w-full bg-gray-100 dark:bg-brand-dark text-xs text-gray-900 dark:text-white p-2.5 rounded-xl border border-gray-200 dark:border-gray-800 mt-1">
-          </div>
-          <button type="submit" class="w-full bg-brand-accent text-black font-bold text-xs py-2.5 rounded-xl shadow-lg">Listeyi Oluştur</button>
         </form>
       </div>
     </div>
@@ -575,26 +520,10 @@
     const DEFAULT_AVATAR = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200"><rect width="200" height="200" fill="%231a1c23"/><circle cx="100" cy="80" r="40" fill="%2300d2ff"/><path d="M40 170c0-33 27-60 60-60s60 27 60 60z" fill="%2300d2ff"/></svg>';
     const DEFAULT_AUDIO = 'https://actions.google.com/sounds/v1/ambiences/outdoor_synth.ogg'; 
 
-    let usersDB = JSON.parse(localStorage.getItem('zaman_users')) || {
-      'kuzeyfe@zamanperdesi.com': {
-        name: 'Kuzeyfe Kalafat',
-        email: 'kuzeyfe@zamanperdesi.com',
-        bio: 'Zaman Perdesi Music Kurucusu & Söz Yazarı.',
-        avatar: DEFAULT_AVATAR,
-        role: 'admin',
-        title: 'Platform Kurucusu',
-        youtube: 'https://www.youtube.com/@kuzeyfe.kalafat', 
-        instagram: 'https://www.instagram.com/kuzeyfekalafat', 
-        spotify: 'https://open.spotify.com/artist/kuzeyfekalafat', 
-        tiktok: 'https://www.tiktok.com/@kuzeyfe.kalafat', 
-        facebook: 'https://www.facebook.com/kuzeyfekalafat.1', 
-        twitter: 'https://www.twitter.com/kuzeyfe_kalafat'
-      }
-    };
-    localStorage.setItem('zaman_users', JSON.stringify(usersDB));
-
+    let usersDB = {};
+    let demoTracks = [];
+    let privateMessages = [];
     let currentUserEmail = localStorage.getItem('zaman_current_user') || 'kuzeyfe@zamanperdesi.com';
-    let privateMessages = JSON.parse(localStorage.getItem('zaman_messages')) || [];
 
     let currentTheme = localStorage.getItem('zaman_theme') || 'dark';
     function initTheme() {
@@ -614,28 +543,6 @@
       initTheme();
     }
 
-    let initialTracks = [
-      {
-        id: 0,
-        title: 'Ateş Ve Kumsal',
-        artist: 'Kuzeyfe Kalafat',
-        plays: 1240,
-        cover: DEFAULT_COVER,
-        mediaUrl: DEFAULT_AUDIO,
-        lyrics: 'Yine toplandık sahilde akşam vaktinde,\nGelişin tüm yükü kaldı o eski şehirde.\nDalgalar vururken ince kumların üstüne,\nBir kıvılcım çaktı kanka, gecenin kalbinde.\n\nAteşin sıcaklığı vuruyor yüzümüze,\nGitarın telleri dokunuyor kalbimize.\nHerkes burada bak, çember olduk yine...',
-        type: 'Single',
-        writer: 'Kuzeyfe Kalafat',
-        arranger: 'Zaman Perdesi',
-        label: 'Zaman Perdesi Music',
-        comments: [
-          { user: 'Zaman Perdesi', text: 'Zirve yolu albümünün ilk ateşleyici şarkısı! 🔥' }
-        ]
-      }
-    ];
-
-    let demoTracks = JSON.parse(localStorage.getItem('zaman_tracks')) || initialTracks;
-    let userPlaylists = JSON.parse(localStorage.getItem('zaman_playlists')) || [];
-
     let currentTrackIndex = 0;
     let isPlaying = false;
     let favorites = [];
@@ -643,37 +550,57 @@
     let chartInstance = null;
     const audioEl = document.getElementById('audioPlayer');
 
-    function setupImageErrorHandlers() {
-      document.querySelectorAll('img').forEach(img => {
-        img.onerror = function() {
-          this.onerror = null;
-          this.src = this.classList.contains('rounded-full') ? DEFAULT_AVATAR : DEFAULT_COVER;
-        };
-      });
-    }
-
     window.onload = function() {
       initTheme();
-      checkAuthSession();
-      renderArtists();
-      renderDynamicFeed();
-      buildAlbumTrackInputs();
+      initFirebaseSync();
       initAudioEvents();
-      loadTrack(0);
-      setupImageErrorHandlers();
-      updateDashboardStats();
-      renderPlaylists();
-      
-      setInterval(() => {
-        let latestMessages = JSON.parse(localStorage.getItem('zaman_messages')) || [];
-        if(JSON.stringify(latestMessages) !== JSON.stringify(privateMessages)) {
-          privateMessages = latestMessages;
-          if(activeChatEmail && !document.getElementById('chatModal').classList.contains('hidden')) {
-            renderChatMessages();
-          }
-        }
-      }, 1000);
     };
+
+    function initFirebaseSync() {
+      const { collection, onSnapshot, setDoc, doc } = window.firestoreFns;
+      const db = window.db;
+
+      // Varsayılan kurucu hesap kontrolü
+      setDoc(doc(db, "users", "kuzeyfe@zamanperdesi.com"), {
+        name: 'Kuzeyfe Kalafat',
+        email: 'kuzeyfe@zamanperdesi.com',
+        bio: 'Zaman Perdesi Music Kurucusu & Söz Yazarı.',
+        avatar: DEFAULT_AVATAR,
+        role: 'admin',
+        title: 'Platform Kurucusu',
+        youtube: 'https://www.youtube.com/@kuzeyfe.kalafat',
+        instagram: 'https://www.instagram.com/kuzeyfekalafat'
+      }, { merge: true });
+
+      // Canlı Veritabanı Dinleyicileri (Firestore Real-Time)
+      onSnapshot(collection(db, "users"), (snapshot) => {
+        usersDB = {};
+        snapshot.forEach(docSnap => { usersDB[docSnap.id] = docSnap.data(); });
+        checkAuthSession();
+        renderArtists();
+      });
+
+      onSnapshot(collection(db, "tracks"), (snapshot) => {
+        demoTracks = [];
+        snapshot.forEach(docSnap => { demoTracks.push(docSnap.data()); });
+        if(demoTracks.length === 0) {
+          // İlk açılış için örnek parça ekle
+          let sample = { id: 0, title: 'Ateş Ve Kumsal', artist: 'Kuzeyfe Kalafat', plays: 1240, cover: DEFAULT_COVER, mediaUrl: DEFAULT_AUDIO, type: 'Tekli' };
+          setDoc(doc(db, "tracks", "0"), sample);
+        }
+        renderDynamicFeed();
+        renderMyTracks();
+        updateDashboardStats();
+      });
+
+      onSnapshot(collection(db, "messages"), (snapshot) => {
+        privateMessages = [];
+        snapshot.forEach(docSnap => { privateMessages.push(docSnap.data()); });
+        if(activeChatEmail && !document.getElementById('chatModal').classList.contains('hidden')) {
+          renderChatMessages();
+        }
+      });
+    }
 
     function initAudioEvents() {
       audioEl.addEventListener('timeupdate', updatePlayerProgress);
@@ -685,26 +612,14 @@
       audioEl.addEventListener('ended', onTrackEnded);
     }
 
-    function saveAppData() {
-      localStorage.setItem('zaman_users', JSON.stringify(usersDB));
-      localStorage.setItem('zaman_tracks', JSON.stringify(demoTracks));
-      localStorage.setItem('zaman_playlists', JSON.stringify(userPlaylists));
-      localStorage.setItem('zaman_messages', JSON.stringify(privateMessages));
-      if(currentUserEmail) {
-        localStorage.setItem('zaman_current_user', currentUserEmail);
-      } else {
-        localStorage.removeItem('zaman_current_user');
-      }
-    }
-
     function checkAuthSession() {
       if(currentUserEmail && usersDB[currentUserEmail]) {
         let u = usersDB[currentUserEmail];
         document.getElementById('headerUserName').innerText = u.name.split(' ')[0];
         document.getElementById('profileNameDisplay').innerText = u.name;
         document.getElementById('profileEmailDisplay').innerText = currentUserEmail;
-        document.getElementById('profileBioDisplay').innerText = u.bio || "Henüz biyografi eklenmedi.";
-        document.getElementById('userAvatar').src = (u.avatar && !u.avatar.includes('class=')) ? u.avatar : DEFAULT_AVATAR;
+        document.getElementById('profileBioDisplay').innerText = u.bio || "Biyografi yok.";
+        document.getElementById('userAvatar').src = u.avatar || DEFAULT_AVATAR;
 
         const roleTag = document.getElementById('profileRoleTag');
         if(u.role === 'admin') {
@@ -714,137 +629,59 @@
           roleTag.innerText = u.title || "Doğrulanmış Sanatçı";
           roleTag.className = "inline-block mt-1 bg-brand-accent/25 text-brand-accent text-[10px] px-2 py-0.5 rounded-full border border-brand-accent/30 font-medium";
         }
-
-        toggleSocialLink('linkYoutube', u.youtube);
-        toggleSocialLink('linkInstagram', u.instagram);
-        toggleSocialLink('linkSpotify', u.spotify);
-        toggleSocialLink('linkTiktok', u.tiktok);
-        toggleSocialLink('linkFacebook', u.facebook);
-        toggleSocialLink('linkTwitter', u.twitter);
       } else {
         document.getElementById('headerUserName').innerText = "Giriş Yap";
         document.getElementById('profileNameDisplay').innerText = "Giriş Yapın";
         document.getElementById('profileEmailDisplay').innerText = "misafir@zamanperdesi.com";
-        document.getElementById('profileBioDisplay').innerText = "Lütfen giriş yapın veya kayıt olun.";
-        document.getElementById('userAvatar').src = DEFAULT_AVATAR;
-
-        toggleSocialLink('linkYoutube', '');
-        toggleSocialLink('linkInstagram', '');
-        toggleSocialLink('linkSpotify', '');
-        toggleSocialLink('linkTiktok', '');
-        toggleSocialLink('linkFacebook', '');
-        toggleSocialLink('linkTwitter', '');
       }
       renderMyTracks();
       updateDashboardStats();
-      setupImageErrorHandlers();
     }
 
     function updateDashboardStats() {
-      if(!currentUserEmail || !usersDB[currentUserEmail]) {
-        document.getElementById('statTotalPlays').innerText = "0";
-        document.getElementById('statTotalTracks').innerText = "0";
-        document.getElementById('statTotalFavs').innerText = "0";
-        return;
-      }
+      if(!currentUserEmail || !usersDB[currentUserEmail]) return;
       const currentName = usersDB[currentUserEmail].name;
       const userTracks = demoTracks.filter(t => t.artist === currentName);
       let totalPlays = userTracks.reduce((acc, t) => acc + (Number(t.plays) || 0), 0);
-
       document.getElementById('statTotalPlays').innerText = totalPlays.toLocaleString();
       document.getElementById('statTotalTracks').innerText = userTracks.length;
       document.getElementById('statTotalFavs').innerText = favorites.length;
-    }
-
-    function toggleSocialLink(id, url) {
-      const el = document.getElementById(id);
-      if(!el) return;
-      if(url && url.trim() !== '') {
-        el.href = url;
-        el.classList.remove('hidden');
-      } else {
-        el.classList.add('hidden');
-      }
-    }
-
-    function buildAlbumTrackInputs() {
-      const container = document.getElementById('albumTracksContainer');
-      if(!container) return;
-      let html = '';
-      for(let i = 1; i <= 15; i++) {
-        html += `
-          <div class="p-2 bg-gray-50 dark:bg-brand-dark rounded-xl border border-gray-200 dark:border-gray-800 space-y-1.5">
-            <span class="text-[10px] text-brand-accent font-bold">Parça #${i}</span>
-            <input type="text" placeholder="Şarkı #${i} Adı" class="w-full bg-white dark:bg-brand-card text-xs text-gray-900 dark:text-white p-2 rounded-lg border border-gray-200 dark:border-gray-700 album-track-name">
-            <input type="file" accept="audio/*" class="w-full text-[10px] text-gray-500 dark:text-gray-400 album-track-file">
-          </div>
-        `;
-      }
-      container.innerHTML = html;
     }
 
     function renderArtists() {
       const grid = document.getElementById('artistsGrid');
       if (!grid) return;
       grid.innerHTML = '';
-      
       const allUsers = Object.values(usersDB);
-      if(allUsers.length === 0) {
-        grid.innerHTML = '<p class="text-xs text-gray-500 italic col-span-2">Henüz kayıtlı sanatçı bulunmuyor.</p>';
-        return;
-      }
       
       allUsers.forEach(a => {
         const isAdmin = a.role === 'admin';
         const titleText = isAdmin ? 'Platform Kurucusu' : (a.title || 'Zaman Perdesi Sanatçısı');
-        const avatarSrc = (a.avatar && !a.avatar.includes('class=')) ? a.avatar : DEFAULT_AVATAR;
-
         const card = document.createElement('div');
         card.className = "bg-gray-100 dark:bg-brand-card p-3 rounded-xl border border-gray-200 dark:border-gray-800 text-center cursor-pointer space-y-2 hover:border-brand-accent transition";
         card.onclick = () => openArtistDetail(a.email);
 
-        const img = document.createElement('img');
-        img.src = avatarSrc;
-        img.className = "w-16 h-16 rounded-full mx-auto object-cover border border-brand-accent";
-        img.onerror = function() { this.src = DEFAULT_AVATAR; };
-
-        const infoDiv = document.createElement('div');
-        
-        const nameRow = document.createElement('div');
-        nameRow.className = "flex items-center justify-center gap-1";
-
-        const h4 = document.createElement('h4');
-        h4.className = "text-xs font-bold text-gray-900 dark:text-white truncate";
-        h4.innerText = a.name;
-
-        const icon = document.createElement('i');
-        icon.className = "fa-solid fa-circle-check text-brand-accent text-[10px]";
-
-        nameRow.appendChild(h4);
-        nameRow.appendChild(icon);
-
-        const p = document.createElement('p');
-        p.className = "text-[10px] text-gray-500 dark:text-gray-400 truncate";
-        p.innerText = titleText;
-
-        infoDiv.appendChild(nameRow);
-        infoDiv.appendChild(p);
-
-        card.appendChild(img);
-        card.appendChild(infoDiv);
-
+        card.innerHTML = `
+          <img src="${a.avatar || DEFAULT_AVATAR}" class="w-16 h-16 rounded-full mx-auto object-cover border border-brand-accent">
+          <div>
+            <div class="flex items-center justify-center gap-1">
+              <h4 class="text-xs font-bold text-gray-900 dark:text-white truncate">${a.name}</h4>
+              <i class="fa-solid fa-circle-check text-brand-accent text-[10px]"></i>
+            </div>
+            <p class="text-[10px] text-gray-500 dark:text-gray-400 truncate">${titleText}</p>
+          </div>
+        `;
         grid.appendChild(card);
       });
     }
 
     function renderDynamicFeed() {
       const container = document.getElementById('dynamicUserFeedList');
+      if(!container) return;
       if(demoTracks.length === 0) {
-        container.innerHTML = '<p class="text-xs text-gray-500 italic">Henüz platforma yüklenen bir içerik bulunmuyor.</p>';
+        container.innerHTML = '<p class="text-xs text-gray-500 italic">Henüz içerik bulunmuyor.</p>';
         return;
       }
-      const isCurAdmin = currentUserEmail && usersDB[currentUserEmail] && usersDB[currentUserEmail].role === 'admin';
-      
       container.innerHTML = demoTracks.map((t, idx) => `
         <div onclick="playTrack(${idx})" class="flex items-center justify-between p-2.5 rounded-xl bg-gray-100 dark:bg-brand-card border border-gray-200 dark:border-gray-800 cursor-pointer">
           <div class="flex items-center gap-2.5">
@@ -854,25 +691,19 @@
               <p class="text-[10px] text-gray-500 dark:text-gray-400">${t.artist} • <span class="text-brand-accent">${t.type || 'Tekli'}</span></p>
             </div>
           </div>
-          <div class="flex items-center gap-2">
-            ${isCurAdmin ? `<button onclick="deleteTrack(event, ${t.id})" class="text-red-400 p-1 hover:text-red-300" title="Admin Olarak Sil"><i class="fa-solid fa-trash-can text-xs"></i></button>` : ''}
-            <i class="fa-solid fa-play text-brand-accent text-xs"></i>
-          </div>
+          <i class="fa-solid fa-play text-brand-accent text-xs"></i>
         </div>
       `).join('');
-      setupImageErrorHandlers();
     }
 
     function renderMyTracks() {
-      if(!currentUserEmail || !usersDB[currentUserEmail]) {
-        document.getElementById('myUploadedTracksList').innerHTML = '<p class="text-xs text-gray-500 italic">İçerikleri görmek için giriş yapmalısınız.</p>';
-        return;
-      }
+      if(!currentUserEmail || !usersDB[currentUserEmail]) return;
       const currentName = usersDB[currentUserEmail].name;
       const userTracks = demoTracks.filter(t => t.artist === currentName);
       const container = document.getElementById('myUploadedTracksList');
+      if(!container) return;
       if(userTracks.length === 0) {
-        container.innerHTML = '<p class="text-xs text-gray-500 italic">Henüz yüklediğiniz bir eser bulunmuyor.</p>';
+        container.innerHTML = '<p class="text-xs text-gray-500 italic">Yüklediğiniz eser yok.</p>';
         return;
       }
       container.innerHTML = userTracks.map(t => `
@@ -881,24 +712,11 @@
             <img src="${t.cover || DEFAULT_COVER}" class="w-10 h-10 rounded-lg object-cover">
             <div>
               <h4 class="text-xs font-bold text-gray-900 dark:text-white">${t.title}</h4>
-              <p class="text-[10px] text-gray-500 dark:text-gray-400">${t.type || 'Eser'} • ${t.plays || 0} Dinlenme</p>
+              <p class="text-[10px] text-gray-500 dark:text-gray-400">${t.plays || 0} Dinlenme</p>
             </div>
           </div>
-          <button onclick="deleteTrack(event, ${t.id})" class="text-red-400 hover:text-red-300 p-1.5"><i class="fa-solid fa-trash-can text-xs"></i></button>
         </div>
       `).join('');
-      setupImageErrorHandlers();
-    }
-
-    function deleteTrack(e, id) {
-      if(e) e.stopPropagation();
-      if(confirm('Bu içeriği platformdan silmek istediğinize emin misiniz?')) {
-        demoTracks = demoTracks.filter(t => t.id !== id);
-        saveAppData();
-        renderDynamicFeed();
-        renderMyTracks();
-        updateDashboardStats();
-      }
     }
 
     function switchTab(tabName) {
@@ -914,109 +732,41 @@
       document.getElementById('albumFields').classList.add('hidden');
       document.getElementById('videoFields').classList.add('hidden');
 
-      document.getElementById('singleTypeBtn').className = "flex-1 py-1.5 font-semibold rounded-lg text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition";
-      document.getElementById('albumTypeBtn').className = "flex-1 py-1.5 font-semibold rounded-lg text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition";
-      document.getElementById('videoTypeBtn').className = "flex-1 py-1.5 font-semibold rounded-lg text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition";
-
-      if (type === 'single') {
-        document.getElementById('singleFields').classList.remove('hidden');
-        document.getElementById('singleTypeBtn').className = "flex-1 py-1.5 font-semibold rounded-lg bg-brand-accent text-black shadow transition";
-      } else if (type === 'album') {
-        document.getElementById('albumFields').classList.remove('hidden');
-        document.getElementById('albumTypeBtn').className = "flex-1 py-1.5 font-semibold rounded-lg bg-brand-accent text-black shadow transition";
-      } else if (type === 'video') {
-        document.getElementById('videoFields').classList.remove('hidden');
-        document.getElementById('videoTypeBtn').className = "flex-1 py-1.5 font-semibold rounded-lg bg-brand-accent text-black shadow transition";
-      }
+      if (type === 'single') document.getElementById('singleFields').classList.remove('hidden');
+      else if (type === 'album') document.getElementById('albumFields').classList.remove('hidden');
+      else if (type === 'video') document.getElementById('videoFields').classList.remove('hidden');
     }
 
     function loadTrack(i) {
       currentTrackIndex = i;
       const t = demoTracks[i];
       if(!t) return;
-
       document.getElementById('playerTitle').innerText = t.title;
       document.getElementById('playerArtist').innerText = t.artist;
       document.getElementById('playerCover').src = t.cover || DEFAULT_COVER;
-
       document.getElementById('fullPlayerTitle').innerText = t.title;
       document.getElementById('fullPlayerArtist').innerText = t.artist;
-      
-      document.getElementById('creditWriter').innerText = t.writer || t.artist || "Bilinmiyor";
-      document.getElementById('creditArranger').innerText = t.arranger || "Zaman Perdesi";
-      document.getElementById('creditLabel').innerText = t.label || "Zaman Perdesi Music";
-
-      if(document.getElementById('lyricsText')) {
-        document.getElementById('lyricsText').innerHTML = (t.lyrics || "Bu şarkı için söz eklenmedi.").replace(/\n/g, '<br>');
-      }
-
-      renderTrackComments();
-
-      const videoEl = document.getElementById('fullPlayerVideo');
-      const coverImg = document.getElementById('fullPlayerCover');
-
-      if(t.type === 'Video Klip' && t.mediaUrl) {
-        coverImg.classList.add('hidden');
-        videoEl.classList.remove('hidden');
-        videoEl.src = t.mediaUrl;
-      } else {
-        videoEl.classList.add('hidden');
-        coverImg.classList.remove('hidden');
-        coverImg.src = t.cover || DEFAULT_COVER;
-        audioEl.src = t.mediaUrl || DEFAULT_AUDIO;
-        audioEl.load();
-      }
-      setupImageErrorHandlers();
+      document.getElementById('fullPlayerCover').src = t.cover || DEFAULT_COVER;
+      audioEl.src = t.mediaUrl || DEFAULT_AUDIO;
+      audioEl.load();
     }
 
     function playTrack(i) { 
       loadTrack(i); 
-      const t = demoTracks[i];
-      t.plays = (Number(t.plays) || 0) + 1;
-      saveAppData();
-      updateDashboardStats();
-
-      if(t && t.type === 'Video Klip') {
-        document.getElementById('fullPlayerVideo').play().catch(()=>{});
-        isPlaying = true;
-      } else {
-        audioEl.play().then(() => {
-          isPlaying = true;
-          updatePlayPauseUI();
-        }).catch(() => {
-          isPlaying = false;
-          updatePlayPauseUI();
-        });
-      }
-      updatePlayPauseUI();
+      audioEl.play().then(() => { isPlaying = true; updatePlayPauseUI(); }).catch(() => {});
       openFullPlayer(); 
     }
 
     function togglePlayPause(e) { 
       if(e) e.stopPropagation(); 
-      const t = demoTracks[currentTrackIndex];
-      const videoEl = document.getElementById('fullPlayerVideo');
-
-      if(t && t.type === 'Video Klip') {
-        if(videoEl.paused) { videoEl.play(); isPlaying = true; } 
-        else { videoEl.pause(); isPlaying = false; }
-      } else {
-        if(audioEl.paused) { 
-          audioEl.play().then(()=> { isPlaying = true; updatePlayPauseUI(); }).catch(()=>{}); 
-        } else { 
-          audioEl.pause(); 
-          isPlaying = false; 
-          updatePlayPauseUI();
-        }
-      }
+      if(audioEl.paused) { audioEl.play(); isPlaying = true; } 
+      else { audioEl.pause(); isPlaying = false; }
       updatePlayPauseUI();
     }
 
     function updatePlayPauseUI() {
-      const iconHTML = isPlaying ? '<i class="fa-solid fa-pause text-xs"></i>' : '<i class="fa-solid fa-play text-xs"></i>';
-      document.getElementById('playPauseBtn').innerHTML = iconHTML;
-      const modalIcon = isPlaying ? '<i class="fa-solid fa-pause text-sm"></i>' : '<i class="fa-solid fa-play text-sm"></i>';
-      document.getElementById('modalPlayBtn').innerHTML = modalIcon;
+      document.getElementById('playPauseBtn').innerHTML = isPlaying ? '<i class="fa-solid fa-pause text-xs"></i>' : '<i class="fa-solid fa-play text-xs"></i>';
+      document.getElementById('modalPlayBtn').innerHTML = isPlaying ? '<i class="fa-solid fa-pause text-sm"></i>' : '<i class="fa-solid fa-play text-sm"></i>';
     }
 
     function updatePlayerProgress() {
@@ -1028,7 +778,7 @@
     }
 
     function seekTrack(val) {
-      if(!audioEl.duration || isNaN(audioEl.duration)) return;
+      if(!audioEl.duration) return;
       audioEl.currentTime = (val / 100) * audioEl.duration;
     }
 
@@ -1039,192 +789,35 @@
       return `${min < 10 ? '0' : ''}${min}:${sec < 10 ? '0' : ''}${sec}`;
     }
 
-    function downloadCurrentTrack(e) {
-      if(e) e.stopPropagation();
-      const current = demoTracks[currentTrackIndex];
-      if(!current || !current.mediaUrl) {
-        alert('İndirilecek ses dosyası bulunamadı!');
-        return;
-      }
-      const a = document.createElement('a');
-      a.href = current.mediaUrl;
-      a.download = `${current.artist} - ${current.title}.mp3`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-    }
-
-    function shareCurrentTrack() {
-      const current = demoTracks[currentTrackIndex];
-      if(!current) return;
-      if (navigator.share) {
-        navigator.share({
-          title: current.title,
-          text: `${current.artist} - ${current.title} eserini Zaman Perdesi Music üzerinde dinle!`,
-          url: window.location.href,
-        }).catch(()=>{});
-      } else {
-        navigator.clipboard.writeText(window.location.href);
-        alert('Şarkı bağlantısı kopyalandı!');
-      }
-    }
-
     function prevTrack() { if(currentTrackIndex > 0) playTrack(currentTrackIndex - 1); }
     function nextTrack() { if(currentTrackIndex < demoTracks.length - 1) playTrack(currentTrackIndex + 1); }
-    function onTrackEnded() { isPlaying = false; updatePlayPauseUI(); nextTrack(); }
+    function onTrackEnded() { nextTrack(); }
 
     function openFullPlayer() { document.getElementById('fullPlayerModal').classList.remove('hidden'); }
-    function closeFullPlayer() { 
-      document.getElementById('fullPlayerModal').classList.add('hidden'); 
-      const videoEl = document.getElementById('fullPlayerVideo');
-      if(!videoEl.paused) videoEl.pause();
-    }
+    function closeFullPlayer() { document.getElementById('fullPlayerModal').classList.add('hidden'); }
 
     function switchPlayerSubTab(tab) {
       document.getElementById('playerLyricsContent').classList.add('hidden');
       document.getElementById('playerCreditsContent').classList.add('hidden');
-      document.getElementById('playerCommentsContent').classList.add('hidden');
-
-      document.getElementById('playerTabLyrics').className = "flex-1 pb-2 font-semibold text-gray-500 dark:text-gray-400";
-      document.getElementById('playerTabCredits').className = "flex-1 pb-2 font-semibold text-gray-500 dark:text-gray-400";
-      document.getElementById('playerTabComments').className = "flex-1 pb-2 font-semibold text-gray-500 dark:text-gray-400";
-
-      if(tab === 'lyrics') {
-        document.getElementById('playerLyricsContent').classList.remove('hidden');
-        document.getElementById('playerTabLyrics').className = "flex-1 pb-2 font-semibold text-brand-accent border-b-2 border-brand-accent";
-      } else if(tab === 'credits') {
-        document.getElementById('playerCreditsContent').classList.remove('hidden');
-        document.getElementById('playerTabCredits').className = "flex-1 pb-2 font-semibold text-brand-accent border-b-2 border-brand-accent";
-      } else if(tab === 'comments') {
-        document.getElementById('playerCommentsContent').classList.remove('hidden');
-        document.getElementById('playerTabComments').className = "flex-1 pb-2 font-semibold text-brand-accent border-b-2 border-brand-accent";
-      }
+      if(tab === 'lyrics') document.getElementById('playerLyricsContent').classList.remove('hidden');
+      if(tab === 'credits') document.getElementById('playerCreditsContent').classList.remove('hidden');
     }
 
-    function addComment(e) {
+    async function handleUploadSubmit(e) {
       e.preventDefault();
-      const currentTrack = demoTracks[currentTrackIndex];
-      if(!currentTrack) return;
-      const commentInput = document.getElementById('commentInput');
-      const text = commentInput.value.trim();
-      if(!text) return;
-      const userName = currentUserEmail && usersDB[currentUserEmail] ? usersDB[currentUserEmail].name : "Misafir Dinleyici";
-      if(!currentTrack.comments) currentTrack.comments = [];
-      currentTrack.comments.push({ user: userName, text: text });
-      saveAppData();
-      renderTrackComments();
-      commentInput.value = '';
-    }
-
-    function renderTrackComments() {
-      const currentTrack = demoTracks[currentTrackIndex];
-      const listContainer = document.getElementById('commentsList');
-      if(!currentTrack || !currentTrack.comments || currentTrack.comments.length === 0) {
-        listContainer.innerHTML = '<p class="text-xs text-gray-500 italic">Henüz yorum yapılmadı.</p>';
-        return;
-      }
-      listContainer.innerHTML = currentTrack.comments.map(c => `
-        <div class="bg-gray-50 dark:bg-brand-dark p-2 rounded-xl text-xs space-y-0.5 border border-gray-200 dark:border-gray-800">
-          <span class="font-bold text-brand-accent block text-[11px]">${c.user}</span>
-          <p class="text-gray-700 dark:text-gray-300 text-[11px]">${c.text}</p>
-        </div>
-      `).join('');
-    }
-
-    function handleUploadSubmit(e) {
-      e.preventDefault();
-      if(!currentUserEmail) {
-        alert('İçerik yüklemek için önce giriş yapmalısınız!');
-        openAuthModal();
-        return;
-      }
-      const artistName = usersDB[currentUserEmail].name;
-      const coverFileInput = document.getElementById('uploadCoverFile');
-      let coverUrl = DEFAULT_COVER;
-      if(coverFileInput.files && coverFileInput.files[0]) {
-        coverUrl = URL.createObjectURL(coverFileInput.files[0]);
-      }
-      const writer = document.getElementById('uploadCreditWriter').value.trim() || artistName;
-      const arranger = document.getElementById('uploadCreditArranger').value.trim() || "Zaman Perdesi";
-      const label = document.getElementById('uploadCreditLabel').value.trim() || "Zaman Perdesi Music";
-
-      const isSingle = !document.getElementById('singleFields').classList.contains('hidden');
-      const isAlbum = !document.getElementById('albumFields').classList.contains('hidden');
-      const isVideo = !document.getElementById('videoFields').classList.contains('hidden');
-
-      if(isSingle) {
-        const title = document.getElementById('uploadTitle').value || "Yeni Tekli";
-        const lyrics = document.getElementById('uploadLyrics').value || "Sözler eklenmedi.";
-        const audioFileInput = document.getElementById('uploadAudioFile');
-        let audioUrl = DEFAULT_AUDIO;
-        if(audioFileInput.files && audioFileInput.files[0]) {
-          audioUrl = URL.createObjectURL(audioFileInput.files[0]);
-        }
-        demoTracks.push({
-          id: demoTracks.length, title, artist: artistName, plays: 0, cover: coverUrl, lyrics, mediaUrl: audioUrl, type: "Tekli", writer, arranger, label, comments: []
-        });
-      } else if(isAlbum) {
-        const albumTitle = document.getElementById('uploadAlbumTitle').value || "Yeni Albüm";
-        demoTracks.push({
-          id: demoTracks.length, title: albumTitle, artist: artistName, plays: 0, cover: coverUrl, lyrics: "Albüm Eseri", mediaUrl: DEFAULT_AUDIO, type: "Albüm", writer, arranger, label, comments: []
-        });
-      } else if(isVideo) {
-        const videoTitle = document.getElementById('uploadVideoTitle').value || "Yeni Klip";
-        const videoFileInput = document.getElementById('uploadVideoFile');
-        let videoUrl = "";
-        if(videoFileInput.files && videoFileInput.files[0]) {
-          videoUrl = URL.createObjectURL(videoFileInput.files[0]);
-        }
-        demoTracks.push({
-          id: demoTracks.length, title: videoTitle, artist: artistName, plays: 0, cover: coverUrl, lyrics: "Video Klip", mediaUrl: videoUrl, type: "Video Klip", writer, arranger, label, comments: []
-        });
-      }
-
-      saveAppData();
-      renderDynamicFeed();
-      renderMyTracks();
-      updateDashboardStats();
-      alert('Tebrikler! Eseriniz başarıyla yayınlandı.');
-      switchTab('home');
-      playTrack(demoTracks.length - 1);
-    }
-
-    function openEditProfileModal() {
       if(!currentUserEmail) { alert('Önce giriş yapmalısınız!'); openAuthModal(); return; }
-      const u = usersDB[currentUserEmail];
-      document.getElementById('editNameInput').value = u.name;
-      document.getElementById('editBioInput').value = u.bio || '';
-      document.getElementById('editYoutubeInput').value = u.youtube || '';
-      document.getElementById('editInstagramInput').value = u.instagram || '';
-      document.getElementById('editSpotifyInput').value = u.spotify || '';
-      document.getElementById('editTiktokInput').value = u.tiktok || '';
-      document.getElementById('editFacebookInput').value = u.facebook || '';
-      document.getElementById('editTwitterInput').value = u.twitter || '';
-      document.getElementById('editProfileModal').classList.remove('hidden');
-    }
-    function closeEditProfileModal() { document.getElementById('editProfileModal').classList.add('hidden'); }
-    
-    function handleProfileUpdate(e) {
-      e.preventDefault();
-      if(!currentUserEmail) return;
-      usersDB[currentUserEmail].name = document.getElementById('editNameInput').value;
-      usersDB[currentUserEmail].bio = document.getElementById('editBioInput').value;
-      usersDB[currentUserEmail].youtube = document.getElementById('editYoutubeInput').value;
-      usersDB[currentUserEmail].instagram = document.getElementById('editInstagramInput').value;
-      usersDB[currentUserEmail].spotify = document.getElementById('editSpotifyInput').value;
-      usersDB[currentUserEmail].tiktok = document.getElementById('editTiktokInput').value;
-      usersDB[currentUserEmail].facebook = document.getElementById('editFacebookInput').value;
-      usersDB[currentUserEmail].twitter = document.getElementById('editTwitterInput').value;
+      const artistName = usersDB[currentUserEmail].name;
+      const title = document.getElementById('uploadTitle').value || "Yeni Eser";
+      const newId = Date.now().toString();
+      
+      const newTrack = {
+        id: newId, title, artist: artistName, plays: 0, cover: DEFAULT_COVER, mediaUrl: DEFAULT_AUDIO, type: "Tekli"
+      };
 
-      const avatarFileInput = document.getElementById('editAvatarFile');
-      if(avatarFileInput.files && avatarFileInput.files[0]) {
-        usersDB[currentUserEmail].avatar = URL.createObjectURL(avatarFileInput.files[0]);
-      }
-      saveAppData();
-      checkAuthSession();
-      closeEditProfileModal();
-      renderArtists();
-      alert('Profil güncellendi!');
+      const { setDoc, doc } = window.firestoreFns;
+      await setDoc(doc(window.db, "tracks", newId), newTrack);
+      alert('Eser buluta başarıyla yüklendi ve tüm cihazlarla senkronize edildi!');
+      switchTab('home');
     }
 
     function openAuthModal() { document.getElementById('authModal').classList.remove('hidden'); }
@@ -1235,82 +828,44 @@
       document.getElementById('registerForm').classList.add('hidden');
       document.getElementById('forgotForm').classList.add('hidden');
       document.getElementById('adminForm').classList.add('hidden');
-
-      document.getElementById('authTabLogin').className = "text-gray-400 pb-1 truncate";
-      document.getElementById('authTabRegister').className = "text-gray-400 pb-1 truncate";
-      document.getElementById('authTabForgot').className = "text-gray-400 pb-1 truncate";
-      document.getElementById('authTabAdmin').className = "text-red-400 pb-1 truncate";
-
-      if(mode === 'login') {
-        document.getElementById('loginForm').classList.remove('hidden');
-        document.getElementById('authTabLogin').className = "text-brand-accent border-b-2 border-brand-accent pb-1 truncate";
-      } else if(mode === 'register') {
-        document.getElementById('registerForm').classList.remove('hidden');
-        document.getElementById('authTabRegister').className = "text-brand-accent border-b-2 border-brand-accent pb-1 truncate";
-      } else if(mode === 'forgot') {
-        document.getElementById('forgotForm').classList.remove('hidden');
-        document.getElementById('authTabForgot').className = "text-brand-accent border-b-2 border-brand-accent pb-1 truncate";
-      } else if(mode === 'admin') {
-        document.getElementById('adminForm').classList.remove('hidden');
-        document.getElementById('authTabAdmin').className = "text-red-400 border-b-2 border-red-500 pb-1 truncate";
-      }
+      if(mode === 'login') document.getElementById('loginForm').classList.remove('hidden');
+      if(mode === 'register') document.getElementById('registerForm').classList.remove('hidden');
+      if(mode === 'forgot') document.getElementById('forgotForm').classList.remove('hidden');
+      if(mode === 'admin') document.getElementById('adminForm').classList.remove('hidden');
     }
 
-    function handleLogin(e) { 
+    async function handleLogin(e) { 
       e.preventDefault(); 
       const email = document.getElementById('loginEmail').value.trim();
       if(!usersDB[email]) { alert('Hesap bulunamadı!'); return; }
       currentUserEmail = email;
-      saveAppData();
+      localStorage.setItem('zaman_current_user', email);
       checkAuthSession();
       closeAuthModal(); 
       alert('Giriş yapıldı!');
     }
 
-    function handleRegister(e) { 
+    async function handleRegister(e) { 
       e.preventDefault(); 
       const name = document.getElementById('regName').value.trim();
       const email = document.getElementById('regEmail').value.trim();
-      usersDB[email] = { name, email, bio: "Zaman Perdesi Sanatçısı", avatar: DEFAULT_AVATAR, role: 'user', youtube:'', instagram:'', spotify:'', tiktok:'', facebook:'', twitter:'' };
+      const newUser = { name, email, bio: "Zaman Perdesi Sanatçısı", avatar: DEFAULT_AVATAR, role: 'user', title: 'Zaman Perdesi Sanatçısı' };
+      
+      const { setDoc, doc } = window.firestoreFns;
+      await setDoc(doc(window.db, "users", email), newUser);
       currentUserEmail = email;
-      saveAppData();
-      checkAuthSession();
-      renderArtists();
+      localStorage.setItem('zaman_current_user', email);
       closeAuthModal(); 
-      alert('Kayıt oluşturuldu!');
-    }
-
-    function handleForgot(e) {
-      e.preventDefault();
-      const email = document.getElementById('forgotEmail').value.trim();
-      if(!usersDB[email]) { alert('Kayıtlı e-posta bulunamadı!'); return; }
-      alert('Şifre güncellendi!');
-      switchAuthMode('login');
+      alert('Kayıt oluşturuldu ve buluta kaydedildi!');
     }
 
     function handleAdminLogin(e) { 
       e.preventDefault(); 
       currentUserEmail = 'kuzeyfe@zamanperdesi.com';
-      usersDB['kuzeyfe@zamanperdesi.com'].role = 'admin';
-      saveAppData();
+      localStorage.setItem('zaman_current_user', currentUserEmail);
       checkAuthSession();
-      renderArtists();
       closeAuthModal(); 
-      alert('Admin / Kurucu olarak giriş yapıldı!');
-    }
-
-    function deleteUserByAdmin(email) {
-      if(email === 'kuzeyfe@zamanperdesi.com') {
-        alert('Kurucu hesabı silinemez!');
-        return;
-      }
-      if(confirm(`${email} kullanıcısını platformdan tamamen silmek istediğinize emin misiniz?`)) {
-        delete usersDB[email];
-        saveAppData();
-        renderArtists();
-        closeArtistDetail();
-        alert('Kullanıcı silindi.');
-      }
+      alert('Admin girişi yapıldı!');
     }
 
     function handleLogout() {
@@ -1319,136 +874,27 @@
         localStorage.removeItem('zaman_current_user');
         checkAuthSession();
         alert('Çıkış yapıldı.');
-        switchTab('home');
-      }
-    }
-    
-    function toggleLikeCurrent() {
-      const current = demoTracks[currentTrackIndex];
-      if(!current) return;
-      const found = favorites.find(f => f.id === current.id);
-      if(!found) { favorites.push(current); alert('Favorilere eklendi!'); } 
-      else { favorites = favorites.filter(f => f.id !== current.id); alert('Favorilerden çıkarıldı!'); }
-      renderFavorites();
-      updateDashboardStats();
-    }
-
-    function renderFavorites() {
-      const container = document.getElementById('favoritesListContainer');
-      if(!container) return;
-      if(favorites.length === 0) { container.innerHTML = '<p class="text-xs text-gray-500">Henüz favori eklenmedi.</p>'; return; }
-      container.innerHTML = favorites.map(t => `
-        <div onclick="playTrack(${t.id})" class="flex items-center justify-between p-2.5 bg-gray-100 dark:bg-brand-card rounded-xl border border-gray-200 dark:border-gray-800 cursor-pointer">
-          <div class="flex items-center gap-2.5">
-            <img src="${t.cover || DEFAULT_COVER}" class="w-10 h-10 rounded-lg object-cover">
-            <div><h4 class="text-xs font-bold text-gray-900 dark:text-white">${t.title}</h4><p class="text-[10px] text-gray-500 dark:text-gray-400">${t.artist}</p></div>
-          </div>
-          <i class="fa-solid fa-heart text-red-500 text-xs"></i>
-        </div>
-      `).join('');
-      setupImageErrorHandlers();
-    }
-
-    function openCreatePlaylistModal() { document.getElementById('createPlaylistModal').classList.remove('hidden'); }
-    function closeCreatePlaylistModal() { document.getElementById('createPlaylistModal').classList.add('hidden'); }
-
-    function handleCreatePlaylist(e) {
-      e.preventDefault();
-      const name = document.getElementById('playlistNameInput').value.trim();
-      if(!name) return;
-      userPlaylists.push({ id: Date.now(), name: name, tracks: [] });
-      saveAppData();
-      renderPlaylists();
-      closeCreatePlaylistModal();
-      document.getElementById('playlistNameInput').value = '';
-      alert('Çalma listesi oluşturuldu!');
-    }
-
-    function renderPlaylists() {
-      const container = document.getElementById('playlistsContainer');
-      if(!container) return;
-      if(userPlaylists.length === 0) {
-        container.innerHTML = '<p class="text-xs text-gray-500 italic">Henüz çalma listesi oluşturulmadı.</p>';
-        return;
-      }
-      container.innerHTML = userPlaylists.map(p => `
-        <div class="p-3 bg-gray-100 dark:bg-brand-card rounded-xl border border-gray-200 dark:border-gray-800 flex items-center justify-between">
-          <div>
-            <h4 class="text-xs font-bold text-gray-900 dark:text-white"><i class="fa-solid fa-list text-brand-accent"></i> ${p.name}</h4>
-            <p class="text-[10px] text-gray-500 dark:text-gray-400">${p.tracks.length} Parça</p>
-          </div>
-          <button onclick="deletePlaylist(${p.id})" class="text-red-400 hover:text-red-300 text-xs p-1"><i class="fa-solid fa-trash"></i></button>
-        </div>
-      `).join('');
-    }
-
-    function deletePlaylist(id) {
-      if(confirm('Bu liste silinsin mi?')) {
-        userPlaylists = userPlaylists.filter(p => p.id !== id);
-        saveAppData();
-        renderPlaylists();
-      }
-    }
-
-    function toggleProfileSubTab(tab) {
-      document.getElementById('myTracksView').classList.add('hidden');
-      document.getElementById('favoritesView').classList.add('hidden');
-      document.getElementById('playlistsView').classList.add('hidden');
-
-      document.getElementById('subTabMyTracks').className = "pb-2 px-2 font-semibold text-gray-500 dark:text-gray-400";
-      document.getElementById('subTabFavs').className = "pb-2 px-2 font-semibold text-gray-500 dark:text-gray-400";
-      document.getElementById('subTabPlaylists').className = "pb-2 px-2 font-semibold text-gray-500 dark:text-gray-400";
-
-      if(tab === 'myTracks') {
-        document.getElementById('myTracksView').classList.remove('hidden');
-        document.getElementById('subTabMyTracks').className = "pb-2 px-2 font-semibold text-brand-accent border-b-2 border-brand-accent";
-      } else if(tab === 'favorites') {
-        document.getElementById('favoritesView').classList.remove('hidden');
-        document.getElementById('subTabFavs').className = "pb-2 px-2 font-semibold text-brand-accent border-b-2 border-brand-accent";
-      } else if(tab === 'playlists') {
-        document.getElementById('playlistsView').classList.remove('hidden');
-        document.getElementById('subTabPlaylists').className = "pb-2 px-2 font-semibold text-brand-accent border-b-2 border-brand-accent";
       }
     }
 
     function openArtistDetail(email) {
       const a = usersDB[email];
       if(!a) return;
-      document.getElementById('artistDetailImg').src = (a.avatar && !a.avatar.includes('class=')) ? a.avatar : DEFAULT_AVATAR;
+      document.getElementById('artistDetailImg').src = a.avatar || DEFAULT_AVATAR;
       document.getElementById('artistDetailName').innerText = a.name;
       document.getElementById('artistDetailBio').innerText = a.bio || 'Açıklama yok.';
       
       const messageAction = document.getElementById('artistMessageAction');
       if(currentUserEmail && currentUserEmail !== email) {
-        messageAction.innerHTML = `
-          <button onclick="openChatWithUser('${email}')" class="bg-brand-accent hover:opacity-90 text-black text-xs px-4 py-2 rounded-xl font-bold flex items-center justify-center gap-1.5 mx-auto shadow transition">
-            <i class="fa-solid fa-comment-dots"></i> Özel Mesaj Gönder
-          </button>
-        `;
-      } else {
-        messageAction.innerHTML = '';
-      }
-
-      const isCurAdmin = currentUserEmail && usersDB[currentUserEmail] && usersDB[currentUserEmail].role === 'admin';
-      const adminControls = document.getElementById('artistAdminControls');
-      
-      if(isCurAdmin && email !== 'kuzeyfe@zamanperdesi.com') {
-        adminControls.innerHTML = `
-          <button onclick="deleteUserByAdmin('${email}')" class="bg-red-950/60 hover:bg-red-900 border border-red-800 text-red-400 text-xs px-3 py-1.5 rounded-xl font-bold flex items-center justify-center gap-1.5 mx-auto transition">
-            <i class="fa-solid fa-user-xmark"></i> Kullanıcıyı Platformdan Sil
-          </button>
-        `;
-      } else {
-        adminControls.innerHTML = '';
-      }
+        messageAction.innerHTML = `<button onclick="openChatWithUser('${email}')" class="bg-brand-accent text-black text-xs px-4 py-2 rounded-xl font-bold flex items-center justify-center gap-1.5 mx-auto shadow"><i class="fa-solid fa-comment-dots"></i> Özel Mesaj Gönder</button>`;
+      } else { messageAction.innerHTML = ''; }
 
       const artistTracks = demoTracks.filter(t => t.artist === a.name);
-      const tracksList = document.getElementById('artistTracksList');
-      tracksList.innerHTML = artistTracks.length ? artistTracks.map(t => `
-        <div onclick="playTrack(${t.id})" class="flex items-center justify-between p-2.5 bg-gray-100 dark:bg-brand-card rounded-xl border border-gray-200 dark:border-gray-800 cursor-pointer">
+      document.getElementById('artistTracksList').innerHTML = artistTracks.length ? artistTracks.map(t => `
+        <div onclick="playTrack(${demoTracks.indexOf(t)})" class="flex items-center justify-between p-2.5 bg-gray-100 dark:bg-brand-card rounded-xl border border-gray-200 dark:border-gray-800 cursor-pointer">
           <div class="flex items-center gap-2">
             <img src="${t.cover || DEFAULT_COVER}" class="w-9 h-9 rounded object-cover">
-            <div><h4 class="text-xs font-bold text-gray-900 dark:text-white">${t.title}</h4><p class="text-[10px] text-gray-500 dark:text-gray-400">${t.artist}</p></div>
+            <div><h4 class="text-xs font-bold text-gray-900 dark:text-white">${t.title}</h4></div>
           </div>
           <i class="fa-solid fa-play text-xs text-brand-accent"></i>
         </div>
@@ -1456,37 +902,38 @@
 
       document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
       document.getElementById('artistDetailView').classList.remove('hidden');
-      setupImageErrorHandlers();
     }
 
     function closeArtistDetail() { document.getElementById('artistDetailView').classList.add('hidden'); switchTab('artists'); }
-    
+
     function openChatWithUser(email) {
       if(!currentUserEmail) { alert('Önce giriş yapmalısınız!'); openAuthModal(); return; }
       activeChatEmail = email;
       const targetUser = usersDB[email];
       document.getElementById('chatUserName').innerText = targetUser.name;
-      document.getElementById('chatUserAvatar').src = (targetUser.avatar && !targetUser.avatar.includes('class=')) ? targetUser.avatar : DEFAULT_AVATAR;
+      document.getElementById('chatUserAvatar').src = targetUser.avatar || DEFAULT_AVATAR;
       renderChatMessages();
       document.getElementById('chatModal').classList.remove('hidden');
     }
 
     function closeChatModal() { document.getElementById('chatModal').classList.add('hidden'); }
 
-    function sendPrivateMessage(e) {
+    async function sendPrivateMessage(e) {
       e.preventDefault();
       const input = document.getElementById('chatInputMessage');
       const text = input.value.trim();
       if(!text || !activeChatEmail) return;
 
-      privateMessages.push({
+      const msgId = Date.now().toString();
+      const newMsg = {
         sender: currentUserEmail,
         receiver: activeChatEmail,
         text: text,
         time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-      });
-      saveAppData();
-      renderChatMessages();
+      };
+
+      const { setDoc, doc } = window.firestoreFns;
+      await setDoc(doc(window.db, "messages", msgId), newMsg);
       input.value = '';
     }
 
@@ -1496,11 +943,6 @@
         (m.sender === currentUserEmail && m.receiver === activeChatEmail) ||
         (m.sender === activeChatEmail && m.receiver === currentUserEmail)
       );
-
-      if(filtered.length === 0) {
-        container.innerHTML = '<p class="text-xs text-gray-500 text-center italic my-4">Henüz mesajlaşma yok. İlk mesajı gönder!</p>';
-        return;
-      }
 
       container.innerHTML = filtered.map(m => {
         const isMe = m.sender === currentUserEmail;
@@ -1512,82 +954,48 @@
             <span class="text-[9px] text-gray-500 px-1">${m.time}</span>
           </div>
         `;
-      }).join('');
+      }).join('') || '<p class="text-xs text-gray-500 text-center italic my-4">Henüz mesajlaşma yok.</p>';
       container.scrollTop = container.scrollHeight;
     }
 
-    function openAnalyticsModal() {
-      document.getElementById('analyticsModal').classList.remove('hidden');
-      renderArtistChart();
-    }
-    function closeAnalyticsModal() {
-      document.getElementById('analyticsModal').classList.add('hidden');
-    }
+    function openAnalyticsModal() { document.getElementById('analyticsModal').classList.remove('hidden'); renderArtistChart(); }
+    function closeAnalyticsModal() { document.getElementById('analyticsModal').classList.add('hidden'); }
 
     function renderArtistChart() {
       const ctx = document.getElementById('artistChart').getContext('2d');
-      if(chartInstance) {
-        chartInstance.destroy();
-      }
-      
-      const currentName = currentUserEmail && usersDB[currentUserEmail] ? usersDB[currentUserEmail].name : "Kuzeyfe Kalafat";
-      const userTracks = demoTracks.filter(t => t.artist === currentName);
-      let basePlays = userTracks.reduce((acc, t) => acc + (Number(t.plays) || 0), 10);
-
+      if(chartInstance) chartInstance.destroy();
       chartInstance = new Chart(ctx, {
         type: 'line',
         data: {
           labels: ['Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt', 'Paz'],
           datasets: [{
             label: 'Günlük Dinlenme',
-            data: [
-              Math.floor(basePlays * 0.1), 
-              Math.floor(basePlays * 0.15), 
-              Math.floor(basePlays * 0.12), 
-              Math.floor(basePlays * 0.2), 
-              Math.floor(basePlays * 0.25), 
-              Math.floor(basePlays * 0.35), 
-              basePlays
-            ],
+            data: [12, 19, 15, 25, 30, 45, 60],
             borderColor: '#00d2ff',
             backgroundColor: 'rgba(0, 210, 255, 0.1)',
             borderWidth: 2,
-            fill: true,
-            tension: 0.3
+            fill: true
           }]
         },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: {
-            legend: { labels: { color: currentTheme === 'dark' ? '#fff' : '#333', font: { size: 10 } } }
-          },
-          scales: {
-            x: { ticks: { color: currentTheme === 'dark' ? '#9ca3af' : '#666', font: { size: 9 } }, grid: { color: 'rgba(200,200,200,0.1)' } },
-            y: { ticks: { color: currentTheme === 'dark' ? '#9ca3af' : '#666', font: { size: 9 } }, grid: { color: 'rgba(200,200,200,0.1)' } }
-          }
-        }
+        options: { responsive: true, maintainAspectRatio: false }
       });
     }
 
     function handleSearch(val) {
       const resultsSection = document.getElementById('searchResultsSection');
       const resultsList = document.getElementById('searchResultsList');
-      const clearBtn = document.getElementById('clearSearchBtn');
-      if (!val.trim()) { resultsSection.classList.add('hidden'); clearBtn.classList.add('hidden'); return; }
-      clearBtn.classList.remove('hidden');
+      if (!val.trim()) { resultsSection.classList.add('hidden'); return; }
       resultsSection.classList.remove('hidden');
       const filtered = demoTracks.filter(t => t.title.toLowerCase().includes(val.toLowerCase()) || t.artist.toLowerCase().includes(val.toLowerCase()));
       resultsList.innerHTML = filtered.map(t => `
-        <div onclick="playTrack(${t.id})" class="p-2 bg-gray-100 dark:bg-brand-card rounded-xl border border-gray-200 dark:border-gray-800 flex items-center justify-between cursor-pointer">
+        <div onclick="playTrack(${demoTracks.indexOf(t)})" class="p-2 bg-gray-100 dark:bg-brand-card rounded-xl border border-gray-200 dark:border-gray-800 flex items-center justify-between cursor-pointer">
           <div class="flex items-center gap-2">
             <img src="${t.cover || DEFAULT_COVER}" class="w-8 h-8 rounded object-cover">
-            <div><p class="text-xs font-bold text-gray-900 dark:text-white">${t.title}</p><span class="text-[10px] text-gray-500 dark:text-gray-400">${t.artist}</span></div>
+            <div><p class="text-xs font-bold text-gray-900 dark:text-white">${t.title}</p><span class="text-[10px] text-gray-500">${t.artist}</span></div>
           </div>
           <i class="fa-solid fa-play text-xs text-brand-accent"></i>
         </div>
       `).join('') || '<p class="text-xs text-gray-500">Sonuç bulunamadı.</p>';
-      setupImageErrorHandlers();
     }
 
     function clearSearch() { document.getElementById('searchInput').value = ''; handleSearch(''); }
