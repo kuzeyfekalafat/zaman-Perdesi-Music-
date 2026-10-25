@@ -481,22 +481,22 @@
         <button onclick="closeAuthModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
         
         <div class="grid grid-cols-4 gap-1 border-b border-gray-200 dark:border-gray-800 pb-2 text-[10px] font-bold text-center">
-          <button id="authTabLogin" onclick="switchAuthMode('login')" class="text-brand-accent border-b-2 border-brand-accent pb-1 truncate">Giriş Yap</button>
-          <button id="authTabRegister" onclick="switchAuthMode('register')" class="text-gray-400 pb-1 truncate">Kayıt Ol</button>
-          <button id="authTabForgot" onclick="switchAuthMode('forgot')" class="text-gray-400 pb-1 truncate">🔑 Şifre</button>
-          <button id="authTabAdmin" onclick="switchAuthMode('admin')" class="text-red-400 pb-1 truncate">🛡️ Admin</button>
+          <button type="button" id="authTabLogin" onclick="switchAuthMode('login')" class="text-brand-accent border-b-2 border-brand-accent pb-1 truncate">Giriş Yap</button>
+          <button type="button" id="authTabRegister" onclick="switchAuthMode('register')" class="text-gray-400 pb-1 truncate">Kayıt Ol</button>
+          <button type="button" id="authTabForgot" onclick="switchAuthMode('forgot')" class="text-gray-400 pb-1 truncate">🔑 Şifre</button>
+          <button type="button" id="authTabAdmin" onclick="switchAuthMode('admin')" class="text-red-400 pb-1 truncate">🛡️ Admin</button>
         </div>
 
         <form id="loginForm" onsubmit="handleLogin(event)" class="space-y-3">
           <div><label class="text-xs text-gray-700 dark:text-gray-300">E-posta</label><input type="email" id="loginEmail" required class="w-full bg-gray-100 dark:bg-brand-dark text-xs text-gray-900 dark:text-white p-2.5 rounded-xl border border-gray-200 dark:border-gray-800 mt-1"></div>
-          <div><label class="text-xs text-gray-700 dark:text-gray-300">Şifre</label><input type="password" required class="w-full bg-gray-100 dark:bg-brand-dark text-xs text-gray-900 dark:text-white p-2.5 rounded-xl border border-gray-200 dark:border-gray-800 mt-1"></div>
+          <div><label class="text-xs text-gray-700 dark:text-gray-300">Şifre</label><input type="password" id="loginPassword" required class="w-full bg-gray-100 dark:bg-brand-dark text-xs text-gray-900 dark:text-white p-2.5 rounded-xl border border-gray-200 dark:border-gray-800 mt-1"></div>
           <button type="submit" class="w-full bg-brand-accent text-black font-bold text-xs py-2.5 rounded-xl">Giriş Yap</button>
         </form>
 
         <form id="registerForm" onsubmit="handleRegister(event)" class="hidden space-y-3">
           <div><label class="text-xs text-gray-700 dark:text-gray-300">Ad Soyad / Sanatçı Adı</label><input type="text" id="regName" required class="w-full bg-gray-100 dark:bg-brand-dark text-xs text-gray-900 dark:text-white p-2.5 rounded-xl border border-gray-200 dark:border-gray-800 mt-1"></div>
           <div><label class="text-xs text-gray-700 dark:text-gray-300">E-posta</label><input type="email" id="regEmail" required class="w-full bg-gray-100 dark:bg-brand-dark text-xs text-gray-900 dark:text-white p-2.5 rounded-xl border border-gray-200 dark:border-gray-800 mt-1"></div>
-          <div><label class="text-xs text-gray-700 dark:text-gray-300">Şifre</label><input type="password" required class="w-full bg-gray-100 dark:bg-brand-dark text-xs text-gray-900 dark:text-white p-2.5 rounded-xl border border-gray-200 dark:border-gray-800 mt-1"></div>
+          <div><label class="text-xs text-gray-700 dark:text-gray-300">Şifre</label><input type="password" id="regPassword" required class="w-full bg-gray-100 dark:bg-brand-dark text-xs text-gray-900 dark:text-white p-2.5 rounded-xl border border-gray-200 dark:border-gray-800 mt-1"></div>
           <button type="submit" class="w-full bg-brand-accent text-black font-bold text-xs py-2.5 rounded-xl">Kayıt Ol & Mavi Tik Al</button>
         </form>
 
@@ -509,7 +509,7 @@
         <form id="adminForm" onsubmit="handleAdminLogin(event)" class="hidden space-y-3">
           <div class="p-2 bg-red-950/40 border border-red-800/50 rounded-xl text-[11px] text-red-300">🛡️ Admin Girişi</div>
           <div><label class="text-xs text-gray-700 dark:text-gray-300">E-posta</label><input type="email" id="adminEmail" value="zamanperdesimusic@gmail.com" required class="w-full bg-gray-100 dark:bg-brand-dark text-xs text-gray-900 dark:text-white p-2.5 rounded-xl border border-gray-200 dark:border-gray-800 mt-1"></div>
-          <div><label class="text-xs text-gray-700 dark:text-gray-300">Şifre</label><input type="password" required class="w-full bg-gray-100 dark:bg-brand-dark text-xs text-gray-900 dark:text-white p-2.5 rounded-xl border border-gray-200 dark:border-gray-800 mt-1"></div>
+          <div><label class="text-xs text-gray-700 dark:text-gray-300">Şifre</label><input type="password" id="adminPassword" required class="w-full bg-gray-100 dark:bg-brand-dark text-xs text-gray-900 dark:text-white p-2.5 rounded-xl border border-gray-200 dark:border-gray-800 mt-1"></div>
           <button type="submit" class="w-full bg-red-600 text-white font-bold text-xs py-2.5 rounded-xl">Admin Giriş</button>
         </form>
       </div>
@@ -945,10 +945,28 @@
       document.getElementById('registerForm').classList.add('hidden');
       document.getElementById('forgotForm').classList.add('hidden');
       document.getElementById('adminForm').classList.add('hidden');
-      if(mode === 'login') document.getElementById('loginForm').classList.remove('hidden');
-      if(mode === 'register') document.getElementById('registerForm').classList.remove('hidden');
-      if(mode === 'forgot') document.getElementById('forgotForm').classList.remove('hidden');
-      if(mode === 'admin') document.getElementById('adminForm').classList.remove('hidden');
+      
+      document.getElementById('authTabLogin').className = "text-gray-400 pb-1 truncate";
+      document.getElementById('authTabRegister').className = "text-gray-400 pb-1 truncate";
+      document.getElementById('authTabForgot').className = "text-gray-400 pb-1 truncate";
+      document.getElementById('authTabAdmin').className = "text-gray-400 pb-1 truncate";
+
+      if(mode === 'login') {
+        document.getElementById('loginForm').classList.remove('hidden');
+        document.getElementById('authTabLogin').className = "text-brand-accent border-b-2 border-brand-accent pb-1 truncate font-bold";
+      }
+      if(mode === 'register') {
+        document.getElementById('registerForm').classList.remove('hidden');
+        document.getElementById('authTabRegister').className = "text-brand-accent border-b-2 border-brand-accent pb-1 truncate font-bold";
+      }
+      if(mode === 'forgot') {
+        document.getElementById('forgotForm').classList.remove('hidden');
+        document.getElementById('authTabForgot').className = "text-brand-accent border-b-2 border-brand-accent pb-1 truncate font-bold";
+      }
+      if(mode === 'admin') {
+        document.getElementById('adminForm').classList.remove('hidden');
+        document.getElementById('authTabAdmin').className = "text-red-400 border-b-2 border-red-500 pb-1 truncate font-bold";
+      }
     }
 
     function handleLogin(e) { 
@@ -982,6 +1000,12 @@
       checkAuthSession();
       closeAuthModal(); 
       alert('Kayıt oluşturuldu ve buluta kaydedildi!');
+    }
+
+    function handleForgot(e) {
+      e.preventDefault();
+      alert('Şifre sıfırlama bağlantısı e-posta adresinize gönderildi!');
+      closeAuthModal();
     }
 
     function handleAdminLogin(e) { 
