@@ -496,7 +496,7 @@
     const DEFAULT_AVATAR = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200"><rect width="200" height="200" fill="%231a1c23"/><circle cx="100" cy="80" r="40" fill="%2300d2ff"/><path d="M40 170c0-33 27-60 60-60s60 27 60 60z" fill="%2300d2ff"/></svg>';
     const DEFAULT_AUDIO = 'https://actions.google.com/sounds/v1/ambiences/outdoor_synth.ogg'; 
 
-    // 🔥 KESİN SIFIRLAMA: Bozuk verileri yok edip veritabanını tertemiz yeniden kuruyoruz
+    // 🔥 KESİN TEMİZLİK: LocalStorage'ı komple sıfırlayıp bozuk veriyi kökünden siliyoruz
     let usersDB = {
       'kuzeyfe@zamanperdesi.com': {
         name: 'Kuzeyfe Kalafat',
@@ -514,7 +514,6 @@
       }
     };
     localStorage.setItem('zaman_users', JSON.stringify(usersDB));
-
     let currentUserEmail = 'kuzeyfe@zamanperdesi.com';
     localStorage.setItem('zaman_current_user', currentUserEmail);
 
@@ -673,36 +672,62 @@
       container.innerHTML = html;
     }
 
-    // 🔥 GÜVENLİ KATALOG RENDER (KESİN ÇÖZÜM)
+    // 🛡️ KESİN GÜVENLİ KATALOG RENDER (DOĞRUDAN DOM ELEMENT OLUŞTURMA)
     function renderArtists() {
       const grid = document.getElementById('artistsGrid');
+      if (!grid) return;
+      grid.innerHTML = '';
+      
       const allUsers = Object.values(usersDB);
       if(allUsers.length === 0) {
         grid.innerHTML = '<p class="text-xs text-gray-500 italic col-span-2">Henüz kayıtlı sanatçı bulunmuyor.</p>';
         return;
       }
       
-      let htmlContent = '';
       allUsers.forEach(a => {
         const isAdmin = a.role === 'admin';
         const titleText = isAdmin ? 'Platform Kurucusu' : (a.title || 'Zaman Perdesi Sanatçısı');
-        const avatarSrc = a.avatar || DEFAULT_AVATAR;
+        const avatarSrc = (a.avatar && !a.avatar.includes('class=')) ? a.avatar : DEFAULT_AVATAR;
 
-        htmlContent += `
-          <div onclick="openArtistDetail('${a.email}')" class="bg-brand-card p-3 rounded-xl border border-gray-800 text-center cursor-pointer space-y-2 hover:border-brand-accent transition">
-            <img src="${avatarSrc}" class="w-16 h-16 rounded-full mx-auto object-cover border border-brand-accent">
-            <div>
-              <div class="flex items-center justify-center gap-1">
-                <h4 class="text-xs font-bold text-white truncate">${a.name}</h4>
-                <i class="fa-solid fa-circle-check text-brand-accent text-[10px]"></i>
-              </div>
-              <p class="text-[10px] text-gray-400 truncate">${titleText}</p>
-            </div>
-          </div>
-        `;
+        // Kart Kapsayıcısı
+        const card = document.createElement('div');
+        card.className = "bg-brand-card p-3 rounded-xl border border-gray-800 text-center cursor-pointer space-y-2 hover:border-brand-accent transition";
+        card.onclick = () => openArtistDetail(a.email);
+
+        // Avatar Resmi
+        const img = document.createElement('img');
+        img.src = avatarSrc;
+        img.className = "w-16 h-16 rounded-full mx-auto object-cover border border-brand-accent";
+        img.onerror = function() { this.src = DEFAULT_AVATAR; };
+
+        // İçerik Divi
+        const infoDiv = document.createElement('div');
+        
+        const nameRow = document.createElement('div');
+        nameRow.className = "flex items-center justify-center gap-1";
+
+        const h4 = document.createElement('h4');
+        h4.className = "text-xs font-bold text-white truncate";
+        h4.innerText = a.name;
+
+        const icon = document.createElement('i');
+        icon.className = "fa-solid fa-circle-check text-brand-accent text-[10px]";
+
+        nameRow.appendChild(h4);
+        nameRow.appendChild(icon);
+
+        const p = document.createElement('p');
+        p.className = "text-[10px] text-gray-400 truncate";
+        p.innerText = titleText;
+
+        infoDiv.appendChild(nameRow);
+        infoDiv.appendChild(p);
+
+        card.appendChild(img);
+        card.appendChild(infoDiv);
+
+        grid.appendChild(card);
       });
-      grid.innerHTML = htmlContent;
-      setupImageErrorHandlers();
     }
 
     function renderDynamicFeed() {
@@ -1282,7 +1307,7 @@
     function openArtistDetail(email) {
       const a = usersDB[email];
       if(!a) return;
-      document.getElementById('artistDetailImg').src = a.avatar || DEFAULT_AVATAR;
+      document.getElementById('artistDetailImg').src = (a.avatar && !a.avatar.includes('class=')) ? a.avatar : DEFAULT_AVATAR;
       document.getElementById('artistDetailName').innerText = a.name;
       document.getElementById('artistDetailBio').innerText = a.bio || 'Açıklama yok.';
       
