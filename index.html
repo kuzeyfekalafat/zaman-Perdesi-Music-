@@ -111,11 +111,11 @@
       </div>
 
       <div class="flex items-center gap-2">
-        <button onclick="requestNotificationPermission()" class="w-8 h-8 rounded-full bg-gray-100 dark:bg-brand-card hover:bg-gray-200 dark:hover:bg-brand-hover border border-gray-200 dark:border-gray-800 flex items-center justify-center text-brand-accent text-xs transition" title="Bildirimleri Aç">
+        <button type="button" onclick="requestNotificationPermission()" class="w-8 h-8 rounded-full bg-gray-100 dark:bg-brand-card hover:bg-gray-200 dark:hover:bg-brand-hover border border-gray-200 dark:border-gray-800 flex items-center justify-center text-brand-accent text-xs transition" title="Bildirimleri Aç">
           <i class="fa-solid fa-bell"></i>
         </button>
 
-        <button onclick="toggleTheme()" class="w-8 h-8 rounded-full bg-gray-100 dark:bg-brand-card hover:bg-gray-200 dark:hover:bg-brand-hover border border-gray-200 dark:border-gray-800 flex items-center justify-center text-brand-accent text-xs transition" title="Tema Değiştir">
+        <button type="button" onclick="toggleTheme()" class="w-8 h-8 rounded-full bg-gray-100 dark:bg-brand-card hover:bg-gray-200 dark:hover:bg-brand-hover border border-gray-200 dark:border-gray-800 flex items-center justify-center text-brand-accent text-xs transition" title="Tema Değiştir">
           <i id="themeIcon" class="fa-solid fa-moon"></i>
         </button>
 
@@ -133,7 +133,7 @@
         <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs"></i>
         <input type="text" id="searchInput" oninput="handleSearch(this.value)" placeholder="Sanatçı, şarkı veya albüm ara..." 
           class="w-full bg-gray-100 dark:bg-brand-card text-xs text-gray-900 dark:text-white pl-9 pr-8 py-2 rounded-xl border border-gray-200 dark:border-gray-800 focus:outline-none focus:border-brand-accent transition placeholder-gray-400 dark:placeholder-gray-500">
-        <button id="clearSearchBtn" onclick="clearSearch()" class="hidden absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white">
+        <button type="button" id="clearSearchBtn" onclick="clearSearch()" class="hidden absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white">
           <i class="fa-solid fa-xmark text-xs"></i>
         </button>
       </div>
@@ -267,10 +267,10 @@
             </span>
           </div>
           <div class="flex flex-col gap-1.5">
-            <button onclick="openEditProfileModal()" class="bg-white dark:bg-brand-dark hover:bg-gray-200 dark:hover:bg-brand-hover border border-gray-200 dark:border-gray-700 text-brand-accent px-2.5 py-1.5 rounded-xl text-xs font-semibold flex items-center justify-center gap-1 transition">
+            <button type="button" onclick="openEditProfileModal()" class="bg-white dark:bg-brand-dark hover:bg-gray-200 dark:hover:bg-brand-hover border border-gray-200 dark:border-gray-700 text-brand-accent px-2.5 py-1.5 rounded-xl text-xs font-semibold flex items-center justify-center gap-1 transition">
               <i class="fa-solid fa-pen-to-square"></i> Düzenle
             </button>
-            <button onclick="handleLogout()" class="bg-red-950/40 hover:bg-red-900/40 border border-red-800/50 text-red-400 px-2.5 py-1.5 rounded-xl text-xs font-semibold flex items-center justify-center gap-1 transition">
+            <button type="button" onclick="handleLogout()" class="bg-red-950/40 hover:bg-red-900/40 border border-red-800/50 text-red-400 px-2.5 py-1.5 rounded-xl text-xs font-semibold flex items-center justify-center gap-1 transition">
               <i class="fa-solid fa-right-from-bracket"></i> Çıkış
             </button>
           </div>
@@ -297,7 +297,7 @@
           </div>
           
           <div class="pt-2 border-t border-gray-200 dark:border-gray-800">
-            <button onclick="openAnalyticsModal()" class="w-full bg-brand-accent/10 hover:bg-brand-accent/20 border border-brand-accent/30 text-brand-accent text-xs font-bold py-2.5 rounded-xl flex items-center justify-center gap-2 shadow transition">
+            <button type="button" onclick="openAnalyticsModal()" class="w-full bg-brand-accent/10 hover:bg-brand-accent/20 border border-brand-accent/30 text-brand-accent text-xs font-bold py-2.5 rounded-xl flex items-center justify-center gap-2 shadow transition">
               <i class="fa-solid fa-chart-pie"></i> Detaylı Dinlenme Grafikleri (Dashboard)
             </button>
           </div>
@@ -319,9 +319,9 @@
 
         <div class="space-y-3">
           <div class="flex border-b border-gray-200 dark:border-gray-800 text-xs justify-between">
-            <button onclick="toggleProfileSubTab('myTracks')" id="subTabMyTracks" class="pb-2 px-2 font-semibold text-brand-accent border-b-2 border-brand-accent">🎵 İçeriklerim</button>
-            <button onclick="toggleProfileSubTab('favorites')" id="subTabFavs" class="pb-2 px-2 font-semibold text-gray-500 dark:text-gray-400">❤️ Favoriler</button>
-            <button onclick="toggleProfileSubTab('playlists')" id="subTabPlaylists" class="pb-2 px-2 font-semibold text-gray-500 dark:text-gray-400">📂 Çalma Listeleri</button>
+            <button type="button" onclick="toggleProfileSubTab('myTracks')" id="subTabMyTracks" class="pb-2 px-2 font-semibold text-brand-accent border-b-2 border-brand-accent">🎵 İçeriklerim</button>
+            <button type="button" onclick="toggleProfileSubTab('favorites')" id="subTabFavs" class="pb-2 px-2 font-semibold text-gray-500 dark:text-gray-400">❤️ Favoriler</button>
+            <button type="button" onclick="toggleProfileSubTab('playlists')" id="subTabPlaylists" class="pb-2 px-2 font-semibold text-gray-500 dark:text-gray-400">📂 Çalma Listeleri</button>
           </div>
 
           <div id="myTracksView" class="space-y-2">
@@ -337,7 +337,7 @@
           <div id="playlistsView" class="hidden space-y-3">
             <div class="flex items-center justify-between">
               <span class="text-xs font-bold text-gray-900 dark:text-white">Özel Çalma Listelerin</span>
-              <button onclick="openCreatePlaylistModal()" class="bg-brand-accent text-black text-[10px] font-bold px-2.5 py-1 rounded-lg shadow"><i class="fa-solid fa-plus"></i> Yeni Liste</button>
+              <button type="button" onclick="openCreatePlaylistModal()" class="bg-brand-accent text-black text-[10px] font-bold px-2.5 py-1 rounded-lg shadow"><i class="fa-solid fa-plus"></i> Yeni Liste</button>
             </div>
             <div id="playlistsContainer" class="space-y-2">
               <p class="text-xs text-gray-500 italic">Henüz çalma listesi oluşturulmadı.</p>
@@ -348,7 +348,7 @@
 
       <!-- ARTIST DETAIL VIEW -->
       <section id="artistDetailView" class="hidden space-y-4">
-        <button onclick="closeArtistDetail()" class="text-xs text-brand-accent flex items-center gap-1 font-semibold">
+        <button type="button" onclick="closeArtistDetail()" class="text-xs text-brand-accent flex items-center gap-1 font-semibold">
           <i class="fa-solid fa-arrow-left"></i> Geri Dön
         </button>
         <div class="text-center space-y-2 bg-gray-100 dark:bg-brand-card p-5 rounded-2xl border border-gray-200 dark:border-gray-800 relative">
@@ -372,7 +372,7 @@
             <p class="text-[9px] text-brand-accent flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span> Gerçek Zamanlı Bulut</p>
           </div>
         </div>
-        <button onclick="closeChatModal()" class="text-gray-400 hover:text-gray-900 dark:hover:text-white p-1 text-base"><i class="fa-solid fa-xmark"></i></button>
+        <button type="button" onclick="closeChatModal()" class="text-gray-400 hover:text-gray-900 dark:hover:text-white p-1 text-base"><i class="fa-solid fa-xmark"></i></button>
       </div>
 
       <div id="chatMessagesContainer" class="flex-1 overflow-y-auto space-y-2 p-2 bg-gray-50 dark:bg-brand-black/60 rounded-xl border border-gray-200 dark:border-gray-800 text-xs"></div>
@@ -386,7 +386,7 @@
     <!-- 📊 ANALYTICS DASHBOARD MODAL -->
     <div id="analyticsModal" class="hidden absolute inset-0 bg-black/85 backdrop-blur-md z-50 flex items-center justify-center p-4">
       <div class="w-full max-w-sm bg-white dark:bg-brand-card p-5 rounded-2xl border border-gray-200 dark:border-gray-800 space-y-4 shadow-2xl relative">
-        <button onclick="closeAnalyticsModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+        <button type="button" onclick="closeAnalyticsModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
         <h3 class="text-sm font-bold text-gray-900 dark:text-white flex items-center gap-2"><i class="fa-solid fa-chart-column text-brand-accent"></i> Sanatçı Dinlenme Grafikleri</h3>
         <div class="h-56 relative">
           <canvas id="artistChart"></canvas>
@@ -405,22 +405,22 @@
         </div>
       </div>
       <div class="flex items-center gap-2.5">
-        <button onclick="downloadCurrentTrack(event)" title="İndir" class="text-gray-400 hover:text-brand-accent transition p-1"><i class="fa-solid fa-download text-xs"></i></button>
-        <button onclick="toggleLikeCurrent()" id="likeBtn" class="text-gray-400 hover:text-red-500 transition p-1"><i class="fa-regular fa-heart text-xs"></i></button>
-        <button onclick="togglePlayPause(event)" id="playPauseBtn" class="w-8 h-8 rounded-full bg-brand-accent text-black flex items-center justify-center font-bold shadow-md"><i class="fa-solid fa-play text-xs"></i></button>
-        <button onclick="openFullPlayer()" class="text-gray-400 hover:text-gray-900 dark:hover:text-white p-1"><i class="fa-solid fa-chevron-up text-xs"></i></button>
+        <button type="button" onclick="downloadCurrentTrack(event)" title="İndir" class="text-gray-400 hover:text-brand-accent transition p-1"><i class="fa-solid fa-download text-xs"></i></button>
+        <button type="button" onclick="toggleLikeCurrent()" id="likeBtn" class="text-gray-400 hover:text-red-500 transition p-1"><i class="fa-regular fa-heart text-xs"></i></button>
+        <button type="button" onclick="togglePlayPause(event)" id="playPauseBtn" class="w-8 h-8 rounded-full bg-brand-accent text-black flex items-center justify-center font-bold shadow-md"><i class="fa-solid fa-play text-xs"></i></button>
+        <button type="button" onclick="openFullPlayer()" class="text-gray-400 hover:text-gray-900 dark:hover:text-white p-1"><i class="fa-solid fa-chevron-up text-xs"></i></button>
       </div>
     </div>
 
     <!-- FULL PLAYER MODAL -->
     <div id="fullPlayerModal" class="hidden absolute inset-0 bg-white/98 dark:bg-brand-black/98 backdrop-blur-xl z-50 flex flex-col p-4 pb-20 overflow-y-auto space-y-3 transition-colors duration-300">
       <div class="flex items-center justify-between border-b border-gray-200 dark:border-gray-800/80 pb-2">
-        <button onclick="closeFullPlayer()" class="text-gray-400 hover:text-gray-900 dark:hover:text-white"><i class="fa-solid fa-chevron-down text-lg"></i></button>
+        <button type="button" onclick="closeFullPlayer()" class="text-gray-400 hover:text-gray-900 dark:hover:text-white"><i class="fa-solid fa-chevron-down text-lg"></i></button>
         <span class="text-xs font-bold uppercase tracking-widest text-brand-accent">Şimdi Çalıyor</span>
         <div class="flex items-center gap-3">
-          <button onclick="downloadCurrentTrack()" title="İndir" class="text-gray-400 hover:text-brand-accent"><i class="fa-solid fa-download text-base"></i></button>
-          <button onclick="shareCurrentTrack()" title="Paylaş" class="text-gray-400 hover:text-brand-accent"><i class="fa-solid fa-share-nodes text-base"></i></button>
-          <button onclick="toggleLikeCurrent()" class="text-gray-400 hover:text-red-500"><i class="fa-solid fa-heart text-base"></i></button>
+          <button type="button" onclick="downloadCurrentTrack()" title="İndir" class="text-gray-400 hover:text-brand-accent"><i class="fa-solid fa-download text-base"></i></button>
+          <button type="button" onclick="shareCurrentTrack()" title="Paylaş" class="text-gray-400 hover:text-brand-accent"><i class="fa-solid fa-share-nodes text-base"></i></button>
+          <button type="button" onclick="toggleLikeCurrent()" class="text-gray-400 hover:text-red-500"><i class="fa-solid fa-heart text-base"></i></button>
         </div>
       </div>
 
@@ -443,16 +443,16 @@
         </div>
 
         <div class="flex items-center justify-center gap-6">
-          <button onclick="prevTrack()" class="text-gray-400 hover:text-gray-900 dark:hover:text-white text-base"><i class="fa-solid fa-backward-step"></i></button>
-          <button onclick="togglePlayPause(event)" id="modalPlayBtn" class="w-11 h-11 rounded-full bg-brand-accent text-black flex items-center justify-center font-bold shadow-lg shadow-cyan-500/20"><i class="fa-solid fa-play text-sm"></i></button>
-          <button onclick="nextTrack()" class="text-gray-400 hover:text-gray-900 dark:hover:text-white text-base"><i class="fa-solid fa-forward-step"></i></button>
+          <button type="button" onclick="prevTrack()" class="text-gray-400 hover:text-gray-900 dark:hover:text-white text-base"><i class="fa-solid fa-backward-step"></i></button>
+          <button type="button" onclick="togglePlayPause(event)" id="modalPlayBtn" class="w-11 h-11 rounded-full bg-brand-accent text-black flex items-center justify-center font-bold shadow-lg shadow-cyan-500/20"><i class="fa-solid fa-play text-sm"></i></button>
+          <button type="button" onclick="nextTrack()" class="text-gray-400 hover:text-gray-900 dark:hover:text-white text-base"><i class="fa-solid fa-forward-step"></i></button>
         </div>
       </div>
 
       <div class="bg-gray-100 dark:bg-brand-card rounded-2xl p-3 border border-gray-200 dark:border-gray-800 space-y-2 flex-1 flex flex-col justify-between">
         <div class="flex border-b border-gray-200 dark:border-gray-800 text-xs">
-          <button onclick="switchPlayerSubTab('lyrics')" id="playerTabLyrics" class="flex-1 pb-2 font-semibold text-brand-accent border-b-2 border-brand-accent">📜 Sözler</button>
-          <button onclick="switchPlayerSubTab('credits')" id="playerTabCredits" class="flex-1 pb-2 font-semibold text-gray-500 dark:text-gray-400">📜 Künye</button>
+          <button type="button" onclick="switchPlayerSubTab('lyrics')" id="playerTabLyrics" class="flex-1 pb-2 font-semibold text-brand-accent border-b-2 border-brand-accent">📜 Sözler</button>
+          <button type="button" onclick="switchPlayerSubTab('credits')" id="playerTabCredits" class="flex-1 pb-2 font-semibold text-gray-500 dark:text-gray-400">📜 Künye</button>
         </div>
 
         <div id="playerLyricsContent" class="text-xs text-gray-700 dark:text-gray-300 space-y-2 leading-relaxed max-h-36 overflow-y-auto p-1">
@@ -469,22 +469,22 @@
 
     <!-- BOTTOM NAVIGATION -->
     <nav class="absolute bottom-0 left-0 right-0 bg-white/95 dark:bg-brand-dark/95 backdrop-blur-lg border-t border-gray-200 dark:border-gray-800 flex justify-around py-2.5 z-40 transition-colors duration-300">
-      <button onclick="switchTab('home')" id="nav-home" class="flex flex-col items-center gap-1 text-brand-accent"><i class="fa-solid fa-house text-base"></i><span class="text-[10px] font-semibold">Ana Sayfa</span></button>
-      <button onclick="switchTab('artists')" id="nav-artists" class="flex flex-col items-center gap-1 text-gray-400 hover:text-gray-900 dark:hover:text-white"><i class="fa-solid fa-users text-base"></i><span class="text-[10px] font-semibold">Sanatçılar</span></button>
-      <button onclick="switchTab('upload')" id="nav-upload" class="flex flex-col items-center gap-1 text-gray-400 hover:text-gray-900 dark:hover:text-white"><i class="fa-solid fa-circle-plus text-base"></i><span class="text-[10px] font-semibold">Yükle</span></button>
-      <button onclick="switchTab('profile')" id="nav-profile" class="flex flex-col items-center gap-1 text-gray-400 hover:text-gray-900 dark:hover:text-white"><i class="fa-solid fa-user text-base"></i><span class="text-[10px] font-semibold">Profilim</span></button>
+      <button type="button" onclick="switchTab('home')" id="nav-home" class="flex flex-col items-center gap-1 text-brand-accent"><i class="fa-solid fa-house text-base"></i><span class="text-[10px] font-semibold">Ana Sayfa</span></button>
+      <button type="button" onclick="switchTab('artists')" id="nav-artists" class="flex flex-col items-center gap-1 text-gray-400 hover:text-gray-900 dark:hover:text-white"><i class="fa-solid fa-users text-base"></i><span class="text-[10px] font-semibold">Sanatçılar</span></button>
+      <button type="button" onclick="switchTab('upload')" id="nav-upload" class="flex flex-col items-center gap-1 text-gray-400 hover:text-gray-900 dark:hover:text-white"><i class="fa-solid fa-circle-plus text-base"></i><span class="text-[10px] font-semibold">Yükle</span></button>
+      <button type="button" onclick="switchTab('profile')" id="nav-profile" class="flex flex-col items-center gap-1 text-gray-400 hover:text-gray-900 dark:hover:text-white"><i class="fa-solid fa-user text-base"></i><span class="text-[10px] font-semibold">Profilim</span></button>
     </nav>
 
     <!-- AUTH MODAL -->
     <div id="authModal" class="hidden absolute inset-0 bg-black/85 backdrop-blur-md z-50 flex items-center justify-center p-4">
       <div class="w-full max-w-sm bg-white dark:bg-brand-card p-5 rounded-2xl border border-gray-200 dark:border-gray-800 space-y-4 shadow-2xl relative">
-        <button onclick="closeAuthModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+        <button type="button" onclick="closeAuthModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
         
         <div class="grid grid-cols-4 gap-1 border-b border-gray-200 dark:border-gray-800 pb-2 text-[10px] font-bold text-center">
-          <button type="button" id="authTabLogin" onclick="switchAuthMode('login')" class="text-brand-accent border-b-2 border-brand-accent pb-1 truncate">Giriş Yap</button>
-          <button type="button" id="authTabRegister" onclick="switchAuthMode('register')" class="text-gray-400 pb-1 truncate">Kayıt Ol</button>
-          <button type="button" id="authTabForgot" onclick="switchAuthMode('forgot')" class="text-gray-400 pb-1 truncate">🔑 Şifre</button>
-          <button type="button" id="authTabAdmin" onclick="switchAuthMode('admin')" class="text-red-400 pb-1 truncate">🛡️ Admin</button>
+          <button type="button" id="authTabLogin" onclick="switchAuthMode('login', event)" class="text-brand-accent border-b-2 border-brand-accent pb-1 truncate">Giriş Yap</button>
+          <button type="button" id="authTabRegister" onclick="switchAuthMode('register', event)" class="text-gray-400 pb-1 truncate">Kayıt Ol</button>
+          <button type="button" id="authTabForgot" onclick="switchAuthMode('forgot', event)" class="text-gray-400 pb-1 truncate">🔑 Şifre</button>
+          <button type="button" id="authTabAdmin" onclick="switchAuthMode('admin', event)" class="text-red-400 pb-1 truncate">🛡️ Admin</button>
         </div>
 
         <form id="loginForm" onsubmit="handleLogin(event)" class="space-y-3">
@@ -497,7 +497,7 @@
           <div><label class="text-xs text-gray-700 dark:text-gray-300">Ad Soyad / Sanatçı Adı</label><input type="text" id="regName" required class="w-full bg-gray-100 dark:bg-brand-dark text-xs text-gray-900 dark:text-white p-2.5 rounded-xl border border-gray-200 dark:border-gray-800 mt-1"></div>
           <div><label class="text-xs text-gray-700 dark:text-gray-300">E-posta</label><input type="email" id="regEmail" required class="w-full bg-gray-100 dark:bg-brand-dark text-xs text-gray-900 dark:text-white p-2.5 rounded-xl border border-gray-200 dark:border-gray-800 mt-1"></div>
           <div><label class="text-xs text-gray-700 dark:text-gray-300">Şifre</label><input type="password" id="regPassword" required class="w-full bg-gray-100 dark:bg-brand-dark text-xs text-gray-900 dark:text-white p-2.5 rounded-xl border border-gray-200 dark:border-gray-800 mt-1"></div>
-          <button type="submit" class="w-full bg-brand-accent text-black font-bold text-xs py-2.5 rounded-xl">Kayıt Ol & Mavi Tik Al</button>
+          <button type="submit" onclick="handleRegister(event)" class="w-full bg-brand-accent text-black font-bold text-xs py-2.5 rounded-xl cursor-pointer">Kayıt Ol & Mavi Tik Al</button>
         </form>
 
         <form id="forgotForm" onsubmit="handleForgot(event)" class="hidden space-y-3">
@@ -518,7 +518,7 @@
     <!-- PROFILE EDIT MODAL -->
     <div id="editProfileModal" class="hidden absolute inset-0 bg-black/85 backdrop-blur-md z-50 flex items-center justify-center p-4">
       <div class="w-full max-w-sm bg-white dark:bg-brand-card p-5 rounded-2xl border border-gray-200 dark:border-gray-800 space-y-4 shadow-2xl relative max-h-[90vh] overflow-y-auto">
-        <button onclick="closeEditProfileModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+        <button type="button" onclick="closeEditProfileModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
         <h3 class="text-sm font-bold text-gray-900 dark:text-white flex items-center gap-2"><i class="fa-solid fa-pen-to-square text-brand-accent"></i> Profili Düzenle</h3>
         <form onsubmit="handleProfileUpdate(event)" class="space-y-3">
           <div><label class="text-xs text-gray-700 dark:text-gray-300">Ad Soyad</label><input type="text" id="editNameInput" required class="w-full bg-gray-100 dark:bg-brand-dark text-xs text-gray-900 dark:text-white p-2.5 rounded-xl border border-gray-200 dark:border-gray-800 mt-1"></div>
@@ -940,7 +940,8 @@
     function openAuthModal() { document.getElementById('authModal').classList.remove('hidden'); }
     function closeAuthModal() { document.getElementById('authModal').classList.add('hidden'); }
     
-    function switchAuthMode(mode) {
+    function switchAuthMode(mode, event) {
+      if(event) event.preventDefault();
       document.getElementById('loginForm').classList.add('hidden');
       document.getElementById('registerForm').classList.add('hidden');
       document.getElementById('forgotForm').classList.add('hidden');
@@ -970,7 +971,7 @@
     }
 
     function handleLogin(e) { 
-      e.preventDefault(); 
+      if(e) e.preventDefault(); 
       const email = document.getElementById('loginEmail').value.trim();
       if(!usersDB[email]) { alert('Hesap bulunamadı!'); return; }
       currentUserEmail = email;
@@ -981,9 +982,21 @@
     }
 
     async function handleRegister(e) { 
-      e.preventDefault(); 
-      const name = document.getElementById('regName').value.trim();
-      const email = document.getElementById('regEmail').value.trim();
+      if(e) e.preventDefault(); 
+      const nameInput = document.getElementById('regName');
+      const emailInput = document.getElementById('regEmail');
+      const passInput = document.getElementById('regPassword');
+
+      if(!nameInput || !emailInput || !passInput) return;
+
+      const name = nameInput.value.trim();
+      const email = emailInput.value.trim();
+
+      if(!name || !email) {
+        alert('Lütfen ad soyad ve e-posta alanlarını doldurunuz!');
+        return;
+      }
+
       const newUser = {
         name,
         email,
@@ -1003,13 +1016,13 @@
     }
 
     function handleForgot(e) {
-      e.preventDefault();
+      if(e) e.preventDefault();
       alert('Şifre sıfırlama bağlantısı e-posta adresinize gönderildi!');
       closeAuthModal();
     }
 
     function handleAdminLogin(e) { 
-      e.preventDefault(); 
+      if(e) e.preventDefault(); 
       currentUserEmail = 'zamanperdesimusic@gmail.com';
       localStorage.setItem('zaman_current_user', currentUserEmail);
       checkAuthSession();
@@ -1035,7 +1048,7 @@
       
       const messageAction = document.getElementById('artistMessageAction');
       if(currentUserEmail && currentUserEmail !== email) {
-        messageAction.innerHTML = `<button onclick="openChatWithUser('${email}')" class="bg-brand-accent text-black text-xs px-4 py-2 rounded-xl font-bold flex items-center justify-center gap-1.5 mx-auto shadow"><i class="fa-solid fa-comment-dots"></i> Özel Mesaj Gönder</button>`;
+        messageAction.innerHTML = `<button type="button" onclick="openChatWithUser('${email}')" class="bg-brand-accent text-black text-xs px-4 py-2 rounded-xl font-bold flex items-center justify-center gap-1.5 mx-auto shadow"><i class="fa-solid fa-comment-dots"></i> Özel Mesaj Gönder</button>`;
       } else { messageAction.innerHTML = ''; }
 
       const artistTracks = demoTracks.filter(t => t.artist === a.name);
@@ -1068,7 +1081,7 @@
     function closeChatModal() { document.getElementById('chatModal').classList.add('hidden'); }
 
     async function sendPrivateMessage(e) {
-      e.preventDefault();
+      if(e) e.preventDefault();
       const input = document.getElementById('chatInputMessage');
       const text = input.value.trim();
       if(!text || !activeChatEmail) return;
