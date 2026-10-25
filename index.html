@@ -229,8 +229,8 @@
               <label class="text-xs font-medium text-gray-700 dark:text-gray-300">Albüm Adı</label>
               <input type="text" id="uploadAlbumTitle" placeholder="Örn: Zirve Yolu Albümü" class="w-full bg-gray-100 dark:bg-brand-card text-xs text-gray-900 dark:text-white p-2.5 rounded-xl border border-gray-200 dark:border-gray-800 focus:outline-none focus:border-brand-accent mt-1">
             </div>
-            <div class="space-y-3 max-h-72 overflow-y-auto pr-1">
-              <label class="text-xs font-bold text-brand-accent block">Albüm Parçaları (15 Şarkı - Ad ve Ses Dosyası)</label>
+            <div class="space-y-3 max-h-80 overflow-y-auto pr-1">
+              <label class="text-xs font-bold text-brand-accent block">Albüm Parçaları (15 Şarkı - Ad, Ses Dosyası ve Şarkı Sözleri)</label>
               <div id="albumTracksContainer" class="space-y-3"></div>
             </div>
           </div>
@@ -578,7 +578,7 @@
       container.innerHTML = '';
       for(let i = 1; i <= 15; i++) {
         const div = document.createElement('div');
-        div.className = "p-2.5 bg-white dark:bg-brand-card rounded-xl border border-gray-200 dark:border-gray-700 space-y-2";
+        div.className = "p-3 bg-white dark:bg-brand-card rounded-xl border border-gray-200 dark:border-gray-700 space-y-2";
         div.innerHTML = `
           <div class="flex items-center justify-between">
             <span class="text-[11px] font-bold text-brand-accent">Parça ${i}</span>
@@ -587,6 +587,10 @@
           <div>
             <label class="text-[9px] text-gray-400 block mb-1">Şarkı Ses Dosyası (MP3 / WAV)</label>
             <input type="file" id="albumTrackFile_${i}" accept="audio/*" class="w-full text-[10px] text-gray-500 bg-gray-50 dark:bg-brand-dark p-1 rounded-lg border border-gray-200 dark:border-gray-700 file:mr-2 file:py-0.5 file:px-1.5 file:rounded file:border-0 file:text-[10px] file:bg-brand-accent file:text-black file:font-semibold">
+          </div>
+          <div>
+            <label class="text-[9px] text-gray-400 block mb-1">Şarkı Sözleri (Lyrics)</label>
+            <textarea rows="2" id="albumTrackLyrics_${i}" placeholder="${i}. Şarkının sözleri..." class="w-full bg-gray-50 dark:bg-brand-dark text-[11px] text-gray-900 dark:text-white p-1.5 rounded-lg border border-gray-200 dark:border-gray-700"></textarea>
           </div>
         `;
         container.appendChild(div);
@@ -809,6 +813,7 @@
       document.getElementById('fullPlayerTitle').innerText = t.title;
       document.getElementById('fullPlayerArtist').innerText = t.artist;
       document.getElementById('fullPlayerCover').src = t.cover || DEFAULT_COVER;
+      document.getElementById('lyricsText').innerText = t.lyrics || "Şarkı sözü eklenmemiş.";
       audioEl.src = t.mediaUrl || DEFAULT_AUDIO;
       audioEl.load();
     }
@@ -875,9 +880,9 @@
 
       const { setDoc, doc } = window.firestoreFns;
       
-      // Tekli mi Albüm mü kontrol et
       if(!document.getElementById('singleFields').classList.contains('hidden')) {
         const title = document.getElementById('uploadTitle').value || "Yeni Eser";
+        const lyrics = document.getElementById('uploadLyrics').value || "Söz eklenmemiş.";
         const newId = Date.now().toString();
         const newTrack = {
           id: newId,
@@ -889,7 +894,8 @@
           type: "Tekli",
           writer,
           arranger,
-          label
+          label,
+          lyrics
         };
         await setDoc(doc(window.db, "tracks", newId), newTrack);
         alert('Tekli eser başarıyla buluta yüklendi!');
@@ -900,6 +906,7 @@
           const trackNameInput = document.getElementById(`albumTrackName_${i}`);
           if(trackNameInput && trackNameInput.value.trim()) {
             const trackName = trackNameInput.value.trim();
+            const trackLyrics = document.getElementById(`albumTrackLyrics_${i}`).value || "Söz eklenmemiş.";
             const newId = (Date.now() + i).toString();
             const newTrack = {
               id: newId,
@@ -911,7 +918,8 @@
               type: "Albüm Parçası",
               writer,
               arranger,
-              label
+              label,
+              lyrics: trackLyrics
             };
             await setDoc(doc(window.db, "tracks", newId), newTrack);
             uploadedCount++;
