@@ -319,9 +319,10 @@
 
     </main>
 
-    <!-- 💬 ÖZEL MESAJLAŞMA MODALI (SABİT ALT INPUT İLE) -->
-    <div id="chatModal" class="hidden absolute inset-0 bg-brand-black/98 backdrop-blur-md z-50 flex flex-col p-4 space-y-3">
-      <div class="flex items-center justify-between border-b border-gray-800 pb-2">
+    <!-- 💬 ÖZEL MESAJLAŞMA MODALI (KESİN GÖRÜNÜR İÇ YAPI) -->
+    <div id="chatModal" class="hidden absolute inset-0 bg-brand-black/98 backdrop-blur-md z-50 flex flex-col justify-between p-3 space-y-2">
+      <!-- Modal Header -->
+      <div class="flex items-center justify-between border-b border-gray-800 pb-2 flex-shrink-0">
         <div class="flex items-center gap-2">
           <img id="chatUserAvatar" src="" class="w-8 h-8 rounded-full object-cover border border-brand-accent">
           <div>
@@ -329,15 +330,15 @@
             <p class="text-[9px] text-brand-accent">Özel Mesaj</p>
           </div>
         </div>
-        <button onclick="closeChatModal()" class="text-gray-400 hover:text-white p-1"><i class="fa-solid fa-xmark text-lg"></i></button>
+        <button onclick="closeChatModal()" class="text-gray-400 hover:text-white p-2"><i class="fa-solid fa-xmark text-lg"></i></button>
       </div>
 
-      <!-- Mesajlar Listesi -->
-      <div id="chatMessagesContainer" class="flex-1 overflow-y-auto space-y-2 p-3 bg-brand-card rounded-2xl border border-gray-800 text-xs"></div>
+      <!-- Mesajlar Listesi (Esnek ve Kaydırılabilir) -->
+      <div id="chatMessagesContainer" class="flex-1 overflow-y-auto space-y-2 p-2 bg-brand-card rounded-xl border border-gray-800 text-xs my-1"></div>
 
-      <!-- Mesaj Gönderme Formu (Sabit ve Garanti Görünür) -->
-      <form onsubmit="sendPrivateMessage(event)" class="flex gap-2 pt-2 border-t border-gray-800 bg-brand-black pb-2">
-        <input type="text" id="chatInputMessage" placeholder="Mesajınızı buraya yazın..." required autocomplete="off" class="flex-1 bg-brand-card text-xs text-white p-3 rounded-xl border border-gray-700 focus:outline-none focus:border-brand-accent">
+      <!-- Mesaj Gönderme Formu (Modal İçinde En Dipte Sabit) -->
+      <form onsubmit="sendPrivateMessage(event)" class="flex gap-2 pt-2 border-t border-gray-800 flex-shrink-0 pb-3">
+        <input type="text" id="chatInputMessage" placeholder="Mesajınızı buraya yazın..." required autocomplete="off" class="flex-1 bg-brand-dark text-xs text-white p-3 rounded-xl border border-gray-700 focus:outline-none focus:border-brand-accent">
         <button type="submit" class="bg-brand-accent text-black px-4 py-3 rounded-xl text-xs font-bold shadow hover:opacity-90 transition"><i class="fa-solid fa-paper-plane text-sm"></i></button>
       </form>
     </div>
