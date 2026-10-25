@@ -196,7 +196,7 @@
             <div class="grid grid-cols-2 gap-2">
               <div>
                 <label class="text-[10px] text-gray-500 dark:text-gray-400">Söz & Müzik</label>
-                <input type="text" id="uploadCreditWriter" placeholder="Örn: Kuzeyfe Kalafat" class="w-full bg-white dark:bg-brand-card text-xs text-gray-900 dark:text-white p-2 rounded-lg border border-gray-200 dark:border-gray-700 mt-0.5">
+                <input type="text" id="uploadCreditWriter" placeholder="Örn: Hamza Kalafat" class="w-full bg-white dark:bg-brand-card text-xs text-gray-900 dark:text-white p-2 rounded-lg border border-gray-200 dark:border-gray-700 mt-0.5">
               </div>
               <div>
                 <label class="text-[10px] text-gray-500 dark:text-gray-400">Aranje / Düzenleme</label>
@@ -258,15 +258,16 @@
           <img id="userAvatar" src="" class="w-14 h-14 rounded-full object-cover border-2 border-brand-accent" alt="Profile">
           <div class="min-w-0 flex-1">
             <div class="flex items-center gap-1.5">
-              <h3 id="profileNameDisplay" class="text-sm font-bold text-gray-900 dark:text-white truncate">Kuzeyfe Kalafat</h3>
+              <h3 id="profileNameDisplay" class="text-sm font-bold text-gray-900 dark:text-white truncate">Hamza Kalafat</h3>
               <i class="fa-solid fa-circle-check text-brand-accent text-xs"></i>
             </div>
-            <p id="profileEmailDisplay" class="text-[11px] text-gray-500 dark:text-gray-400 truncate">zamanperdesimusic@gmail.com</p>
-            <span id="profileRoleTag" class="inline-block mt-1 bg-red-500/20 text-red-400 text-[10px] px-2 py-0.5 rounded-full border border-red-500/30 font-semibold">
-              🛡️ Kurucu & Sistem Yöneticisi
+            <p id="profileEmailDisplay" class="text-[11px] text-gray-500 dark:text-gray-400 truncate">kuzeyfe198634@gmail.com</p>
+            <span id="profileRoleTag" class="inline-block mt-1 bg-brand-accent/25 text-brand-accent text-[10px] px-2 py-0.5 rounded-full border border-brand-accent/30 font-medium">
+              Zaman Perdesi Sanatçısı
             </span>
           </div>
           <div class="flex flex-col gap-1.5">
+            <!-- DÜZENLE BUTONUNA ONCLICK EKLENDİ -->
             <button type="button" onclick="openEditProfileModal()" class="bg-white dark:bg-brand-dark hover:bg-gray-200 dark:hover:bg-brand-hover border border-gray-200 dark:border-gray-700 text-brand-accent px-2.5 py-1.5 rounded-xl text-xs font-semibold flex items-center justify-center gap-1 transition">
               <i class="fa-solid fa-pen-to-square"></i> Düzenle
             </button>
@@ -305,16 +306,10 @@
 
         <div class="bg-gray-100 dark:bg-brand-card p-3 rounded-xl border border-gray-200 dark:border-gray-800 space-y-2">
           <span class="text-xs font-bold text-brand-accent block">✍️ Hakkında / Biyografi</span>
-          <p id="profileBioDisplay" class="text-xs text-gray-600 dark:text-gray-300">Zaman Perdesi Music Kurucusu & Söz Yazarı.</p>
+          <p id="profileBioDisplay" class="text-xs text-gray-600 dark:text-gray-300">Zaman Perdesi Sanatçısı.</p>
           
-          <div class="pt-2 border-t border-gray-200 dark:border-gray-800 flex items-center gap-3.5 text-base flex-wrap">
-            <a id="linkYoutube" href="#" target="_blank" class="text-red-500 hover:scale-110 transition" title="YouTube"><i class="fa-brands fa-youtube text-lg"></i></a>
-            <a id="linkInstagram" href="#" target="_blank" class="text-pink-500 hover:scale-110 transition" title="Instagram"><i class="fa-brands fa-instagram text-lg"></i></a>
-            <a id="linkSpotify" href="#" target="_blank" class="text-green-500 hover:scale-110 transition" title="Spotify"><i class="fa-brands fa-spotify text-lg"></i></a>
-            <a id="linkTiktok" href="#" target="_blank" class="text-cyan-400 hover:scale-110 transition" title="TikTok"><i class="fa-brands fa-tiktok text-lg"></i></a>
-            <a id="linkFacebook" href="#" target="_blank" class="text-blue-500 hover:scale-110 transition" title="Facebook"><i class="fa-brands fa-facebook text-lg"></i></a>
-            <a id="linkTwitter" href="#" target="_blank" class="text-sky-400 hover:scale-110 transition" title="Twitter"><i class="fa-brands fa-twitter text-lg"></i></a>
-          </div>
+          <!-- KULLANICIYA ÖZEL DİNAMİK SOSYAL MEDYA LİNKLERİ -->
+          <div id="profileSocialLinks" class="pt-2 border-t border-gray-200 dark:border-gray-800 flex items-center gap-3.5 text-base flex-wrap"></div>
         </div>
 
         <div class="space-y-3">
@@ -401,7 +396,7 @@
         <img id="playerCover" src="" class="w-10 h-10 rounded-lg object-cover shadow border border-gray-200 dark:border-gray-700">
         <div class="min-w-0 flex-1">
           <h4 id="playerTitle" class="text-xs font-bold text-gray-900 dark:text-white truncate">Ateş Ve Kumsal</h4>
-          <p id="playerArtist" class="text-[10px] text-brand-accent truncate">Kuzeyfe Kalafat</p>
+          <p id="playerArtist" class="text-[10px] text-brand-accent truncate">Hamza Kalafat</p>
         </div>
       </div>
       <div class="flex items-center gap-2.5">
@@ -430,7 +425,7 @@
 
       <div class="text-center space-y-0.5">
         <h2 id="fullPlayerTitle" class="text-base font-extrabold text-gray-900 dark:text-white">Ateş Ve Kumsal</h2>
-        <p id="fullPlayerArtist" class="text-xs text-brand-accent font-semibold">Kuzeyfe Kalafat</p>
+        <p id="fullPlayerArtist" class="text-xs text-brand-accent font-semibold">Hamza Kalafat</p>
       </div>
 
       <div id="visualPlayerControls" class="bg-gray-100 dark:bg-brand-card p-3 rounded-2xl border border-gray-200 dark:border-gray-800/80 space-y-2">
@@ -460,7 +455,7 @@
         </div>
 
         <div id="playerCreditsContent" class="hidden text-xs space-y-2 text-gray-700 dark:text-gray-300 max-h-36 overflow-y-auto p-1">
-          <div class="flex justify-between border-b border-gray-200 dark:border-gray-800/80 pb-1.5"><span class="text-gray-500">Söz & Müzik:</span><span id="creditWriter" class="font-semibold text-gray-900 dark:text-white">Kuzeyfe Kalafat</span></div>
+          <div class="flex justify-between border-b border-gray-200 dark:border-gray-800/80 pb-1.5"><span class="text-gray-500">Söz & Müzik:</span><span id="creditWriter" class="font-semibold text-gray-900 dark:text-white">Hamza Kalafat</span></div>
           <div class="flex justify-between border-b border-gray-200 dark:border-gray-800/80 pb-1.5"><span class="text-gray-500">Aranje / Düzenleme:</span><span id="creditArranger" class="font-semibold text-gray-900 dark:text-white">Zaman Perdesi</span></div>
           <div class="flex justify-between border-b border-gray-200 dark:border-gray-800/80 pb-1.5"><span class="text-gray-500">Yapım Şirketi:</span><span id="creditLabel" class="font-semibold text-brand-accent">Zaman Perdesi Music</span></div>
         </div>
@@ -487,7 +482,6 @@
           <button type="button" id="authTabAdmin" onclick="switchAuthMode('admin', event)" class="text-red-400 pb-1 truncate">🛡️ Admin</button>
         </div>
 
-        <!-- GİRİŞ YAP ALANI (GÜNCELLENDİ: EĞER KULLANICI YOKSA OTOMATİK OLUŞTURUP GİRER) -->
         <div id="loginForm" class="space-y-3">
           <div><label class="text-xs text-gray-700 dark:text-gray-300">E-posta</label><input type="email" id="loginEmail" required class="w-full bg-gray-100 dark:bg-brand-dark text-xs text-gray-900 dark:text-white p-2.5 rounded-xl border border-gray-200 dark:border-gray-800 mt-1"></div>
           <div><label class="text-xs text-gray-700 dark:text-gray-300">Şifre</label><input type="password" id="loginPassword" required class="w-full bg-gray-100 dark:bg-brand-dark text-xs text-gray-900 dark:text-white p-2.5 rounded-xl border border-gray-200 dark:border-gray-800 mt-1"></div>
@@ -524,6 +518,8 @@
         <form onsubmit="handleProfileUpdate(event)" class="space-y-3">
           <div><label class="text-xs text-gray-700 dark:text-gray-300">Ad Soyad</label><input type="text" id="editNameInput" required class="w-full bg-gray-100 dark:bg-brand-dark text-xs text-gray-900 dark:text-white p-2.5 rounded-xl border border-gray-200 dark:border-gray-800 mt-1"></div>
           <div><label class="text-xs text-gray-700 dark:text-gray-300">Biyografi</label><textarea id="editBioInput" rows="2" class="w-full bg-gray-100 dark:bg-brand-dark text-xs text-gray-900 dark:text-white p-2.5 rounded-xl border border-gray-200 dark:border-gray-800 mt-1"></textarea></div>
+          <div><label class="text-xs text-gray-700 dark:text-gray-300">YouTube Linki</label><input type="url" id="editYoutubeInput" placeholder="https://youtube.com/@kanal" class="w-full bg-gray-100 dark:bg-brand-dark text-xs text-gray-900 dark:text-white p-2.5 rounded-xl border border-gray-200 dark:border-gray-800 mt-1"></div>
+          <div><label class="text-xs text-gray-700 dark:text-gray-300">Instagram Linki</label><input type="url" id="editInstagramInput" placeholder="https://instagram.com/kullanici" class="w-full bg-gray-100 dark:bg-brand-dark text-xs text-gray-900 dark:text-white p-2.5 rounded-xl border border-gray-200 dark:border-gray-800 mt-1"></div>
           <button type="submit" class="w-full bg-brand-accent text-black font-bold text-xs py-2.5 rounded-xl shadow-lg">Kaydet & Güncelle</button>
         </form>
       </div>
@@ -539,7 +535,7 @@
     let usersDB = {};
     let demoTracks = [];
     let privateMessages = [];
-    let currentUserEmail = localStorage.getItem('zaman_current_user') || 'zamanperdesimusic@gmail.com';
+    let currentUserEmail = localStorage.getItem('zaman_current_user') || 'kuzeyfe198634@gmail.com';
 
     let currentTheme = localStorage.getItem('zaman_theme') || 'dark';
     function initTheme() {
@@ -601,7 +597,9 @@
           bio: "Zaman Perdesi Sanatçısı",
           avatar: DEFAULT_AVATAR,
           role: 'user',
-          title: 'Zaman Perdesi Sanatçısı'
+          title: 'Zaman Perdesi Sanatçısı',
+          youtube: '',
+          instagram: ''
         };
 
         try {
@@ -638,7 +636,6 @@
           return;
         }
 
-        // Eğer kullanıcı veritabanında yoksa otomatik oluşturup giriş yapsın
         if(!usersDB[email]) {
           const newUser = {
             name: email.split('@')[0],
@@ -646,7 +643,9 @@
             bio: "Zaman Perdesi Sanatçısı",
             avatar: DEFAULT_AVATAR,
             role: 'user',
-            title: 'Zaman Perdesi Sanatçısı'
+            title: 'Zaman Perdesi Sanatçısı',
+            youtube: '',
+            instagram: ''
           };
           const { setDoc, doc } = window.firestoreFns;
           await setDoc(doc(window.db, "users", email), newUser);
@@ -717,7 +716,7 @@
           let sample = {
             id: '0',
             title: 'Ateş Ve Kumsal',
-            artist: 'Kuzeyfe Kalafat',
+            artist: 'Hamza Kalafat',
             plays: 1240,
             cover: DEFAULT_COVER,
             mediaUrl: DEFAULT_AUDIO,
@@ -759,17 +758,21 @@
         document.getElementById('profileBioDisplay').innerText = u.bio || "Biyografi eklenmedi.";
         document.getElementById('userAvatar').src = u.avatar || DEFAULT_AVATAR;
 
-        const ytLink = document.getElementById('linkYoutube');
-        const igLink = document.getElementById('linkInstagram');
-        if(u.youtube) { ytLink.href = u.youtube; ytLink.classList.remove('hidden'); } else { ytLink.classList.add('hidden'); }
-        if(u.instagram) { igLink.href = u.instagram; igLink.classList.remove('hidden'); } else { igLink.classList.add('hidden'); }
+        // Dinamik Sosyal Medya Linkleri
+        const socialContainer = document.getElementById('profileSocialLinks');
+        if(socialContainer) {
+          let socialHTML = '';
+          if(u.youtube) socialHTML += `<a href="${u.youtube}" target="_blank" class="text-red-500 hover:scale-110 transition" title="YouTube"><i class="fa-brands fa-youtube text-lg"></i></a>`;
+          if(u.instagram) socialHTML += `<a href="${u.instagram}" target="_blank" class="text-pink-500 hover:scale-110 transition" title="Instagram"><i class="fa-brands fa-instagram text-lg"></i></a>`;
+          socialContainer.innerHTML = socialHTML || '<span class="text-[10px] text-gray-500 italic">Sosyal medya linki eklenmemiş. "Düzenle" butonundan ekleyebilirsin.</span>';
+        }
 
         const roleTag = document.getElementById('profileRoleTag');
         if(u.role === 'admin') {
           roleTag.innerText = "🛡️ Kurucu & Sistem Yöneticisi";
           roleTag.className = "inline-block mt-1 bg-red-500/20 text-red-400 text-[10px] px-2 py-0.5 rounded-full border border-red-500/30 font-semibold";
         } else {
-          roleTag.innerText = u.title || "Doğrulanmış Sanatçı";
+          roleTag.innerText = u.title || "Zaman Perdesi Sanatçısı";
           roleTag.className = "inline-block mt-1 bg-brand-accent/25 text-brand-accent text-[10px] px-2 py-0.5 rounded-full border border-brand-accent/30 font-medium";
         }
       } else {
@@ -792,6 +795,7 @@
       document.getElementById('statTotalFavs').innerText = favorites.length;
     }
 
+    // SANATÇI KATALOĞU (HTML BOZUKLUĞU GİDERİLDİ)
     function renderArtists() {
       const grid = document.getElementById('artistsGrid');
       if (!grid) return;
@@ -807,16 +811,21 @@
         card.className = "bg-gray-100 dark:bg-brand-card p-3 rounded-xl border border-gray-200 dark:border-gray-800 text-center cursor-pointer space-y-2 hover:border-brand-accent transition";
         card.onclick = () => openArtistDetail(a.email);
 
-        card.innerHTML = `
-          <img src="${avatarSrc}" class="w-16 h-16 rounded-full mx-auto object-cover border border-brand-accent">
-          <div>
-            <div class="flex items-center justify-center gap-1">
-              <h4 class="text-xs font-bold text-gray-900 dark:text-white truncate">${a.name}</h4>
-              <i class="fa-solid fa-circle-check text-brand-accent text-[10px]"></i>
-            </div>
-            <p class="text-[10px] text-gray-500 dark:text-gray-400 truncate">${titleText}</p>
+        const imgEl = document.createElement('img');
+        imgEl.src = avatarSrc;
+        imgEl.className = "w-16 h-16 rounded-full mx-auto object-cover border border-brand-accent";
+
+        const infoDiv = document.createElement('div');
+        infoDiv.innerHTML = `
+          <div class="flex items-center justify-center gap-1">
+            <h4 class="text-xs font-bold text-gray-900 dark:text-white truncate">${a.name}</h4>
+            <i class="fa-solid fa-circle-check text-brand-accent text-[10px]"></i>
           </div>
+          <p class="text-[10px] text-gray-500 dark:text-gray-400 truncate">${titleText}</p>
         `;
+
+        card.appendChild(imgEl);
+        card.appendChild(infoDiv);
         grid.appendChild(card);
       });
     }
@@ -1085,6 +1094,41 @@
       }
     }
 
+    function openEditProfileModal() {
+      if(!currentUserEmail || !usersDB[currentUserEmail]) return;
+      const u = usersDB[currentUserEmail];
+      document.getElementById('editNameInput').value = u.name || '';
+      document.getElementById('editBioInput').value = u.bio || '';
+      document.getElementById('editYoutubeInput').value = u.youtube || '';
+      document.getElementById('editInstagramInput').value = u.instagram || '';
+      document.getElementById('editProfileModal').classList.remove('hidden');
+    }
+
+    function closeEditProfileModal() {
+      document.getElementById('editProfileModal').classList.add('hidden');
+    }
+
+    async function handleProfileUpdate(e) {
+      e.preventDefault();
+      if(!currentUserEmail) return;
+
+      const name = document.getElementById('editNameInput').value.trim();
+      const bio = document.getElementById('editBioInput').value.trim();
+      const youtube = document.getElementById('editYoutubeInput').value.trim();
+      const instagram = document.getElementById('editInstagramInput').value.trim();
+
+      const { setDoc, doc } = window.firestoreFns;
+      await setDoc(doc(window.db, "users", currentUserEmail), {
+        name,
+        bio,
+        youtube,
+        instagram
+      }, { merge: true });
+
+      closeEditProfileModal();
+      alert('Profiliniz başarıyla güncellendi!');
+    }
+
     function openArtistDetail(email) {
       const a = usersDB[email];
       if(!a) return;
@@ -1112,7 +1156,7 @@
       document.getElementById('artistDetailView').classList.remove('hidden');
     }
 
-    function closeArtistDetail() { document.getElementById('artistDetailView').classList.add('hidden'); switchTab('artists'); }
+    function closeArtistDetail() { document.getElementById('artistDetailView'].classList.add('hidden'); switchTab('artists'); }
 
     function openChatWithUser(email) {
       if(!currentUserEmail) { alert('Önce giriş yapmalısınız!'); openAuthModal(); return; }
