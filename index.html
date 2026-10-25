@@ -308,12 +308,12 @@
           <p id="profileBioDisplay" class="text-xs text-gray-600 dark:text-gray-300">Zaman Perdesi Music Kurucusu & Söz Yazarı.</p>
           
           <div class="pt-2 border-t border-gray-200 dark:border-gray-800 flex items-center gap-3.5 text-base flex-wrap">
-            <a id="linkYoutube" href="#" target="_blank" class="text-red-500 hover:scale-110 transition hidden" title="YouTube"><i class="fa-brands fa-youtube text-lg"></i></a>
-            <a id="linkInstagram" href="#" target="_blank" class="text-pink-500 hover:scale-110 transition hidden" title="Instagram"><i class="fa-brands fa-instagram text-lg"></i></a>
-            <a id="linkSpotify" href="#" target="_blank" class="text-green-500 hover:scale-110 transition hidden" title="Spotify"><i class="fa-brands fa-spotify text-lg"></i></a>
-            <a id="linkTiktok" href="#" target="_blank" class="text-cyan-400 hover:scale-110 transition hidden" title="TikTok"><i class="fa-brands fa-tiktok text-lg"></i></a>
-            <a id="linkFacebook" href="#" target="_blank" class="text-blue-500 hover:scale-110 transition hidden" title="Facebook"><i class="fa-brands fa-facebook text-lg"></i></a>
-            <a id="linkTwitter" href="#" target="_blank" class="text-sky-400 hover:scale-110 transition hidden" title="Twitter"><i class="fa-brands fa-twitter text-lg"></i></a>
+            <a id="linkYoutube" href="#" target="_blank" class="text-red-500 hover:scale-110 transition" title="YouTube"><i class="fa-brands fa-youtube text-lg"></i></a>
+            <a id="linkInstagram" href="#" target="_blank" class="text-pink-500 hover:scale-110 transition" title="Instagram"><i class="fa-brands fa-instagram text-lg"></i></a>
+            <a id="linkSpotify" href="#" target="_blank" class="text-green-500 hover:scale-110 transition" title="Spotify"><i class="fa-brands fa-spotify text-lg"></i></a>
+            <a id="linkTiktok" href="#" target="_blank" class="text-cyan-400 hover:scale-110 transition" title="TikTok"><i class="fa-brands fa-tiktok text-lg"></i></a>
+            <a id="linkFacebook" href="#" target="_blank" class="text-blue-500 hover:scale-110 transition" title="Facebook"><i class="fa-brands fa-facebook text-lg"></i></a>
+            <a id="linkTwitter" href="#" target="_blank" class="text-sky-400 hover:scale-110 transition" title="Twitter"><i class="fa-brands fa-twitter text-lg"></i></a>
           </div>
         </div>
 
@@ -641,6 +641,12 @@
         document.getElementById('profileEmailDisplay').innerText = currentUserEmail;
         document.getElementById('profileBioDisplay').innerText = u.bio || "Biyografi eklenmedi.";
         document.getElementById('userAvatar').src = u.avatar || DEFAULT_AVATAR;
+
+        // Sosyal Medya Linkleri
+        const ytLink = document.getElementById('linkYoutube');
+        const igLink = document.getElementById('linkInstagram');
+        if(u.youtube) { ytLink.href = u.youtube; ytLink.classList.remove('hidden'); } else { ytLink.classList.add('hidden'); }
+        if(u.instagram) { igLink.href = u.instagram; igLink.classList.remove('hidden'); } else { igLink.classList.add('hidden'); }
 
         const roleTag = document.getElementById('profileRoleTag');
         if(u.role === 'admin') {
